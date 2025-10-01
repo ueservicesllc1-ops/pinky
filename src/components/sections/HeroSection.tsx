@@ -17,13 +17,13 @@ export default function HeroSection() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center min-h-[500px]">
           {/* Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center lg:text-left"
+            className="text-center lg:text-left lg:pr-8"
           >
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -97,21 +97,25 @@ export default function HeroSection() {
             </motion.div>
           </motion.div>
 
-          {/* Hero Image */}
+          {/* Hero Banner Image */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
+            className="relative lg:pl-8"
           >
             <div className="relative z-10">
-              {/* Placeholder for hero image */}
-              <div className="aspect-square bg-gradient-to-br from-pink-200 to-purple-300 rounded-3xl shadow-2xl flex items-center justify-center">
-                <div className="text-center text-white">
-                  <Sparkles className="h-24 w-24 mx-auto mb-4 opacity-80" />
-                  <p className="text-lg font-semibold">Imagen de Velas</p>
-                  <p className="text-sm opacity-80">Aquí irá la imagen principal</p>
+              {/* Banner Image Placeholder */}
+              <div className="aspect-[4/3] bg-gradient-to-br from-pink-200 to-purple-300 rounded-2xl shadow-2xl flex items-center justify-center overflow-hidden">
+                <div className="text-center text-white p-8">
+                  <Heart className="h-32 w-32 mx-auto mb-6 opacity-80" />
+                  <h3 className="text-2xl font-bold mb-2">Banner de Velas</h3>
+                  <p className="text-lg opacity-80">Imagen tipo banner</p>
+                  <p className="text-sm opacity-60 mt-2">Perfecto para mostrar la colección</p>
                 </div>
+                
+                {/* Decorative overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
             </div>
 
@@ -119,12 +123,12 @@ export default function HeroSection() {
             <motion.div
               animate={{ y: [-10, 10, -10] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-4 -right-4 w-20 h-20 bg-pink-400 rounded-full opacity-60"
+              className="absolute -top-6 -right-6 w-16 h-16 bg-pink-400 rounded-full opacity-60"
             />
             <motion.div
               animate={{ y: [10, -10, 10] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute -bottom-4 -left-4 w-16 h-16 bg-purple-400 rounded-full opacity-60"
+              className="absolute -bottom-6 -left-6 w-12 h-12 bg-purple-400 rounded-full opacity-60"
             />
           </motion.div>
         </div>

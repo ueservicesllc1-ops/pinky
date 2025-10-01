@@ -4,21 +4,27 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, Sparkles, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useHeroPopupConfig } from '@/hooks/useHeroPopupConfig';
 
 export default function HeroPopup() {
   const [isOpen, setIsOpen] = useState(false);
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(10);
+  
+  // Obtener configuración desde Firebase
+  const { config: popupConfig, isLoading } = useHeroPopupConfig();
 
   useEffect(() => {
-    // Show popup after 1 second of page load
+    if (!popupConfig.isActive) return;
+
+    // Show popup after delay
     const showTimer = setTimeout(() => {
       setIsOpen(true);
-    }, 1000);
+    }, popupConfig.showDelay);
 
-    // Auto-close after 5 seconds
+    // Auto-close after specified seconds
     const autoCloseTimer = setTimeout(() => {
       setIsOpen(false);
-    }, 6000);
+    }, popupConfig.showDelay + (popupConfig.autoCloseSeconds * 1000));
 
     // Countdown timer
     const countdownTimer = setInterval(() => {
@@ -36,7 +42,7 @@ export default function HeroPopup() {
       clearTimeout(autoCloseTimer);
       clearInterval(countdownTimer);
     };
-  }, []);
+  }, [popupConfig]);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -107,10 +113,15 @@ export default function HeroPopup() {
                       transition={{ delay: 0.3, duration: 0.6 }}
                       className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
                     >
-                      Ilumina tus
-                      <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                        {' '}momentos especiales
-                      </span>
+                      {popupConfig.title.split(' ').map((word, index) => 
+                        index === popupConfig.title.split(' ').length - 2 ? (
+                          <span key={index} className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                            {' '}{word}
+                          </span>
+                        ) : (
+                          <span key={index}>{index === 0 ? word : ` ${word}`}</span>
+                        )
+                      )}
                     </motion.h1>
 
                     {/* Subtitle */}
@@ -120,7 +131,7 @@ export default function HeroPopup() {
                       transition={{ delay: 0.4, duration: 0.6 }}
                       className="text-lg text-gray-600 mb-6"
                     >
-                      Descubre nuestra colección única de velas personalizadas, creadas con ingredientes naturales y diseñadas para crear la atmósfera perfecta en tu hogar.
+                      {popupConfig.subtitle}
                     </motion.p>
 
                     {/* Offer */}
@@ -131,8 +142,8 @@ export default function HeroPopup() {
                       className="bg-gradient-to-r from-pink-500 to-purple-600 text-white p-4 rounded-lg mb-6"
                     >
                       <div className="text-center">
-                        <p className="text-lg font-semibold">🎉 ¡Descuento del 20%!</p>
-                        <p className="text-sm opacity-90">En tu primera compra</p>
+                        <p className="text-lg font-semibold">🎉 {popupConfig.offerTitle}</p>
+                        <p className="text-sm opacity-90">{popupConfig.offerDescription}</p>
                       </div>
                     </motion.div>
 
@@ -147,10 +158,10 @@ export default function HeroPopup() {
                         size="lg"
                         className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-6 py-3"
                         onClick={() => {
-                          window.location.href = '/catalogo';
+                          window.location.href = popupConfig.ctaButton1Link;
                         }}
                       >
-                        Explorar Catálogo
+                        {popupConfig.ctaButton1Text}
                         <ArrowRight className="ml-2 h-5 w-5" />
                       </Button>
                       <Button
@@ -158,10 +169,10 @@ export default function HeroPopup() {
                         size="lg"
                         className="border-2 border-pink-300 text-pink-600 hover:bg-pink-50 px-6 py-3"
                         onClick={() => {
-                          window.location.href = '/personalizadas';
+                          window.location.href = popupConfig.ctaButton2Link;
                         }}
                       >
-                        Personalizar Ahora
+                        {popupConfig.ctaButton2Text}
                       </Button>
                     </motion.div>
 
@@ -189,12 +200,27 @@ export default function HeroPopup() {
                 </div>
 
                 {/* Right Side - Image */}
-                <div className="relative bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center">
-                  <div className="text-center text-white p-8">
-                    <Heart className="h-32 w-32 mx-auto mb-6 opacity-80" />
-                    <h3 className="text-2xl font-bold mb-2">Velas Artesanales</h3>
-                    <p className="text-lg opacity-80">Hechas con amor</p>
-                  </div>
+                <div className="relative bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center overflow-hidden">
+                  {popupConfig.imageUrl ? (
+                    <div className="w-full h-full relative">
+                      <img
+                        src={popupConfig.imageUrl}
+                        alt="Vela personalizada"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                      <div className="absolute bottom-8 left-8 right-8 text-white">
+                        <h3 className="text-2xl font-bold mb-2">Velas Artesanales</h3>
+                        <p className="text-lg opacity-90">Hechas con amor</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center text-white p-8">
+                      <Heart className="h-32 w-32 mx-auto mb-6 opacity-80" />
+                      <h3 className="text-2xl font-bold mb-2">Velas Artesanales</h3>
+                      <p className="text-lg opacity-80">Hechas con amor</p>
+                    </div>
+                  )}
 
                   {/* Floating Elements */}
                   <motion.div

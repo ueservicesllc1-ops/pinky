@@ -76,7 +76,21 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
               <div className="grid grid-cols-1 lg:grid-cols-2">
                 {/* Left Side - Product Image */}
                 <div className="relative bg-gradient-to-br from-pink-100 to-purple-100 min-h-[400px] flex items-center justify-center">
-                  <div className="text-center text-gray-600 p-8">
+                  {product.images && product.images[0] ? (
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // Si falla la imagen, mostrar placeholder
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  
+                  {/* Fallback cuando no hay imagen o falla */}
+                  <div className="text-center text-gray-600 p-8" style={{ display: product.images && product.images[0] ? 'none' : 'flex' }}>
                     <Heart className="h-32 w-32 mx-auto mb-4 opacity-80" />
                     <h3 className="text-2xl font-bold mb-2">{product.name}</h3>
                     <p className="text-lg opacity-80">Imagen de alta calidad</p>

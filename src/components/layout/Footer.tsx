@@ -8,13 +8,25 @@ import { Heart, Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
+  // Datos de configuración (en producción vendrían de Firebase)
+  const businessInfo = {
+    email: 'info@pinkyflame.com',
+    phone: '+1 (555) 123-4567',
+    address: '123 Main Street, Newark, NJ 07102',
+    socialMedia: {
+      instagram: 'https://instagram.com/pinkyflame',
+      facebook: 'https://facebook.com/pinkyflame',
+      twitter: 'https://twitter.com/pinkyflame'
+    }
+  };
+
   const footerSections = [
     {
       title: 'Tienda',
       links: [
         { label: 'Catálogo', href: '/catalogo' },
         { label: 'Velas Personalizadas', href: '/personalizadas' },
-        { label: 'Nuevos Productos', href: '/nuevos' },
+        { label: 'IA Generator', href: '/ia-generator' },
         { label: 'Ofertas', href: '/ofertas' },
       ]
     },
@@ -39,9 +51,9 @@ export default function Footer() {
   ];
 
   const socialLinks = [
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
+    { icon: Instagram, href: businessInfo.socialMedia.instagram, label: 'Instagram' },
+    { icon: Facebook, href: businessInfo.socialMedia.facebook, label: 'Facebook' },
+    { icon: Twitter, href: businessInfo.socialMedia.twitter, label: 'Twitter' },
   ];
 
   return (
@@ -133,9 +145,14 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">
-            © {currentYear} Pinky Flame. Todos los derechos reservados.
-          </p>
+          <div className="flex flex-col md:flex-row items-center gap-2">
+            <p className="text-gray-400 text-sm">
+              © {currentYear} Pinky Flame. Todos los derechos reservados.
+            </p>
+            <p className="text-gray-500 text-xs">
+              Potenciada por Freedom Labs
+            </p>
+          </div>
           
           {/* Social Links */}
           <div className="flex items-center space-x-4 mt-4 md:mt-0">

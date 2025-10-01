@@ -1,0 +1,71 @@
+// Reglas de Firebase Storage para Pinky Flame
+// Copia y pega estas reglas en Firebase Console > Storage > Rules
+
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Permitir lectura pública de todas las imágenes
+    match /{allPaths=**} {
+      allow read: if true;
+    }
+    
+    // Permitir escritura en carpetas específicas para usuarios autenticados
+    match /banners/{fileName} {
+      allow write: if true; // Temporalmente permitir a todos, cambiar por autenticación si es necesario
+    }
+    
+    match /candles/{fileName} {
+      allow write: if true; // Temporalmente permitir a todos, cambiar por autenticación si es necesario
+    }
+    
+    match /promotions/{fileName} {
+      allow write: if true; // Temporalmente permitir a todos, cambiar por autenticación si es necesario
+    }
+    
+    match /offers/{fileName} {
+      allow write: if true; // Temporalmente permitir a todos, cambiar por autenticación si es necesario
+    }
+    
+    match /categories/{fileName} {
+      allow write: if true; // Temporalmente permitir a todos, cambiar por autenticación si es necesario
+    }
+    
+    match /hero-popup/{fileName} {
+      allow write: if true; // Temporalmente permitir a todos, cambiar por autenticación si es necesario
+    }
+    
+    // Permitir eliminación en las mismas carpetas
+    match /banners/{fileName} {
+      allow delete: if true; // Temporalmente permitir a todos
+    }
+    
+    match /candles/{fileName} {
+      allow delete: if true; // Temporalmente permitir a todos
+    }
+    
+    match /promotions/{fileName} {
+      allow delete: if true; // Temporalmente permitir a todos
+    }
+    
+    match /offers/{fileName} {
+      allow delete: if true; // Temporalmente permitir a todos
+    }
+    
+    match /categories/{fileName} {
+      allow delete: if true; // Temporalmente permitir a todos
+    }
+    
+    match /hero-popup/{fileName} {
+      allow delete: if true; // Temporalmente permitir a todos
+    }
+  }
+}
+
+// INSTRUCCIONES PARA APLICAR ESTAS REGLAS:
+// 1. Ve a https://console.firebase.google.com/
+// 2. Selecciona tu proyecto "mysetlistapp-bb4c6"
+// 3. En el menú lateral, haz clic en "Storage"
+// 4. Haz clic en la pestaña "Rules"
+// 5. Reemplaza todo el contenido con las reglas de arriba
+// 6. Haz clic en "Publish"

@@ -1,0 +1,47 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Permitir lectura pública de todas las colecciones
+    match /{document=**} {
+      allow read: if true;
+    }
+    
+    // Reglas específicas para cada colección
+    match /categories/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
+    
+    match /candles/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
+    
+    match /banners/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
+    
+    match /promotions/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
+    
+    match /special_offers/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
+    
+    match /business_config/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
+    
+    match /orders/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
+    
+    match /newsletter_subscriptions/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
+    
+    match /hero-popup/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
+  }
+}

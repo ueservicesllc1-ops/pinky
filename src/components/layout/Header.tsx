@@ -16,8 +16,10 @@ export default function Header() {
     { href: '/', label: 'Inicio' },
     { href: '/catalogo', label: 'Catálogo' },
     { href: '/personalizadas', label: 'Personalizadas' },
+    { href: '/ia-generator', label: 'IA Generator' },
     { href: '/nosotros', label: 'Nosotros' },
     { href: '/contacto', label: 'Contacto' },
+    { href: '/admin', label: 'Admin' },
   ];
 
   return (

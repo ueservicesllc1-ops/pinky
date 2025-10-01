@@ -1,0 +1,26 @@
+<svg width="150" height="350" viewBox="0 0 150 350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="whiteGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f8fafc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="3" dy="5" stdDeviation="3" flood-color="#000000" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Vela cónica -->
+  <path d="M 75 50 L 120 280 L 30 280 Z" fill="url(#whiteGradient)" filter="url(#shadow)"/>
+  
+  <!-- Mechas -->
+  <rect x="73" y="30" width="3" height="25" rx="1.5" fill="#8b5cf6"/>
+  
+  <!-- Llama -->
+  <ellipse cx="74.5" cy="15" rx="10" ry="16" fill="#fbbf24">
+    <animate attributeName="ry" values="16;20;16" dur="2s" repeatCount="indefinite"/>
+  </ellipse>
+  
+  <!-- Detalles de cera -->
+  <circle cx="75" cy="150" r="35" fill="#ffffff" opacity="0.3"/>
+</svg>

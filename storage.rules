@@ -1,0 +1,60 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Permitir lectura pública de todas las imágenes
+    match /{allPaths=**} {
+      allow read: if true;
+    }
+    
+    // Permitir escritura en carpetas específicas
+    match /banners/{fileName} {
+      allow write: if true;
+    }
+    
+    match /candles/{fileName} {
+      allow write: if true;
+    }
+    
+    match /promotions/{fileName} {
+      allow write: if true;
+    }
+    
+    match /offers/{fileName} {
+      allow write: if true;
+    }
+    
+    match /categories/{fileName} {
+      allow write: if true;
+    }
+    
+    match /hero-popup/{fileName} {
+      allow write: if true;
+    }
+    
+    // Permitir eliminación en las mismas carpetas
+    match /banners/{fileName} {
+      allow delete: if true;
+    }
+    
+    match /candles/{fileName} {
+      allow delete: if true;
+    }
+    
+    match /promotions/{fileName} {
+      allow delete: if true;
+    }
+    
+    match /offers/{fileName} {
+      allow delete: if true;
+    }
+    
+    match /categories/{fileName} {
+      allow delete: if true;
+    }
+    
+    match /hero-popup/{fileName} {
+      allow delete: if true;
+    }
+  }
+}

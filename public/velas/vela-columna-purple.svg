@@ -1,0 +1,30 @@
+<svg width="250" height="200" viewBox="0 0 250 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#9333ea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="4" dy="6" stdDeviation="4" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Vela columna -->
+  <rect x="40" y="60" width="170" height="120" rx="15" ry="15" fill="url(#purpleGradient)" filter="url(#shadow)"/>
+  
+  <!-- Mechas múltiples -->
+  <rect x="110" y="40" width="3" height="25" rx="1.5" fill="#8b5cf6"/>
+  <rect x="140" y="40" width="3" height="25" rx="1.5" fill="#8b5cf6"/>
+  
+  <!-- Llamas -->
+  <ellipse cx="111.5" cy="25" rx="8" ry="14" fill="#f59e0b">
+    <animate attributeName="ry" values="14;18;14" dur="2s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="141.5" cy="25" rx="8" ry="14" fill="#f59e0b">
+    <animate attributeName="ry" values="14;18;14" dur="2s" repeatCount="indefinite"/>
+  </ellipse>
+  
+  <!-- Decoración -->
+  <circle cx="125" cy="120" r="20" fill="#c084fc" opacity="0.4"/>
+</svg>

@@ -6,82 +6,38 @@ import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
+import { useCandles } from '@/hooks/useCandles';
+import ProductModal from '@/components/ProductModal';
 import { CartItem } from '@/types';
 
-// Mock data para productos destacados
-const featuredProducts: CartItem['product'][] = [
-  {
-    id: '1',
-    name: 'Vela Rosa Premium',
-    description: 'Vela aromática de cera de soja con fragancia de rosas frescas',
-    price: 25.99,
-    images: ['/placeholder-candle-1.jpg'],
-    category: 'aromáticas',
-    stock: 10,
-    isCustomizable: true,
-    customizationOptions: {
-      scents: ['Rosa', 'Lavanda', 'Vainilla'],
-      sizes: ['Pequeña', 'Mediana', 'Grande'],
-      colors: ['Rosa', 'Blanco', 'Coral']
-    },
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: '2',
-    name: 'Vela Lavanda Relajante',
-    description: 'Perfecta para crear un ambiente relajante y tranquilo',
-    price: 22.99,
-    images: ['/placeholder-candle-2.jpg'],
-    category: 'aromáticas',
-    stock: 15,
-    isCustomizable: true,
-    customizationOptions: {
-      scents: ['Lavanda', 'Eucalipto', 'Manzanilla'],
-      sizes: ['Pequeña', 'Mediana', 'Grande'],
-      colors: ['Morado', 'Lila', 'Blanco']
-    },
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: '3',
-    name: 'Vela Vainilla Clásica',
-    description: 'El clásico aroma de vainilla que nunca pasa de moda',
-    price: 19.99,
-    images: ['/placeholder-candle-3.jpg'],
-    category: 'aromáticas',
-    stock: 20,
-    isCustomizable: true,
-    customizationOptions: {
-      scents: ['Vainilla', 'Canela', 'Caramelo'],
-      sizes: ['Pequeña', 'Mediana', 'Grande'],
-      colors: ['Crema', 'Beige', 'Dorado']
-    },
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: '4',
-    name: 'Vela Eucalipto Fresco',
-    description: 'Fragancia refrescante y revitalizante para espacios amplios',
-    price: 24.99,
-    images: ['/placeholder-candle-4.jpg'],
-    category: 'aromáticas',
-    stock: 12,
-    isCustomizable: true,
-    customizationOptions: {
-      scents: ['Eucalipto', 'Menta', 'Pino'],
-      sizes: ['Pequeña', 'Mediana', 'Grande'],
-      colors: ['Verde', 'Azul', 'Blanco']
-    },
-    createdAt: new Date(),
-    updatedAt: new Date()
-  }
-];
 
 export default function FeaturedProducts() {
   const { addItem } = useCart();
+  const { candles, isLoading } = useCandles();
+  const [selectedProduct, setSelectedProduct] = React.useState<CartItem['product'] | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  // Convertir velas de Firebase al formato esperado por el carrito
+  const featuredProducts = candles
+    .filter(candle => candle.isActive) // Solo velas activas
+    .slice(0, 4) // Tomar máximo 4 velas
+    .map(candle => ({
+      id: candle.id,
+      name: candle.name,
+      description: candle.description,
+      price: candle.price,
+      images: [candle.imageUrl],
+      category: candle.category,
+      stock: 10, // Asumir stock disponible
+      isCustomizable: true,
+      customizationOptions: {
+        scents: ['Personalizado'],
+        sizes: ['Único'],
+        colors: ['Personalizable']
+      },
+      createdAt: candle.uploadedAt,
+      updatedAt: candle.uploadedAt
+    }));
 
   const handleAddToCart = (product: CartItem['product']) => {
     addItem({
@@ -89,6 +45,51 @@ export default function FeaturedProducts() {
       quantity: 1
     });
   };
+
+  const handleProductClick = (product: CartItem['product']) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  // Mostrar loading si está cargando
+  if (isLoading) {
+    return (
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando productos destacados...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Si no hay velas, mostrar mensaje
+  if (featuredProducts.length === 0) {
+    return (
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              Productos Destacados
+            </h2>
+            <p className="text-gray-600 mb-8">
+              Pronto tendremos productos destacados disponibles
+            </p>
+            <Button size="lg" variant="outline" className="border-2 border-pink-300 text-pink-600 hover:bg-pink-50">
+              Ver Catálogo Completo
+            </Button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 bg-white">
@@ -117,11 +118,28 @@ export default function FeaturedProducts() {
               transition={{ delay: index * 0.1, duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300">
+              <Card 
+                className="group overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer"
+                onClick={() => handleProductClick(product)}
+              >
                 <CardContent className="p-0">
                   {/* Product Image */}
                   <div className="aspect-square bg-gradient-to-br from-pink-100 to-purple-100 relative overflow-hidden">
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    {product.images && product.images[0] ? (
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // Si falla la imagen, mostrar placeholder
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.nextElementSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    
+                    {/* Fallback cuando no hay imagen o falla */}
+                    <div className="absolute inset-0 flex items-center justify-center" style={{ display: product.images && product.images[0] ? 'none' : 'flex' }}>
                       <div className="text-center text-gray-600">
                         <Heart className="h-16 w-16 mx-auto mb-2 opacity-50" />
                         <p className="text-sm">Imagen de {product.name}</p>
@@ -133,13 +151,21 @@ export default function FeaturedProducts() {
                       <div className="flex gap-2">
                         <Button
                           size="sm"
-                          onClick={() => handleAddToCart(product)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddToCart(product);
+                          }}
                           className="bg-white text-gray-900 hover:bg-gray-100"
                         >
                           <ShoppingCart className="h-4 w-4 mr-2" />
                           Agregar
                         </Button>
-                        <Button size="sm" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="border-white text-white hover:bg-white hover:text-gray-900"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <Heart className="h-4 w-4" />
                         </Button>
                       </div>
@@ -176,7 +202,10 @@ export default function FeaturedProducts() {
                         ${product.price}
                       </div>
                       <Button
-                        onClick={() => handleAddToCart(product)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart(product);
+                        }}
                         className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
                       >
                         <ShoppingCart className="h-4 w-4 mr-2" />
@@ -198,11 +227,23 @@ export default function FeaturedProducts() {
           viewport={{ once: true }}
           className="text-center mt-12"
         >
-          <Button size="lg" variant="outline" className="border-2 border-pink-300 text-pink-600 hover:bg-pink-50">
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="border-2 border-pink-300 text-pink-600 hover:bg-pink-50"
+            onClick={() => window.location.href = '/catalogo'}
+          >
             Ver Todos los Productos
           </Button>
         </motion.div>
       </div>
+
+      {/* Product Modal */}
+      <ProductModal
+        product={selectedProduct}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </section>
   );
 }
