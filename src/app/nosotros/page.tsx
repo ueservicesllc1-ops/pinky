@@ -153,7 +153,7 @@ export default function NosotrosPage() {
             </p>
             <div className="bg-gradient-to-r from-pink-100 to-purple-100 rounded-2xl p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                "Cada llama cuenta una historia, cada fragancia evoca un recuerdo"
+                &ldquo;Cada llama cuenta una historia, cada fragancia evoca un recuerdo&rdquo;
               </h3>
               <p className="text-gray-600 italic">
                 - Pinky Flame

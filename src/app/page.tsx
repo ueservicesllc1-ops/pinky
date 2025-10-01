@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Star, Shield, Truck, Heart } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Star, Shield, Truck, Heart } from 'lucide-react';
+// import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import BannerCarousel from '@/components/BannerCarousel';
 import HeroPopup from '@/components/HeroPopup';

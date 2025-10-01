@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, ShoppingCart, Heart, Filter, Grid, List } from 'lucide-react';
+import { Star, Heart, Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -128,12 +128,12 @@ export default function CatalogoPage() {
   // Crear array de categorías para los filtros
   const categoryFilters = ['Todas', ...categories.map(cat => cat.name)];
 
-  const handleAddToCart = (product: CartItem['product']) => {
-    addItem({
-      product,
-      quantity: 1
-    });
-  };
+  // const handleAddToCart = (product: CartItem['product']) => {
+  //   addItem({
+  //     product,
+  //     quantity: 1
+  //   });
+  // };
 
   const handleProductClick = (product: CartItem['product']) => {
     setSelectedProduct(product);

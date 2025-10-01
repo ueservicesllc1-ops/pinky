@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Star, Heart, ShoppingCart, Plus, Minus, Palette, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+// import { Card, CardContent } from '@/components/ui/card';
 import { CartItem } from '@/types';
 import { useCart } from '@/contexts/CartContext';
 
