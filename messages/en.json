@@ -1,0 +1,125 @@
+{
+  "navigation": {
+    "home": "Home",
+    "catalog": "Catalog",
+    "custom": "Custom",
+    "about": "About",
+    "cart": "Cart",
+    "aiGenerator": "AI Generator"
+  },
+  "hero": {
+    "title": "Personalized Candles That Illuminate Your Life",
+    "subtitle": "Create unique candles with your own designs. From personalized scents to special images.",
+    "cta": "Explore Catalog",
+    "customize": "Customize Now"
+  },
+  "banner": {
+    "personalize": "Personalize your candles",
+    "description": "Create unique candles with your own designs. From personalized scents to special images.",
+    "createNow": "Create now",
+    "memberDiscount": "Only for registered members 30% discount"
+  },
+  "features": {
+    "title": "Why choose Pinky Flame?",
+    "custom": {
+      "title": "100% Customizable",
+      "description": "Design your perfect candle with our AI generators"
+    },
+    "quality": {
+      "title": "Premium Quality",
+      "description": "Highest quality materials for a unique experience"
+    },
+    "shipping": {
+      "title": "Free Shipping",
+      "description": "Free shipping on orders over $50"
+    },
+    "support": {
+      "title": "24/7 Support",
+      "description": "We're here to help you every step of the way"
+    }
+  },
+  "products": {
+    "title": "Our Products",
+    "subtitle": "Discover our collection of artisanal candles",
+    "viewAll": "View All",
+    "addToCart": "Add to Cart",
+    "customize": "Customize",
+    "price": "Price",
+    "stock": "Stock",
+    "category": "Category"
+  },
+  "testimonials": {
+    "title": "What our customers say",
+    "subtitle": "Real stories from people who have illuminated their lives with Pinky Flame"
+  },
+  "newsletter": {
+    "title": "Stay updated",
+    "subtitle": "Receive exclusive offers and news about our products",
+    "placeholder": "Your email",
+    "subscribe": "Subscribe",
+    "success": "Thank you for subscribing!",
+    "error": "Error subscribing. Please try again."
+  },
+  "footer": {
+    "about": "About",
+    "aboutText": "Pinky Flame is your destination for high-quality personalized candles. We create unique experiences that illuminate and fragrance your special moments.",
+    "quickLinks": "Quick Links",
+    "contact": "Contact",
+    "followUs": "Follow Us",
+    "rights": "All rights reserved",
+    "privacy": "Privacy Policy",
+    "terms": "Terms and Conditions",
+    "shipping": "Shipping Policies"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "checkout": "Checkout",
+    "continue": "Continue Shopping",
+    "remove": "Remove",
+    "quantity": "Quantity"
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Illuminating special moments since 2024",
+    "mission": "Our Mission",
+    "missionText": "Create artisanal candles that not only illuminate spaces, but also fill every corner of your home with love and warmth. We want each candle to be a unique experience that connects with your emotions and most precious memories.",
+    "quote": "Every flame tells a story, every fragrance evokes a memory",
+    "author": "- Pinky Flame",
+    "values": "Our Values",
+    "quality": "Quality",
+    "qualityText": "We use only the best materials and artisanal techniques to guarantee maximum quality in each candle.",
+    "innovation": "Innovation",
+    "innovationText": "We incorporate AI technology to allow unique and creative customizations.",
+    "sustainability": "Sustainability",
+    "sustainabilityText": "We are committed to sustainable practices and eco-friendly materials."
+  },
+  "admin": {
+    "title": "Administration Panel",
+    "banners": "Banner Management",
+    "products": "Product Management",
+    "orders": "Orders",
+    "settings": "Settings"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "view": "View",
+    "close": "Close",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "reset": "Reset"
+  }
+}

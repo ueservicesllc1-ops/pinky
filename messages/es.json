@@ -1,0 +1,125 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "catalog": "Catálogo",
+    "custom": "Personalizadas",
+    "about": "Nosotros",
+    "cart": "Carrito",
+    "aiGenerator": "Generador IA"
+  },
+  "hero": {
+    "title": "Velas Personalizadas que Iluminan tu Vida",
+    "subtitle": "Crea velas únicas con tus propios diseños. Desde aromas personalizados hasta imágenes especiales.",
+    "cta": "Explorar Catálogo",
+    "customize": "Personalizar Ahora"
+  },
+  "banner": {
+    "personalize": "Personaliza tus velas",
+    "description": "Crea velas únicas con tus propios diseños. Desde aromas personalizados hasta imágenes especiales.",
+    "createNow": "Crear ahora",
+    "memberDiscount": "Solo para miembros registrados el 30% de descuentos"
+  },
+  "features": {
+    "title": "¿Por qué elegir Pinky Flame?",
+    "custom": {
+      "title": "100% Personalizable",
+      "description": "Diseña tu vela perfecta con nuestros generadores de IA"
+    },
+    "quality": {
+      "title": "Calidad Premium",
+      "description": "Materiales de la más alta calidad para una experiencia única"
+    },
+    "shipping": {
+      "title": "Envío Gratis",
+      "description": "Envío gratuito en pedidos superiores a $50"
+    },
+    "support": {
+      "title": "Soporte 24/7",
+      "description": "Estamos aquí para ayudarte en cada paso"
+    }
+  },
+  "products": {
+    "title": "Nuestros Productos",
+    "subtitle": "Descubre nuestra colección de velas artesanales",
+    "viewAll": "Ver Todo",
+    "addToCart": "Agregar al Carrito",
+    "customize": "Personalizar",
+    "price": "Precio",
+    "stock": "Stock",
+    "category": "Categoría"
+  },
+  "testimonials": {
+    "title": "Lo que dicen nuestros clientes",
+    "subtitle": "Historias reales de personas que han iluminado sus vidas con Pinky Flame"
+  },
+  "newsletter": {
+    "title": "Mantente al día",
+    "subtitle": "Recibe ofertas exclusivas y novedades sobre nuestros productos",
+    "placeholder": "Tu email",
+    "subscribe": "Suscribirse",
+    "success": "¡Gracias por suscribirte!",
+    "error": "Error al suscribirse. Inténtalo de nuevo."
+  },
+  "footer": {
+    "about": "Acerca de",
+    "aboutText": "Pinky Flame es tu destino para velas personalizadas de alta calidad. Creamos experiencias únicas que iluminan y aromatizan tus momentos especiales.",
+    "quickLinks": "Enlaces Rápidos",
+    "contact": "Contacto",
+    "followUs": "Síguenos",
+    "rights": "Todos los derechos reservados",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos y Condiciones",
+    "shipping": "Políticas de Envío"
+  },
+  "cart": {
+    "title": "Carrito de Compras",
+    "empty": "Tu carrito está vacío",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "checkout": "Finalizar Compra",
+    "continue": "Continuar Comprando",
+    "remove": "Eliminar",
+    "quantity": "Cantidad"
+  },
+  "about": {
+    "title": "Sobre Nosotros",
+    "subtitle": "Iluminando momentos especiales desde 2024",
+    "mission": "Nuestra Misión",
+    "missionText": "Crear velas artesanales que no solo iluminen espacios, sino que también llenen de amor y calidez cada rincón de tu hogar. Queremos que cada vela sea una experiencia única que conecte con tus emociones y recuerdos más preciados.",
+    "quote": "Cada llama cuenta una historia, cada fragancia evoca un recuerdo",
+    "author": "- Pinky Flame",
+    "values": "Nuestros Valores",
+    "quality": "Calidad",
+    "qualityText": "Utilizamos solo los mejores materiales y técnicas artesanales para garantizar la máxima calidad en cada vela.",
+    "innovation": "Innovación",
+    "innovationText": "Incorporamos tecnología de IA para permitir personalizaciones únicas y creativas.",
+    "sustainability": "Sostenibilidad",
+    "sustainabilityText": "Nos comprometemos con prácticas sostenibles y materiales eco-amigables."
+  },
+  "admin": {
+    "title": "Panel de Administración",
+    "banners": "Gestión de Banners",
+    "products": "Gestión de Productos",
+    "orders": "Pedidos",
+    "settings": "Configuración"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "add": "Agregar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "view": "Ver",
+    "close": "Cerrar",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "reset": "Restablecer"
+  }
+}

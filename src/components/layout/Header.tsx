@@ -7,17 +7,20 @@ import { ShoppingCart, User, Menu, X, Heart, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCart } from '@/contexts/CartContext';
+import LanguageSelector from '@/components/LanguageSelector';
+import { useTranslations } from 'next-intl';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { itemCount } = useCart();
+  const t = useTranslations('navigation');
 
   const navItems = [
-    { href: '/', label: 'Inicio' },
-    { href: '/catalogo', label: 'Catálogo' },
-    { href: '/personalizadas', label: 'Personalizadas' },
-    { href: '/ia-generator', label: 'IA Generator' },
-    { href: '/nosotros', label: 'Nosotros' },
+    { href: '/', label: t('home') },
+    { href: '/catalogo', label: t('catalog') },
+    { href: '/personalizadas', label: t('custom') },
+    { href: '/ia-generator', label: t('aiGenerator') },
+    { href: '/nosotros', label: t('about') },
     { href: '/contacto', label: 'Contacto' },
     { href: '/admin', label: 'Admin' },
   ];
@@ -91,6 +94,9 @@ export default function Header() {
                 )}
               </Button>
             </Link>
+
+            {/* Language Selector */}
+            <LanguageSelector />
 
             {/* User */}
             <Button variant="ghost" size="sm">

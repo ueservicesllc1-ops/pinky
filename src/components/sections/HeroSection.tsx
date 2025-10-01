@@ -5,8 +5,11 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export default function HeroSection() {
+  const t = useTranslations('hero');
+  
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
       {/* Background Elements */}
@@ -32,7 +35,7 @@ export default function HeroSection() {
               className="flex items-center justify-center lg:justify-start mb-6"
             >
               <Sparkles className="h-6 w-6 text-pink-500 mr-2" />
-              <span className="text-pink-600 font-semibold">Velas Artesanales Premium</span>
+              <span className="text-pink-600 font-semibold">{t('subtitle')}</span>
             </motion.div>
 
             <motion.h1
@@ -41,10 +44,7 @@ export default function HeroSection() {
               transition={{ delay: 0.3, duration: 0.6 }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6"
             >
-              Ilumina tus
-              <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                {' '}momentos especiales
-              </span>
+              {t('title')}
             </motion.h1>
 
             <motion.p
@@ -53,7 +53,7 @@ export default function HeroSection() {
               transition={{ delay: 0.4, duration: 0.6 }}
               className="text-xl text-gray-600 mb-8 max-w-lg mx-auto lg:mx-0"
             >
-              Descubre nuestra colección única de velas personalizadas, creadas con ingredientes naturales y diseñadas para crear la atmósfera perfecta en tu hogar.
+              {t('subtitle')}
             </motion.p>
 
             <motion.div
@@ -64,13 +64,13 @@ export default function HeroSection() {
             >
               <Link href="/catalogo">
                 <Button size="lg" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-8 py-3">
-                  Explorar Catálogo
+                  {t('cta')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/personalizadas">
                 <Button variant="outline" size="lg" className="border-2 border-pink-300 text-pink-600 hover:bg-pink-50 px-8 py-3">
-                  Personalizar Ahora
+                  {t('customize')}
                 </Button>
               </Link>
             </motion.div>
