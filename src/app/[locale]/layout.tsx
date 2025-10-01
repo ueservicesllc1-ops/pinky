@@ -8,11 +8,12 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export default async function LocaleLayout({
   children,
-  params: { locale }
+  params
 }: {
   children: React.ReactNode;
   params: { locale: string };
 }) {
+  const { locale } = await params;
   const messages = await getMessages();
 
   return (
