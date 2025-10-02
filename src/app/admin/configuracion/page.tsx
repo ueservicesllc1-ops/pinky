@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Save, MapPin, Phone, Mail, Clock, Globe, Facebook, Instagram, Twitter } from 'lucide-react';
@@ -56,6 +56,22 @@ export default function AdminConfigPage() {
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Cargar datos guardados al montar el componente
+  useEffect(() => {
+    const savedConfig = localStorage.getItem('pinky-flame-business-config');
+    if (savedConfig) {
+      try {
+        const parsedConfig = JSON.parse(savedConfig);
+        setBusinessInfo(parsedConfig);
+        console.log('✅ Loaded saved business config:', parsedConfig);
+      } catch (error) {
+        console.error('❌ Error loading saved config:', error);
+      }
+    }
+    setIsLoading(false);
+  }, []);
 
   const handleInputChange = (field: string, value: string | number) => {
     if (field.includes('.')) {
@@ -79,13 +95,34 @@ export default function AdminConfigPage() {
     setIsSaving(true);
     setSaveMessage('');
     
-    // Simular guardado (en producción, guardarías en Firebase)
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setIsSaving(false);
-    setSaveMessage('Información guardada exitosamente!');
-    setTimeout(() => setSaveMessage(''), 3000);
+    try {
+      // Guardar en localStorage primero
+      localStorage.setItem('pinky-flame-business-config', JSON.stringify(businessInfo));
+      
+      // Simular guardado en Firebase (en producción, aquí harías la llamada real)
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setSaveMessage('Información guardada exitosamente!');
+      console.log('✅ Business config saved:', businessInfo);
+    } catch (error) {
+      console.error('❌ Error saving business config:', error);
+      setSaveMessage('Error al guardar la información');
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => setSaveMessage(''), 3000);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando configuración...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-16">
