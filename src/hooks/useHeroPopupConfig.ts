@@ -104,7 +104,7 @@ export function useHeroPopupConfig() {
   };
 
   // Actualizar campo específico
-  const updateField = (field: keyof HeroPopupConfig, value: any) => {
+  const updateField = (field: keyof HeroPopupConfig, value: string | number | boolean | Date) => {
     setConfig(prev => ({
       ...prev,
       [field]: value,

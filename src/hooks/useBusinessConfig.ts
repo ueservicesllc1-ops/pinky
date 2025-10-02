@@ -118,7 +118,7 @@ export function useBusinessConfig() {
   }, [businessInfo]);
 
   // Actualizar campo específico
-  const updateField = useCallback((field: keyof BusinessInfo, value: any) => {
+  const updateField = useCallback((field: keyof BusinessInfo, value: string | number | boolean | Date | Record<string, unknown>) => {
     setBusinessInfo(prev => ({
       ...prev,
       [field]: value,
@@ -127,11 +127,11 @@ export function useBusinessConfig() {
   }, []);
 
   // Actualizar campo anidado (como socialMedia)
-  const updateNestedField = useCallback((path: string, value: any) => {
+  const updateNestedField = useCallback((path: string, value: string | number | boolean) => {
     setBusinessInfo(prev => {
       const keys = path.split('.');
       const newInfo = { ...prev };
-      let current: any = newInfo;
+      let current: Record<string, unknown> = newInfo as Record<string, unknown>;
       
       for (let i = 0; i < keys.length - 1; i++) {
         current = current[keys[i]];

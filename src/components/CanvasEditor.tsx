@@ -5,12 +5,12 @@ import { fabric } from "fabric";
 
 interface CanvasEditorProps {
   onCanvasReady: (canvas: fabric.Canvas) => void;
-  onImageLoad: (template: any) => void;
+  onImageLoad: (template: { id: string; name: string; imageUrl: string }) => void;
   textLines: string[];
   color: string;
   fontSize: number;
   fontFamily: string;
-  selectedTemplate: any;
+  selectedTemplate: { id: string; name: string; imageUrl: string } | null;
 }
 
 export default function CanvasEditor({ 

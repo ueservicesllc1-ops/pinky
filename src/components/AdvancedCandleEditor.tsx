@@ -16,7 +16,7 @@ export default function AdvancedCandleEditor() {
   const [fontSize, setFontSize] = useState(24);
   const [fontFamily, setFontFamily] = useState("Arial");
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<{ id: string; name: string; imageUrl: string; type: string } | null>(null);
   const [finalResult, setFinalResult] = useState<string | null>(null);
   const [isFusing, setIsFusing] = useState(false);
   const [use3D, setUse3D] = useState(false);
@@ -89,7 +89,7 @@ export default function AdvancedCandleEditor() {
 
 
   // Cargar plantilla en Fabric.js
-  const loadTemplate = async (template: any) => {
+  const loadTemplate = async (template: { id: string; name: string; imageUrl: string; type: string }) => {
     if (!canvas || use3D) return;
     
     setSelectedTemplate(template);

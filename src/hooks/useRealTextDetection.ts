@@ -19,7 +19,7 @@ interface DetectionResult {
 export function useRealTextDetection() {
   const [isDetecting, setIsDetecting] = useState(false);
   const [result, setResult] = useState<DetectionResult | null>(null);
-  const [worker, setWorker] = useState<any>(null);
+  const [worker, setWorker] = useState<Tesseract.Worker | null>(null);
 
   // Inicializar worker de Tesseract
   const initializeWorker = async () => {
@@ -50,8 +50,8 @@ export function useRealTextDetection() {
       
       // Procesar palabras detectadas
       const textAreas: TextArea[] = words
-        .filter((word: any) => word.confidence > 30) // Filtrar por confianza
-        .map((word: any) => ({
+        .filter((word: Tesseract.Word) => word.confidence > 30) // Filtrar por confianza
+        .map((word: Tesseract.Word) => ({
           x: word.bbox.x0,
           y: word.bbox.y0,
           width: word.bbox.x1 - word.bbox.x0,

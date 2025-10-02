@@ -146,7 +146,7 @@ async function getKarrioShippingRates(
     const data = await response.json();
     
     // Transformar respuesta de Karrio a nuestro formato
-    return data.rates?.map((rate: any) => ({
+    return data.rates?.map((rate: { carrier_name?: string; carrier_id?: string; service?: string; service_name?: string; total_charge?: string; rate?: string; transit_days?: string; delivery_days?: string }) => ({
       carrier: rate.carrier_name || rate.carrier_id,
       service: rate.service || rate.service_name,
       price: parseFloat(rate.total_charge || rate.rate),

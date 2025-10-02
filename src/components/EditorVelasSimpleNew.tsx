@@ -13,8 +13,8 @@ export default function EditorVelasSimpleNew() {
   const [color, setColor] = useState("#000000");
   const [fontSize, setFontSize] = useState(24);
   const [fontFamily, setFontFamily] = useState("Arial");
-  const [canvas, setCanvas] = useState<any>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+  const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<{ id: string; name: string; imageUrl: string; type: string } | null>(null);
   const [finalResult, setFinalResult] = useState<string | null>(null);
   const [isFusing, setIsFusing] = useState(false);
   
@@ -33,13 +33,13 @@ export default function EditorVelasSimpleNew() {
   ];
 
   // Manejar cuando el canvas esté listo
-  const handleCanvasReady = (canvasInstance: any) => {
+  const handleCanvasReady = (canvasInstance: fabric.Canvas) => {
     setCanvas(canvasInstance);
     console.log('✅ Canvas listo');
   };
 
   // Cargar plantilla
-  const loadTemplate = (template: any) => {
+  const loadTemplate = (template: { id: string; name: string; imageUrl: string; type: string }) => {
     setSelectedTemplate(template);
     console.log('🔄 Cargando plantilla:', template.name);
   };
