@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Truck, Settings, Save, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import ShippingTest from '@/components/ShippingTest';
 
 interface CarrierCredentials {
   id: string;
@@ -320,11 +321,21 @@ export default function EnviosAdminPage() {
           </Button>
         </motion.div>
 
-        {/* Help Section */}
+        {/* Test Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
+          className="mt-12"
+        >
+          <ShippingTest />
+        </motion.div>
+
+        {/* Help Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
           className="mt-12 bg-blue-50 border border-blue-200 rounded-lg p-6"
         >
           <h3 className="text-lg font-semibold text-blue-900 mb-3">
