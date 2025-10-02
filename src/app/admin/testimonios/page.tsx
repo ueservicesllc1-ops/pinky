@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import Textarea from '@/components/ui/textarea';
 import { useTestimonials, Testimonial } from '@/hooks/useTestimonials';
 import { migrateTestimonials } from '@/lib/migrate-testimonials';
+import TestimonialsTest from '@/components/TestimonialsTest';
+import TestimonialsStatus from '@/components/TestimonialsStatus';
 
 export default function TestimonialsAdminPage() {
   const { testimonials, isLoading, addTestimonial, updateTestimonial, deleteTestimonial } = useTestimonials();
@@ -435,6 +437,26 @@ export default function TestimonialsAdminPage() {
           </Button>
         </motion.div>
       )}
+
+      {/* Estado de Firebase */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8 }}
+        className="mt-12"
+      >
+        <TestimonialsStatus />
+      </motion.div>
+
+      {/* Test Component */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.9 }}
+        className="mt-8"
+      >
+        <TestimonialsTest />
+      </motion.div>
     </div>
   );
 }
