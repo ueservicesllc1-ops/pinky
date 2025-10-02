@@ -28,12 +28,10 @@ export default function Header() {
   }, []);
 
   const navItems = [
-    { href: '/', label: 'Inicio' },
-    { href: '/catalogo', label: 'Catálogo' },
-    { href: '/personalizadas', label: 'Personalizadas' },
-    { href: '/ia-generator', label: 'IA Generator' },
-    { href: '/nosotros', label: 'Nosotros' },
-    { href: '/contacto', label: 'Contacto' },
+    { href: '/es', label: 'Inicio' },
+    { href: '/es/catalogo', label: 'Catálogo' },
+    { href: '/es/personalizadas', label: 'Personalizadas' },
+    { href: '/es/nosotros', label: 'Nosotros' },
     { href: '/admin', label: 'Admin' },
   ];
 
@@ -47,7 +45,7 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/es" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">P</span>
             </div>

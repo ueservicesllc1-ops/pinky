@@ -24,9 +24,9 @@ export default function Footer() {
     {
       title: 'Tienda',
       links: [
-        { label: 'Catálogo', href: '/catalogo' },
-        { label: 'Velas Personalizadas', href: '/personalizadas' },
-        { label: 'IA Generator', href: '/ia-generator' },
+        { label: 'Catálogo', href: '/es/catalogo' },
+        { label: 'Velas Personalizadas', href: '/es/personalizadas' },
+        { label: 'IA Generator', href: '/es/ia-generator' },
         { label: 'Ofertas', href: '/ofertas' },
       ]
     },
@@ -42,7 +42,7 @@ export default function Footer() {
     {
       title: 'Empresa',
       links: [
-        { label: 'Nosotros', href: '/nosotros' },
+        { label: 'Nosotros', href: '/es/nosotros' },
         { label: 'Nuestra Historia', href: '/historia' },
         { label: 'Trabaja con Nosotros', href: '/trabajo' },
         { label: 'Prensa', href: '/prensa' },
@@ -62,7 +62,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center space-x-2 mb-4">
+            <Link href="/es" className="flex items-center space-x-2 mb-4">
               <div className="h-8 w-8 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
                 <Heart className="h-5 w-5 text-white" />
               </div>

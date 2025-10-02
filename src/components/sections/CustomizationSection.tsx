@@ -2,33 +2,51 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Palette, Sparkles, Gift, Heart } from 'lucide-react';
+import { Palette, Sparkles, Gift, Heart, Star, Zap, Award, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useCustomizationConfig } from '@/hooks/useCustomizationConfig';
+
+// Mapeo de iconos disponibles
+const iconMap = {
+  Palette,
+  Sparkles,
+  Gift,
+  Heart,
+  Star,
+  Zap,
+  Award,
+  Crown
+};
 
 export default function CustomizationSection() {
-  const customizationFeatures = [
-    {
-      icon: Palette,
-      title: 'Colores Personalizados',
-      description: 'Elige entre más de 20 colores vibrantes o crea tu propio tono único'
-    },
-    {
-      icon: Sparkles,
-      title: 'Fragancias Exclusivas',
-      description: 'Más de 50 fragancias premium para crear la atmósfera perfecta'
-    },
-    {
-      icon: Gift,
-      title: 'Mensajes Especiales',
-      description: 'Graba nombres, fechas especiales o mensajes personalizados'
-    },
-    {
-      icon: Heart,
-      title: 'Embalaje Único',
-      description: 'Presentación elegante perfecta para regalos especiales'
-    }
-  ];
+  const { config, isLoading } = useCustomizationConfig();
+
+  // Si no está activa la sección, no mostrar nada
+  if (!config.isActive) {
+    return null;
+  }
+
+  // Mientras carga, mostrar un placeholder
+  if (isLoading) {
+    return (
+      <section className="py-16 bg-gradient-to-br from-pink-50 to-purple-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="animate-pulse">
+              <div className="h-6 bg-gray-200 rounded mb-6 w-48"></div>
+              <div className="h-12 bg-gray-200 rounded mb-6"></div>
+              <div className="h-20 bg-gray-200 rounded mb-8"></div>
+              <div className="h-12 bg-gray-200 rounded w-48"></div>
+            </div>
+            <div className="animate-pulse">
+              <div className="aspect-square bg-gray-200 rounded-3xl"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 bg-gradient-to-br from-pink-50 to-purple-50">
@@ -43,50 +61,58 @@ export default function CustomizationSection() {
           >
             <div className="flex items-center mb-6">
               <Sparkles className="h-6 w-6 text-pink-500 mr-2" />
-              <span className="text-pink-600 font-semibold">Personalización Total</span>
+              <span className="text-pink-600 font-semibold">{config.subtitle}</span>
             </div>
 
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              Crea la vela
-              <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                {' '}perfecta
-              </span>
+              {config.title.split(' ').map((word, index) => {
+                const isLastWord = index === config.title.split(' ').length - 1;
+                return isLastWord ? (
+                  <span key={index} className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                    {' '}{word}
+                  </span>
+                ) : (
+                  <span key={index}>{word} </span>
+                );
+              })}
             </h2>
 
             <p className="text-lg text-gray-600 mb-8">
-              Cada vela puede ser completamente personalizada según tus gustos y necesidades. 
-              Desde el color y la fragancia hasta mensajes especiales y embalaje.
+              {config.description}
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              {customizationFeatures.map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.6 }}
-                  viewport={{ once: true }}
-                  className="flex items-start space-x-3"
-                >
-                  <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <feature.icon className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">
-                      {feature.title}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      {feature.description}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+              {config.features.map((feature, index) => {
+                const IconComponent = iconMap[feature.icon as keyof typeof iconMap] || Sparkles;
+                return (
+                  <motion.div
+                    key={feature.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.6 }}
+                    viewport={{ once: true }}
+                    className="flex items-start space-x-3"
+                  >
+                    <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <IconComponent className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-1">
+                        {feature.title}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
 
-            <Link href="/personalizadas">
+            <Link href={config.buttonLink}>
               <Button size="lg" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-8 py-3">
                 <Sparkles className="mr-2 h-5 w-5" />
-                Personalizar Ahora
+                {config.buttonText}
               </Button>
             </Link>
           </motion.div>
@@ -99,13 +125,26 @@ export default function CustomizationSection() {
             viewport={{ once: true }}
             className="relative"
           >
-            {/* Main Image Placeholder */}
-            <div className="aspect-square bg-gradient-to-br from-pink-200 to-purple-300 rounded-3xl shadow-2xl flex items-center justify-center relative overflow-hidden">
-              <div className="text-center text-white z-10">
-                <Gift className="h-20 w-20 mx-auto mb-4 opacity-80" />
-                <p className="text-lg font-semibold">Vela Personalizada</p>
-                <p className="text-sm opacity-80">Tu diseño único</p>
-              </div>
+            {/* Main Image */}
+            <div className="aspect-square rounded-3xl shadow-2xl relative overflow-hidden">
+              {config.imageUrl ? (
+                <img
+                  src={config.imageUrl}
+                  alt={config.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center">
+                  <div className="text-center text-white z-10">
+                    <Gift className="h-20 w-20 mx-auto mb-4 opacity-80" />
+                    <p className="text-lg font-semibold">Vela Personalizada</p>
+                    <p className="text-sm opacity-80">Tu diseño único</p>
+                  </div>
+                </div>
+              )}
+              
+              {/* Decorative overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
               
               {/* Decorative elements */}
               <div className="absolute top-4 left-4 w-8 h-8 bg-white/20 rounded-full"></div>

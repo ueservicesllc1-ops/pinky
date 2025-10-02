@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { Stage, Layer, Image as KonvaImage, Text } from "react-konva";
+import { Stage, Layer, Image as KonvaImage, Text, Shape } from "react-konva";
 import useImage from "use-image";
 import Konva from "konva";
 import { useCandleTemplates } from "@/hooks/useCandleTemplates";
+import { Heart, Flower2 as Flower, Leaf, Star, Sparkles, Sun, Moon, Crown, Gift, Diamond, Zap } from "lucide-react";
 
 interface VelaMockupProFinalProps {
   src?: string;
@@ -23,9 +24,18 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
   const [fontSize, setFontSize] = useState(35);
   const [fontColor, setFontColor] = useState("#d4af37");
   const [fontFamily, setFontFamily] = useState("Arial");
-  const textCurve = 0.12; // Curvatura fija optimizada
   const [textY, setTextY] = useState(250);
-  const [shadowIntensity, setShadowIntensity] = useState(0.7);
+  
+  // Estados de elementos decorativos
+  const [decorativeElements, setDecorativeElements] = useState<Array<{
+    id: string;
+    type: string;
+    x: number;
+    y: number;
+    size: number;
+    color: string;
+    rotation: number;
+  }>>([]);
   
   // Cargar plantillas desde Firebase
   const { templates, isLoading: templatesLoading } = useCandleTemplates();
@@ -51,6 +61,24 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
     "Verdana", "Trebuchet MS", "Impact", "Courier New"
   ];
 
+  // Librería de elementos decorativos
+  const decorativeLibrary = [
+    { type: "heart", icon: Heart, name: "Corazón", category: "Amor" },
+    { type: "flower", icon: Flower, name: "Flor", category: "Naturaleza" },
+    { type: "leaf", icon: Leaf, name: "Hoja", category: "Naturaleza" },
+    { type: "star", icon: Star, name: "Estrella", category: "Celestial" },
+    { type: "sparkles", icon: Sparkles, name: "Brillos", category: "Mágico" },
+    { type: "sun", icon: Sun, name: "Sol", category: "Celestial" },
+    { type: "moon", icon: Moon, name: "Luna", category: "Celestial" },
+    { type: "crown", icon: Crown, name: "Corona", category: "Elegante" },
+    { type: "gift", icon: Gift, name: "Regalo", category: "Celebración" },
+    { type: "diamond", icon: Diamond, name: "Diamante", category: "Elegante" },
+    { type: "zap", icon: Zap, name: "Rayo", category: "Energía" },
+  ];
+
+  const decorativeCategories = ["Todos", "Amor", "Naturaleza", "Celestial", "Mágico", "Elegante", "Celebración", "Energía"];
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
+
   // Seleccionar plantilla existente
   const handleTemplateSelect = (template: any) => {
     setCurrentImageSrc(template.imageUrl);
@@ -59,6 +87,30 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
   // Resetear a imagen por defecto
   const handleResetImage = () => {
     setCurrentImageSrc("/velas/vela-cilindrica-rosa.jpg");
+  };
+
+  // Agregar elemento decorativo
+  const addDecorativeElement = (type: string) => {
+    const newElement = {
+      id: Date.now().toString(),
+      type,
+      x: canvasWidth / 2,
+      y: canvasHeight / 2,
+      size: 30,
+      color: predefinedColors[Math.floor(Math.random() * predefinedColors.length)],
+      rotation: 0,
+    };
+    setDecorativeElements(prev => [...prev, newElement]);
+  };
+
+  // Eliminar elemento decorativo
+  const removeDecorativeElement = (id: string) => {
+    setDecorativeElements(prev => prev.filter(el => el.id !== id));
+  };
+
+  // Limpiar todos los elementos decorativos
+  const clearDecorativeElements = () => {
+    setDecorativeElements([]);
   };
 
   const handleExport = () => {
@@ -77,65 +129,161 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
     link.click();
   };
 
-  // Renderizar texto curvado con efectos profesionales
-  const renderCurvedText = () => {
+  // Renderizar texto simple y movible
+  const renderSimpleText = () => {
     if (!layerRef.current || !text.trim()) return;
 
     // Limpiar textos anteriores
-    const existingTexts = layerRef.current.find('.curved-text');
+    const existingTexts = layerRef.current.find('.simple-text');
     existingTexts.forEach((node: any) => node.destroy());
 
-    const centerX = canvasWidth / 2;
-    const centerY = textY;
-    const radius = 120;
-    const chars = text.split("");
-    const totalAngle = chars.length * textCurve;
-    const startAngle = -totalAngle / 2;
+    // Crear texto simple y movible
+    const textNode = new Konva.Text({
+      x: canvasWidth / 2,
+      y: textY,
+      text: text,
+      fontSize: fontSize,
+      fontFamily: fontFamily,
+      fill: fontColor,
+      align: 'center',
+      verticalAlign: 'middle',
+      offsetX: 0,
+      offsetY: fontSize / 2,
+      name: 'simple-text',
+      draggable: true, // Hacer el texto arrastrable
+      width: canvasWidth - 40, // Ancho máximo con margen
+    });
 
-    chars.forEach((char, i) => {
-      const angle = startAngle + (i * textCurve);
-      const x = centerX + radius * Math.sin(angle);
-      const y = centerY - radius * (1 - Math.cos(angle)) * 0.3;
+    // Centrar el texto horizontalmente
+    textNode.offsetX(textNode.width() / 2);
 
-      // Texto principal con efectos de relieve
-      const textNode = new Konva.Text({
-        x: x,
-        y: y,
-        text: char,
-        fontSize: fontSize,
-        fontFamily: fontFamily,
-        fill: fontColor,
-        align: 'center',
-        verticalAlign: 'middle',
-        rotation: angle * (180 / Math.PI),
-        offsetX: fontSize / 4,
-        offsetY: fontSize / 2,
-        name: 'curved-text',
-        // Efectos de sombra para relieve
-        shadowColor: 'rgba(0,0,0,' + shadowIntensity + ')',
-        shadowBlur: 8,
-        shadowOffset: { x: 2, y: 2 },
-        shadowOpacity: 0.8,
-      });
+    // Agregar eventos para mantener el texto dentro del canvas
+    textNode.on('dragmove', function() {
+      const box = this.getClientRect();
+      
+      // Limitar movimiento horizontal
+      if (box.x < 0) {
+        this.x(this.width() / 2);
+      }
+      if (box.x + box.width > canvasWidth) {
+        this.x(canvasWidth - this.width() / 2);
+      }
+      
+      // Limitar movimiento vertical
+      if (box.y < 0) {
+        this.y(this.height() / 2);
+      }
+      if (box.y + box.height > canvasHeight) {
+        this.y(canvasHeight - this.height() / 2);
+      }
+    });
 
-      // Efecto de relieve adicional (texto más claro detrás)
-      const reliefText = new Konva.Text({
-        x: x - 1,
-        y: y - 1,
-        text: char,
-        fontSize: fontSize,
-        fontFamily: fontFamily,
-        fill: 'rgba(255,255,255,0.3)',
-        align: 'center',
-        verticalAlign: 'middle',
-        rotation: angle * (180 / Math.PI),
-        offsetX: fontSize / 4,
-        offsetY: fontSize / 2,
-        name: 'curved-text',
-      });
+    // Cambiar cursor al pasar por encima
+    textNode.on('mouseenter', function() {
+      document.body.style.cursor = 'move';
+    });
 
-      layerRef.current?.add(reliefText);
-      layerRef.current?.add(textNode);
+    textNode.on('mouseleave', function() {
+      document.body.style.cursor = 'default';
+    });
+
+    layerRef.current?.add(textNode);
+    layerRef.current?.batchDraw();
+  };
+
+  // Renderizar elementos decorativos
+  const renderDecorativeElements = () => {
+    if (!layerRef.current) return;
+
+    // Limpiar elementos anteriores
+    const existingElements = layerRef.current.find('.decorative-element');
+    existingElements.forEach((node: any) => node.destroy());
+
+    // Crear elementos decorativos
+    decorativeElements.forEach((element) => {
+      // Crear formas simples usando Konva
+      let shape;
+      
+      switch (element.type) {
+        case 'heart':
+          shape = new Konva.Path({
+            x: element.x,
+            y: element.y,
+            data: 'M12,21.35l-1.45-1.32C5.4,15.36,2,12.28,2,8.5 C2,5.42,4.42,3,7.5,3c1.74,0,3.41,0.81,4.5,2.09C13.09,3.81,14.76,3,16.5,3 C19.58,3,22,5.42,22,8.5c0,3.78-3.4,6.86-8.55,11.54L12,21.35z',
+            fill: element.color,
+            scaleX: element.size / 24,
+            scaleY: element.size / 24,
+            offsetX: 12,
+            offsetY: 12,
+            rotation: element.rotation,
+            draggable: true,
+            name: 'decorative-element',
+          });
+          break;
+        case 'star':
+          shape = new Konva.Star({
+            x: element.x,
+            y: element.y,
+            numPoints: 5,
+            innerRadius: element.size * 0.4,
+            outerRadius: element.size,
+            fill: element.color,
+            rotation: element.rotation,
+            draggable: true,
+            name: 'decorative-element',
+          });
+          break;
+        case 'flower':
+          shape = new Konva.Circle({
+            x: element.x,
+            y: element.y,
+            radius: element.size / 2,
+            fill: element.color,
+            rotation: element.rotation,
+            draggable: true,
+            name: 'decorative-element',
+          });
+          break;
+        default:
+          // Forma por defecto (círculo)
+          shape = new Konva.Circle({
+            x: element.x,
+            y: element.y,
+            radius: element.size / 2,
+            fill: element.color,
+            rotation: element.rotation,
+            draggable: true,
+            name: 'decorative-element',
+          });
+      }
+
+      if (shape) {
+        // Agregar eventos de interacción
+        shape.on('dragmove', function() {
+          const box = this.getClientRect();
+          
+          // Limitar movimiento dentro del canvas
+          if (box.x < 0) this.x(this.radius ? this.radius() : element.size / 2);
+          if (box.x + box.width > canvasWidth) this.x(canvasWidth - (this.radius ? this.radius() : element.size / 2));
+          if (box.y < 0) this.y(this.radius ? this.radius() : element.size / 2);
+          if (box.y + box.height > canvasHeight) this.y(canvasHeight - (this.radius ? this.radius() : element.size / 2));
+        });
+
+        shape.on('mouseenter', function() {
+          document.body.style.cursor = 'move';
+        });
+
+        shape.on('mouseleave', function() {
+          document.body.style.cursor = 'default';
+        });
+
+        // Doble click para eliminar
+        shape.on('dblclick', function() {
+          removeDecorativeElement(element.id);
+        });
+
+        layerRef.current?.add(shape);
+      }
     });
 
     layerRef.current?.batchDraw();
@@ -166,11 +314,12 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
   useEffect(() => {
     if (image && layerRef.current) {
       setTimeout(() => {
-        renderCurvedText();
+        renderSimpleText();
+        renderDecorativeElements();
         addLightOverlay();
       }, 100);
     }
-  }, [text, fontSize, fontColor, fontFamily, textCurve, textY, shadowIntensity, image]);
+  }, [text, fontSize, fontColor, fontFamily, textY, image, decorativeElements]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-6">
@@ -230,35 +379,62 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
             </div>
 
 
-            {/* Posición Vertical */}
+            {/* Elementos Decorativos */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Posición Vertical
-              </label>
-              <input
-                type="range"
-                min={150}
-                max={450}
-                value={textY}
-                onChange={(e) => setTextY(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-              />
+              <div className="flex items-center justify-between mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Elementos Decorativos
+                </label>
+                {decorativeElements.length > 0 && (
+                  <button
+                    onClick={clearDecorativeElements}
+                    className="text-xs text-red-600 hover:text-red-800"
+                  >
+                    Limpiar todo
+                  </button>
+                )}
+              </div>
+
+              {/* Categorías */}
+              <div className="flex flex-wrap gap-1 mb-3">
+                {decorativeCategories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`px-2 py-1 text-xs rounded-full transition-colors ${
+                      selectedCategory === category
+                        ? 'bg-pink-500 text-white'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+
+              {/* Librería de elementos */}
+              <div className="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto">
+                {decorativeLibrary
+                  .filter(item => selectedCategory === "Todos" || item.category === selectedCategory)
+                  .map((item) => (
+                    <button
+                      key={item.type}
+                      onClick={() => addDecorativeElement(item.type)}
+                      className="p-2 border border-gray-200 rounded-lg hover:border-pink-300 hover:bg-pink-50 transition-colors group"
+                      title={item.name}
+                    >
+                      <item.icon className="h-6 w-6 mx-auto text-gray-600 group-hover:text-pink-600" />
+                      <p className="text-xs text-gray-500 mt-1">{item.name}</p>
+                    </button>
+                  ))}
+              </div>
             </div>
 
-            {/* Intensidad de Sombra */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Relieve: {Math.round(shadowIntensity * 100)}%
-              </label>
-              <input
-                type="range"
-                min={0.1}
-                max={1.0}
-                step={0.1}
-                value={shadowIntensity}
-                onChange={(e) => setShadowIntensity(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-              />
+            {/* Instrucciones */}
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm text-blue-700">
+                💡 <strong>Tips:</strong> Arrastra el texto y elementos para posicionarlos. Doble click en elementos para eliminarlos.
+              </p>
             </div>
 
             {/* Colores Predefinidos */}
@@ -309,14 +485,27 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
                 <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
                   <Stage width={canvasWidth} height={canvasHeight} ref={stageRef}>
                     <Layer ref={layerRef}>
-                      {image && (
-                        <KonvaImage
-                          image={image}
-                          width={canvasWidth}
-                          height={canvasHeight}
-                          listening={false}
-                        />
-                      )}
+                      {image && (() => {
+                        // Calcular escala para mantener proporción
+                        const scale = Math.min(canvasWidth / image.width, canvasHeight / image.height);
+                        const scaledWidth = image.width * scale;
+                        const scaledHeight = image.height * scale;
+                        
+                        // Centrar la imagen
+                        const x = (canvasWidth - scaledWidth) / 2;
+                        const y = (canvasHeight - scaledHeight) / 2;
+                        
+                        return (
+                          <KonvaImage
+                            image={image}
+                            x={x}
+                            y={y}
+                            width={scaledWidth}
+                            height={scaledHeight}
+                            listening={false}
+                          />
+                        );
+                      })()}
                     </Layer>
                   </Stage>
                 </div>
