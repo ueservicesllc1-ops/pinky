@@ -291,7 +291,11 @@ export default function AdminBannersPage() {
                     buttonLink: '',
                     imageUrl: '',
                     isActive: true,
-                    order: 1
+                    order: 1,
+                    imageZoom: 1,
+                    imagePosition: { x: 0, y: 0 },
+                    showMemberDiscount: false,
+                    discountText: 'Solo para miembros registrados el 30% de descuentos'
                   });
                 }
               }}

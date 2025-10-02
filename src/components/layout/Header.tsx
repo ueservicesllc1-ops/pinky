@@ -84,7 +84,7 @@ export default function Header() {
             </Button>
 
             {/* Cart */}
-            <Link href="/carrito">
+            <Link href="/es/carrito">
               <Button variant="ghost" size="sm" className="relative">
                 <ShoppingCart className="h-4 w-4" />
                 {itemCount > 0 && (

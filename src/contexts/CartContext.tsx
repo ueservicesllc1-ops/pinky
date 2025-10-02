@@ -75,6 +75,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       
     case 'LOAD_CART':
       return {
+        ...state,
         items: action.payload,
         total: action.payload.reduce((sum, item) => sum + (item.product.price * item.quantity), 0),
         itemCount: action.payload.reduce((sum, item) => sum + item.quantity, 0),
