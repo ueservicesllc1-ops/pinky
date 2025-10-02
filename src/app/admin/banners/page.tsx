@@ -710,7 +710,11 @@ export default function AdminBannersPage() {
                         buttonLink: '',
                         imageUrl: '',
                         isActive: true,
-                        order: 1
+                        order: 1,
+                        imageZoom: 1,
+                        imagePosition: { x: 0, y: 0 },
+                        showMemberDiscount: false,
+                        discountText: 'Solo para miembros registrados el 30% de descuentos'
                       });
                     }}
                     className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors"
