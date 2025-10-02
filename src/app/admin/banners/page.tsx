@@ -155,7 +155,9 @@ export default function AdminBannersPage() {
           isActive: true,
           order: 1,
           imageZoom: 1,
-          imagePosition: { x: 0, y: 0 }
+          imagePosition: { x: 0, y: 0 },
+          showMemberDiscount: false,
+          discountText: 'Solo para miembros registrados el 30% de descuentos'
         });
         setEditingBanner(null);
         setShowUploadForm(false);
