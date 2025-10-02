@@ -59,6 +59,11 @@ export default function ShippingCalculator({
     
     try {
       // Validar dirección primero
+      if (!destination) {
+        setError('Por favor, ingresa una dirección de envío.');
+        setIsLoading(false);
+        return;
+      }
       const validation = await validateAddress(destination);
       setAddressValid(validation.valid);
       

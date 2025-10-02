@@ -168,7 +168,7 @@ export default function EditorVelasIA() {
           } else {
             reject(new Error('No se pudo cargar la imagen'));
           }
-        }, { crossOrigin: 'anonymous' });
+        });
       });
 
       canvas.add(img);
@@ -511,7 +511,8 @@ export default function EditorVelasIA() {
                       selectable: false,
                       evented: false
                     });
-                    canvas.add(placeholder, placeholderText);
+                    canvas.add(placeholder);
+                    canvas.add(placeholderText);
                     canvas.renderAll();
                   }
                 }}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
-import { Canvas, Rect, Circle, Text, Shadow, Image } from 'fabric';
+import { fabric } from 'fabric';
 import { motion } from 'framer-motion';
 import { 
   Palette, 
@@ -27,6 +27,11 @@ interface CandleTemplate {
   image: string;
   width: number;
   height: number;
+  variants?: Array<{
+    id: string;
+    name: string;
+    image: string;
+  }>;
 }
 
 const candleTemplates: CandleTemplate[] = [
@@ -109,7 +114,7 @@ export default function CandleCustomizer() {
   const [selectedTemplate, setSelectedTemplate] = useState<string>('cylindrical');
   const [selectedVariant, setSelectedVariant] = useState<string>('cylindrical-1');
   const [showVariantPopup, setShowVariantPopup] = useState<boolean>(false);
-  const [currentTemplate, setCurrentTemplate] = useState<{ id: string; name: string; image: string } | null>(null);
+  const [currentTemplate, setCurrentTemplate] = useState<CandleTemplate | null>(null);
   const [selectedColor, setSelectedColor] = useState<string>('#f472b6');
   const [textContent, setTextContent] = useState<string>('');
   const [selectedFont, setSelectedFont] = useState<string>('Dancing Script');
@@ -121,7 +126,7 @@ export default function CandleCustomizer() {
   useEffect(() => {
     if (canvasRef.current) {
       // Inicializar Fabric.js con TODO EL PODER
-      fabricCanvasRef.current = new Canvas(canvasRef.current, {
+      fabricCanvasRef.current = new fabric.Canvas(canvasRef.current, {
         width: 700,
         height: 700,
         backgroundColor: '#ffffff',
@@ -150,39 +155,39 @@ export default function CandleCustomizer() {
     fabricCanvasRef.current.clear();
 
     // Cargar imagen real de la vela
-    Image.fromURL(template.image, (img) => {
-      if (!img || !fabricCanvasRef.current) return;
+    try {
+      fabric.Image.fromURL(template.image, (img) => {
+        if (!img || !fabricCanvasRef.current) return;
 
-      // Calcular dimensiones para mantener proporción - MÁS GRANDE
-      const maxWidth = 600;
-      const maxHeight = 700;
-      const scaleX = maxWidth / img.width!;
-      const scaleY = maxHeight / img.height!;
-      const scale = Math.min(scaleX, scaleY);
+        // Calcular dimensiones para mantener proporción - MÁS GRANDE
+        const maxWidth = 600;
+        const maxHeight = 700;
+        const scaleX = maxWidth / img.width!;
+        const scaleY = maxHeight / img.height!;
+        const scale = Math.min(scaleX, scaleY);
 
-      // Configurar la imagen de la vela
-      img.set({
-        left: 350 - (img.width! * scale) / 2,
-        top: 350 - (img.height! * scale) / 2,
-        scaleX: scale,
-        scaleY: scale,
-        selectable: false,
-        evented: false,
-        shadow: new Shadow({
-          color: 'rgba(0,0,0,0.3)',
-          blur: 15,
-          offsetX: 8,
-          offsetY: 8
-        })
+        // Configurar la imagen de la vela
+        img.set({
+          left: 350 - (img.width! * scale) / 2,
+          top: 350 - (img.height! * scale) / 2,
+          scaleX: scale,
+          scaleY: scale,
+          selectable: false,
+          evented: false,
+          shadow: new fabric.Shadow({
+            color: 'rgba(0,0,0,0.3)',
+            blur: 15,
+            offsetX: 8,
+            offsetY: 8
+          })
+        });
+
+        fabricCanvasRef.current.add(img);
+        fabricCanvasRef.current.renderAll();
       });
-
-      fabricCanvasRef.current.add(img);
-      fabricCanvasRef.current.renderAll();
-    }, {
-      crossOrigin: 'anonymous'
-    }).catch(() => {
+    } catch (error) {
       // Si falla la carga de imagen, usar forma geométrica como fallback
-      const candle = new Rect({
+      const candle = new fabric.Rect({
         left: 350 - template.width / 2,
         top: 350 - template.height / 2,
         width: template.width,
@@ -192,7 +197,7 @@ export default function CandleCustomizer() {
         strokeWidth: 2,
         rx: template.id === 'jar' ? 20 : 10,
         ry: template.id === 'jar' ? 20 : 10,
-        shadow: new Shadow({
+        shadow: new fabric.Shadow({
           color: 'rgba(0,0,0,0.2)',
           blur: 10,
           offsetX: 5,
@@ -202,13 +207,13 @@ export default function CandleCustomizer() {
 
       fabricCanvasRef.current.add(candle);
       fabricCanvasRef.current.renderAll();
-    });
+    }
   };
 
   const addText = () => {
     if (!fabricCanvasRef.current || !textContent.trim()) return;
 
-    const text = new Text(textContent, {
+    const text = new fabric.Text(textContent, {
       left: 350,
       top: 350,
       fontFamily: selectedFont,
@@ -217,7 +222,7 @@ export default function CandleCustomizer() {
       textAlign: 'center',
       originX: 'center',
       originY: 'center',
-      shadow: new Shadow({
+      shadow: new fabric.Shadow({
         color: 'rgba(0,0,0,0.3)',
         blur: 5,
         offsetX: 2,
@@ -251,7 +256,7 @@ export default function CandleCustomizer() {
     const candleImage = objects.find(obj => obj.type === 'image');
     if (candleImage) {
       // Crear overlay de color semi-transparente para simular cambio de color
-      const colorOverlay = new Rect({
+      const colorOverlay = new fabric.Rect({
         left: candleImage.left,
         top: candleImage.top,
         width: candleImage.width! * candleImage.scaleX!,
@@ -305,7 +310,7 @@ export default function CandleCustomizer() {
     // Cargar la variante seleccionada
     if (fabricCanvasRef.current) {
       fabricCanvasRef.current.clear();
-      Image.fromURL(variant.image, (img) => {
+      fabric.Image.fromURL(variant.image, (img) => {
         if (!img || !fabricCanvasRef.current) return;
 
         const maxWidth = 600;
@@ -321,7 +326,7 @@ export default function CandleCustomizer() {
           scaleY: scale,
           selectable: false,
           evented: false,
-          shadow: new Shadow({
+          shadow: new fabric.Shadow({
             color: 'rgba(0,0,0,0.3)',
             blur: 15,
             offsetX: 8,
@@ -331,8 +336,6 @@ export default function CandleCustomizer() {
 
         fabricCanvasRef.current.add(img);
         fabricCanvasRef.current.renderAll();
-      }, {
-        crossOrigin: 'anonymous'
       });
     }
   };

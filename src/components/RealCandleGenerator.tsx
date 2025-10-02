@@ -166,7 +166,7 @@ export default function RealCandleGenerator() {
                 </label>
                 <select
                   value={textStyle}
-                  onChange={(e) => setTextStyle(e.target.value as 'elegant' | 'modern' | 'classic' | 'playful')}
+                  onChange={(e) => setTextStyle(e.target.value as 'elegant' | 'modern' | 'classic' | 'bold')}
                   className="w-full p-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 >
                   <option value="elegant">Elegante y Cursiva</option>

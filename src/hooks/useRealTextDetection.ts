@@ -44,7 +44,11 @@ export function useRealTextDetection() {
       const tesseractWorker = await initializeWorker();
       
       console.log('🔄 Analizando imagen con Tesseract...');
-      const { data: { words } } = await tesseractWorker.recognize(imageUrl);
+      if (!tesseractWorker) {
+        throw new Error('Worker de Tesseract no inicializado');
+      }
+      const { data } = await tesseractWorker.recognize(imageUrl);
+      const words = (data as any).words || [];
       
       console.log('✅ Análisis completado, palabras encontradas:', words.length);
       

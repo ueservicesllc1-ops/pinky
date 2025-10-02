@@ -182,8 +182,6 @@ export default function EditorVelasSimple() {
           } else {
             reject(new Error('No se pudo cargar imagen desde proxy'));
           }
-        }, { 
-          crossOrigin: 'anonymous'
         });
       });
 

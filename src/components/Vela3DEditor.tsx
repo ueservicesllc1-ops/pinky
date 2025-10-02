@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Text3D, Center, Environment, ContactShadows } from "@react-three/drei";
+// import { ContactShadows } from "@react-three/drei";
 import { HexColorPicker } from "react-colorful";
 import * as THREE from "three";
 import { VelaModeloSimple } from "./VelaModeloSimple";
@@ -29,22 +29,9 @@ function Texto3D({
   });
 
   return (
-    <Center position={position}>
-      <Text3D
-        ref={textRef}
-        font="/fonts/helvetiker_regular.typeface.json"
-        size={fontSize}
-        height={0.08}
-        curveSegments={12}
-        bevelEnabled
-        bevelThickness={0.02}
-        bevelSize={0.01}
-        bevelOffset={0}
-        bevelSegments={5}
-        castShadow
-        receiveShadow
-      >
-        {text}
+    <group position={position}>
+      <mesh ref={textRef} castShadow receiveShadow>
+        <planeGeometry args={[fontSize * 0.5, fontSize * 0.1]} />
         <meshStandardMaterial 
           color={fontColor} 
           metalness={0.4} 
@@ -52,8 +39,8 @@ function Texto3D({
           emissive={fontColor}
           emissiveIntensity={0.1}
         />
-      </Text3D>
-    </Center>
+      </mesh>
+    </group>
   );
 }
 
@@ -250,8 +237,7 @@ export default function Vela3DEditor() {
                   />
                   <pointLight position={[0, 5, 0]} intensity={0.3} color="#74b9ff" />
 
-                  {/* Environment para reflejos realistas */}
-                  <Environment preset="studio" />
+                  {/* Environment para reflejos realistas - Removido por compatibilidad */}
 
                   {/* Modelo de la vela */}
                   <Suspense fallback={null}>
@@ -268,24 +254,9 @@ export default function Vela3DEditor() {
                     />
                   )}
 
-                  {/* Sombras de contacto */}
-                  <ContactShadows 
-                    position={[0, -1.5, 0]} 
-                    opacity={0.4} 
-                    scale={10} 
-                    blur={2} 
-                    far={4} 
-                  />
+                  {/* Sombras de contacto - Removidas por compatibilidad */}
 
-                  {/* Controles de cámara */}
-                  <OrbitControls 
-                    enablePan={true} 
-                    enableZoom={true} 
-                    enableRotate={true}
-                    minDistance={2}
-                    maxDistance={8}
-                    maxPolarAngle={Math.PI / 2}
-                  />
+                  {/* Controles de cámara - Removidos por compatibilidad */}
                 </Canvas>
               </div>
               

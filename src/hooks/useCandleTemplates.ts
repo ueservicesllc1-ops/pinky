@@ -8,6 +8,12 @@ export interface CandleTemplate {
   description: string;
   imageUrl: string;
   category: string;
+  type: string;
+  variants?: Array<{
+    id: string;
+    name: string;
+    image: string;
+  }>;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -40,6 +46,7 @@ export function useCandleTemplates() {
           description: data.description || 'Sin descripción',
           imageUrl: data.imageUrl || '',
           category: data.category || 'Sin categoría',
+          type: data.type || 'cylindrical',
           isActive: data.isActive !== false, // Si no está definido, asumir true
           createdAt: data.createdAt?.toDate() || new Date(),
           updatedAt: data.updatedAt?.toDate() || new Date()

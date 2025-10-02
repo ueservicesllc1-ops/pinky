@@ -10,28 +10,19 @@ export default function BannerCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
 
-  // Convertir banners de Firebase al formato esperado
-  const bannerSlides = banners
-    .filter(banner => banner.isActive) // Solo banners activos
-    .map(banner => ({
-      id: banner.id,
-      image: banner.imageUrl,
-      title: banner.title,
-      subtitle: banner.subtitle,
-      buttonText: banner.buttonText,
-      buttonLink: banner.buttonLink
-    }));
+  // Filtrar solo banners activos
+  const activeBanners = banners.filter(banner => banner.isActive);
 
   // Auto-play functionality
   useEffect(() => {
-    if (!isAutoPlay || bannerSlides.length <= 1) return;
+    if (!isAutoPlay || activeBanners.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
+      setCurrentSlide((prev) => (prev + 1) % activeBanners.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlay, bannerSlides.length]);
+  }, [isAutoPlay, activeBanners.length]);
 
   // Mostrar loading si está cargando
   if (isLoading) {
@@ -48,7 +39,7 @@ export default function BannerCarousel() {
   }
 
   // Si no hay banners, mostrar mensaje
-  if (bannerSlides.length === 0) {
+  if (activeBanners.length === 0) {
     return (
       <section className="relative w-full h-[400px] md:h-[500px] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-100 to-pink-100 flex items-center justify-center">
@@ -63,12 +54,12 @@ export default function BannerCarousel() {
   }
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
+    setCurrentSlide((prev) => (prev + 1) % activeBanners.length);
     setIsAutoPlay(false);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length);
+    setCurrentSlide((prev) => (prev - 1 + activeBanners.length) % activeBanners.length);
     setIsAutoPlay(false);
   };
 
@@ -122,25 +113,25 @@ export default function BannerCarousel() {
           {/* Contenido principal */}
           <div className="max-w-sm relative z-10">
             {/* Etiqueta de descuento para miembros */}
-            {(bannerSlides[currentSlide] as Banner)?.showMemberDiscount && (
+            {activeBanners[currentSlide]?.showMemberDiscount && (
               <div className="mb-4">
                 <div className="inline-flex items-center px-4 py-2 bg-yellow-400 text-yellow-900 text-sm font-bold rounded-full shadow-lg animate-pulse">
-                  🎉 {(bannerSlides[currentSlide] as Banner)?.discountText || 'Solo para miembros registrados el 30% de descuentos'}
+                  🎉 {activeBanners[currentSlide]?.discountText || 'Solo para miembros registrados el 30% de descuentos'}
                 </div>
               </div>
             )}
             
             <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
-              {bannerSlides[currentSlide]?.title || 'Personaliza tus velas'}
+              {activeBanners[currentSlide]?.title || 'Personaliza tus velas'}
             </h2>
             <p className="text-lg md:text-xl mb-6 text-purple-100 leading-relaxed">
-              {bannerSlides[currentSlide]?.subtitle || 'Crea velas únicas con tus propios diseños. Desde aromas personalizados hasta imágenes especiales.'}
+              {activeBanners[currentSlide]?.subtitle || 'Crea velas únicas con tus propios diseños. Desde aromas personalizados hasta imágenes especiales.'}
             </p>
             <a 
-              href={bannerSlides[currentSlide]?.buttonLink || '/personalizadas'}
+              href={activeBanners[currentSlide]?.buttonLink || '/personalizadas'}
               className="inline-flex items-center px-6 py-3 bg-white text-purple-600 font-semibold rounded-lg hover:bg-purple-50 transition-colors duration-300 shadow-lg hover:shadow-xl"
             >
-              {bannerSlides[currentSlide]?.buttonText || 'Crear ahora'}
+              {activeBanners[currentSlide]?.buttonText || 'Crear ahora'}
             </a>
           </div>
         </div>
@@ -148,7 +139,7 @@ export default function BannerCarousel() {
         {/* Sección de imagen - 65% */}
         <div className="relative w-[65%] h-full">
           <AnimatePresence mode="wait">
-            {bannerSlides.length > 0 && (
+            {activeBanners.length > 0 && (
               <motion.div
                 key={currentSlide}
                 initial={{ opacity: 0 }}
@@ -157,15 +148,15 @@ export default function BannerCarousel() {
                 transition={{ duration: 0.5 }}
                 className="absolute inset-0"
               >
-                {bannerSlides[currentSlide].image ? (
+                {activeBanners[currentSlide].imageUrl ? (
                   <div 
                     className="w-full h-full bg-no-repeat bg-center"
                     style={{
-                      backgroundImage: `url(${bannerSlides[currentSlide].image})`,
-                      backgroundSize: `${100 * ((bannerSlides[currentSlide] as Banner).imageZoom || 1)}%`,
+                      backgroundImage: `url(${activeBanners[currentSlide].imageUrl})`,
+                      backgroundSize: `${100 * (activeBanners[currentSlide].imageZoom || 1)}%`,
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center center',
-                      transform: `translate(${(bannerSlides[currentSlide] as Banner).imagePosition?.x || 0}px, ${(bannerSlides[currentSlide] as Banner).imagePosition?.y || 0}px)`
+                      transform: `translate(${activeBanners[currentSlide].imagePosition?.x || 0}px, ${activeBanners[currentSlide].imagePosition?.y || 0}px)`
                     }}
                   />
                 ) : (
@@ -181,7 +172,7 @@ export default function BannerCarousel() {
           </AnimatePresence>
 
           {/* Navigation Arrows - Solo si hay más de un banner */}
-          {bannerSlides.length > 1 && (
+          {activeBanners.length > 1 && (
             <>
               <button
                 onClick={prevSlide}
@@ -202,9 +193,9 @@ export default function BannerCarousel() {
           )}
 
           {/* Dots Indicator - Solo si hay más de un banner */}
-          {bannerSlides.length > 1 && (
+          {activeBanners.length > 1 && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
-              {bannerSlides.map((_, index) => (
+              {activeBanners.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}

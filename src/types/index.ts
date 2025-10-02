@@ -24,6 +24,12 @@ export interface CartItem {
     size?: string;
     color?: string;
     message?: string;
+    candleType?: string;
+    candleColor?: string;
+    customText?: string;
+    font?: string;
+    fontSize?: number;
+    textColor?: string;
   };
 }
 

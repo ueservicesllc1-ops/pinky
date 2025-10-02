@@ -168,7 +168,7 @@ export default function EditorVelasIASimple() {
           } else {
             reject(new Error('No se pudo cargar la imagen'));
           }
-        }, { crossOrigin: 'anonymous' });
+        });
       });
 
       canvas.add(img);

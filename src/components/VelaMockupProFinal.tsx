@@ -263,10 +263,11 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
           const box = this.getClientRect();
           
           // Limitar movimiento dentro del canvas
-          if (box.x < 0) this.x(this.radius ? this.radius() : element.size / 2);
-          if (box.x + box.width > canvasWidth) this.x(canvasWidth - (this.radius ? this.radius() : element.size / 2));
-          if (box.y < 0) this.y(this.radius ? this.radius() : element.size / 2);
-          if (box.y + box.height > canvasHeight) this.y(canvasHeight - (this.radius ? this.radius() : element.size / 2));
+          const radius = (this as any).radius ? (this as any).radius() : element.size / 2;
+          if (box.x < 0) this.x(radius);
+          if (box.x + box.width > canvasWidth) this.x(canvasWidth - radius);
+          if (box.y < 0) this.y(radius);
+          if (box.y + box.height > canvasHeight) this.y(canvasHeight - radius);
         });
 
         shape.on('mouseenter', function() {

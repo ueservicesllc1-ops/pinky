@@ -5,7 +5,7 @@ import { fabric } from "fabric";
 
 interface CanvasEditorProps {
   onCanvasReady: (canvas: fabric.Canvas) => void;
-  onImageLoad: (template: { id: string; name: string; imageUrl: string }) => void;
+  onImageLoad: (template: { id: string; name: string; imageUrl: string; type: string }) => void;
   textLines: string[];
   color: string;
   fontSize: number;

@@ -266,8 +266,6 @@ export default function VelaPersonalizada() {
             console.error('❌ No se pudo cargar la imagen');
             reject(new Error('No se pudo cargar la imagen'));
           }
-        }, {
-          crossOrigin: 'anonymous' // Para evitar problemas de CORS
         });
       });
 
@@ -294,7 +292,8 @@ export default function VelaPersonalizada() {
       console.log('✅ Plantilla cargada exitosamente:', template.name);
     } catch (error) {
       console.error('❌ Error cargando plantilla:', error);
-      alert(`Error cargando plantilla: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      alert(`Error cargando plantilla: ${errorMessage}`);
     }
   };
 

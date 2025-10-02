@@ -30,7 +30,8 @@ export default function TestTemplateCreator() {
       alert('Plantilla de prueba creada exitosamente!');
     } catch (error) {
       console.error('❌ Error creando plantilla:', error);
-      alert(`Error: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      alert(`Error: ${errorMessage}`);
     } finally {
       setIsCreating(false);
     }
