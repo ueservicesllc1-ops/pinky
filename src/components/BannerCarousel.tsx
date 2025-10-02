@@ -38,15 +38,39 @@ export default function BannerCarousel() {
     );
   }
 
-  // Si no hay banners, mostrar mensaje
+  // Si no hay banners, mostrar banner por defecto
   if (activeBanners.length === 0) {
     return (
       <section className="relative w-full h-[400px] md:h-[500px] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-100 to-pink-100 flex items-center justify-center">
-          <div className="text-center">
-            <Heart className="h-16 w-16 mx-auto mb-4 text-pink-400 opacity-50" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Pronto tendremos banners disponibles</h2>
-            <p className="text-gray-600">Mientras tanto, explora nuestro catálogo de velas</p>
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 flex items-center">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between">
+              {/* Contenido principal */}
+              <div className="max-w-sm relative z-10">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight text-white">
+                  Personaliza tus velas
+                </h2>
+                <p className="text-lg md:text-xl mb-6 text-purple-100 leading-relaxed">
+                  Crea velas únicas con tus propios diseños. Desde aromas personalizados hasta imágenes especiales.
+                </p>
+                <a 
+                  href="/es/personalizadas"
+                  className="inline-flex items-center px-6 py-3 bg-white text-purple-600 font-semibold rounded-lg hover:bg-purple-50 transition-colors duration-300 shadow-lg hover:shadow-xl"
+                >
+                  Crear ahora
+                </a>
+              </div>
+
+              {/* Sección de imagen */}
+              <div className="relative w-[65%] h-full">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-100 to-pink-100 flex items-center justify-center">
+                  <div className="text-center text-gray-500">
+                    <Heart className="h-24 w-24 mx-auto mb-4 text-pink-400 opacity-50" />
+                    <p className="text-lg">Explora nuestras velas personalizadas</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
