@@ -272,7 +272,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
                     key={color}
                     onClick={() => setFontColor(color)}
                     className={`w-10 h-10 rounded-full border-2 transition-all ${
-                      fontColor === color ? 'border-blue-500 scale-110' : 'border-gray-300'
+                      fontColor === color ? 'border-pink-500 scale-110' : 'border-gray-300'
                     }`}
                     style={{ backgroundColor: color }}
                   />
@@ -296,7 +296,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
             {/* Botón de Exportar */}
             <button
               onClick={handleExport}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg"
+              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-700 transition-all duration-200 shadow-lg"
             >
               Descargar Imagen
             </button>
@@ -331,7 +331,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {templatesLoading ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500 mx-auto"></div>
                   <p className="text-sm text-gray-500 mt-2">Cargando plantillas...</p>
                 </div>
               ) : templates.length > 0 ? (
@@ -341,8 +341,8 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
                     onClick={() => handleTemplateSelect(template)}
                     className={`w-full rounded-lg overflow-hidden border-2 transition-all ${
                       currentImageSrc === template.imageUrl
-                        ? 'border-purple-500 scale-105'
-                        : 'border-gray-200 hover:border-purple-300'
+                        ? 'border-pink-500 scale-105'
+                        : 'border-gray-200 hover:border-pink-300'
                     }`}
                   >
                     <img
@@ -366,7 +366,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
 
             <button
               onClick={handleResetImage}
-              className="w-full mt-4 bg-gray-500 text-white px-3 py-2 rounded-md text-sm hover:bg-gray-600 transition-colors"
+              className="w-full mt-4 bg-gradient-to-r from-pink-400 to-purple-500 text-white px-3 py-2 rounded-md text-sm hover:from-pink-500 hover:to-purple-600 transition-colors"
             >
               Resetear Imagen
             </button>
