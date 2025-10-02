@@ -109,10 +109,15 @@ export function useBusinessConfigFirebase() {
         const data = doc.data();
         setBusinessInfo(data as BusinessInfo);
         setLastUpdated(data.updatedAt?.toDate() || new Date());
+        setIsLoading(false); // ✅ Marcar como cargado
         console.log('🔄 Real-time update received:', data);
+      } else {
+        setIsLoading(false); // ✅ Marcar como cargado aunque no exista
+        console.log('⚠️ business_config document does not exist');
       }
     }, (error) => {
       console.error('❌ Real-time listener error:', error);
+      setIsLoading(false); // ✅ Marcar como cargado aunque haya error
     });
 
     return () => unsubscribe();

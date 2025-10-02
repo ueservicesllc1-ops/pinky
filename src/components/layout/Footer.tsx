@@ -9,6 +9,10 @@ import { useBusinessConfigFirebase } from '@/hooks/useBusinessConfigFirebase';
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const { businessInfo, isLoading } = useBusinessConfigFirebase();
+  
+  // Debug: mostrar datos actuales
+  console.log('🔍 Footer - businessInfo:', businessInfo);
+  console.log('🔍 Footer - isLoading:', isLoading);
 
   // Mostrar loading si aún está cargando
   if (isLoading) {
