@@ -220,8 +220,8 @@ export default function PersonalizacionAdminPage() {
                 <CardContent>
                   <ImageUpload
                     folder="candles"
-                    onUploadComplete={handleImageUpload}
-                    currentImageUrl={formData.imageUrl}
+                    onUpload={handleImageUpload}
+                    currentImage={formData.imageUrl}
                   />
                 </CardContent>
               </Card>
