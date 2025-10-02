@@ -245,8 +245,6 @@ export default function AdminPlantillasVelasPage() {
                   onUpload={handleImageUpload}
                   folder="candle-templates"
                   accept="image/*"
-                  maxSize={5 * 1024 * 1024} // 5MB
-                  disabled={isUploading}
                 />
                 <p className="text-sm text-gray-500 mt-2">
                   Sube una imagen PNG transparente o JPG de alta calidad de la vela
