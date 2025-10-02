@@ -3,13 +3,15 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ShoppingCart, User, Menu, X, Heart, Search } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, Heart, Search, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [itemCount, setItemCount] = useState(0);
+  const [currentLanguage, setCurrentLanguage] = useState('es');
 
   // Load cart count from localStorage on mount
   React.useEffect(() => {
@@ -34,6 +36,20 @@ export default function Header() {
     { href: '/es/nosotros', label: 'Nosotros' },
     { href: '/admin', label: 'Admin' },
   ];
+
+  const languages = [
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+  ];
+
+  const handleLanguageChange = (langCode: string) => {
+    setCurrentLanguage(langCode);
+    setIsLanguageOpen(false);
+    // Redirect to the same page but with different language
+    const currentPath = window.location.pathname;
+    const newPath = currentPath.replace(/^\/[a-z]{2}/, `/${langCode}`);
+    window.location.href = newPath;
+  };
 
   return (
     <motion.header 
@@ -98,6 +114,43 @@ export default function Header() {
                 )}
               </Button>
             </Link>
+
+            {/* Language Selector */}
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+                className="flex items-center space-x-1"
+              >
+                <Globe className="h-4 w-4" />
+                <span className="text-sm">
+                  {languages.find(lang => lang.code === currentLanguage)?.flag}
+                </span>
+              </Button>
+              
+              {isLanguageOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50"
+                >
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => handleLanguageChange(lang.code)}
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center space-x-2 ${
+                        currentLanguage === lang.code ? 'bg-pink-50 text-pink-600' : 'text-gray-700'
+                      }`}
+                    >
+                      <span>{lang.flag}</span>
+                      <span>{lang.name}</span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </div>
 
             {/* User */}
             <Button variant="ghost" size="sm">

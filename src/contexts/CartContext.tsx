@@ -7,6 +7,8 @@ interface CartState {
   items: CartItem[];
   total: number;
   itemCount: number;
+  showNotification: boolean;
+  lastAddedProduct: string;
 }
 
 type CartAction =
@@ -14,12 +16,16 @@ type CartAction =
   | { type: 'REMOVE_ITEM'; payload: string }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
-  | { type: 'LOAD_CART'; payload: CartItem[] };
+  | { type: 'LOAD_CART'; payload: CartItem[] }
+  | { type: 'SHOW_NOTIFICATION'; payload: string }
+  | { type: 'HIDE_NOTIFICATION' };
 
 const initialState: CartState = {
   items: [],
   total: 0,
   itemCount: 0,
+  showNotification: false,
+  lastAddedProduct: '',
 };
 
 function cartReducer(state: CartState, action: CartAction): CartState {
@@ -42,6 +48,8 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         items: newItems,
         total: newItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0),
         itemCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
+        showNotification: true,
+        lastAddedProduct: action.payload.product.name,
       };
     }
     
@@ -81,6 +89,20 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         itemCount: action.payload.reduce((sum, item) => sum + item.quantity, 0),
       };
       
+    case 'SHOW_NOTIFICATION':
+      return {
+        ...state,
+        showNotification: true,
+        lastAddedProduct: action.payload,
+      };
+      
+    case 'HIDE_NOTIFICATION':
+      return {
+        ...state,
+        showNotification: false,
+        lastAddedProduct: '',
+      };
+      
     default:
       return state;
   }
@@ -91,6 +113,7 @@ interface CartContextType extends CartState {
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
+  hideNotification: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -136,6 +159,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'CLEAR_CART' });
   };
 
+  const hideNotification = () => {
+    dispatch({ type: 'HIDE_NOTIFICATION' });
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -144,6 +171,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         removeItem,
         updateQuantity,
         clearCart,
+        hideNotification,
       }}
     >
       {children}
