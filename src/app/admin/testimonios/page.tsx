@@ -102,18 +102,38 @@ export default function TestimonialsAdminPage() {
   };
 
   const handleMigration = async () => {
+    // Verificar si ya existen testimonios
+    if (testimonials.length > 0) {
+      const confirmMigrate = confirm(`Ya existen ${testimonials.length} testimonios. ¿Deseas agregar los testimonios originales de todos modos?`);
+      if (!confirmMigrate) {
+        return;
+      }
+    }
+
     if (confirm('¿Estás seguro de que quieres migrar los testimonios originales? Esto agregará 6 testimonios de ejemplo.')) {
       setIsMigrating(true);
-      const result = await migrateTestimonials();
+      setSaveMessage('🔄 Migrando testimonios...');
       
-      if (result.success) {
-        setSaveMessage(`✅ Migración completada: ${result.count} testimonios agregados`);
-      } else {
-        setSaveMessage(`❌ Error en migración: ${result.error}`);
+      try {
+        const result = await migrateTestimonials();
+        
+        if (result.success) {
+          setSaveMessage(`✅ Migración completada: ${result.count} testimonios agregados`);
+          console.log('✅ Migration completed:', result);
+          // Recargar la página después de un breve delay para ver los cambios
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        } else {
+          setSaveMessage(`❌ Error en migración: ${result.error}`);
+        }
+      } catch (error) {
+        console.error('❌ Migration error:', error);
+        setSaveMessage('❌ Error inesperado durante la migración');
+      } finally {
+        setTimeout(() => setSaveMessage(''), 5000);
+        setIsMigrating(false);
       }
-      
-      setTimeout(() => setSaveMessage(''), 5000);
-      setIsMigrating(false);
     }
   };
 
