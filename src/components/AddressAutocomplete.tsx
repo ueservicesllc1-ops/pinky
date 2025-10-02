@@ -76,7 +76,7 @@ export default function AddressAutocomplete({
       script.async = true;
       script.defer = true;
       
-      window.initGoogleMaps = () => {
+      (window as any).initGoogleMaps = () => {
         googleMapsLoaded.current = true;
       };
       
