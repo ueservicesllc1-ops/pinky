@@ -73,11 +73,21 @@ export default function CarritoPage() {
                   <CardContent className="p-6">
                     <div className="flex gap-4">
                       {/* Product Image */}
-                      <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <div className="text-center text-gray-600">
-                          <ShoppingCart className="h-8 w-8 mx-auto mb-1 opacity-50" />
-                          <p className="text-xs">Imagen</p>
-                        </div>
+                      <div className="w-24 h-24 rounded-lg flex-shrink-0 overflow-hidden">
+                        {item.product.images && item.product.images.length > 0 ? (
+                          <img
+                            src={item.product.images[0]}
+                            alt={item.product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center">
+                            <div className="text-center text-gray-600">
+                              <ShoppingCart className="h-8 w-8 mx-auto mb-1 opacity-50" />
+                              <p className="text-xs">Imagen</p>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       {/* Product Info */}
