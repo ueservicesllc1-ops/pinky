@@ -5,13 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 import { useBanners, Banner } from '@/hooks/useBanners';
 
-interface ExtendedBanner extends Banner {
-  showMemberDiscount?: boolean;
-  discountText?: string;
-  imageZoom?: number;
-  imagePosition?: { x: number; y: number };
-}
-
 export default function BannerCarousel() {
   const { banners, isLoading } = useBanners();
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -129,10 +122,10 @@ export default function BannerCarousel() {
           {/* Contenido principal */}
           <div className="max-w-sm relative z-10">
             {/* Etiqueta de descuento para miembros */}
-            {(bannerSlides[currentSlide] as ExtendedBanner)?.showMemberDiscount && (
+            {(bannerSlides[currentSlide] as Banner)?.showMemberDiscount && (
               <div className="mb-4">
                 <div className="inline-flex items-center px-4 py-2 bg-yellow-400 text-yellow-900 text-sm font-bold rounded-full shadow-lg animate-pulse">
-                  🎉 {(bannerSlides[currentSlide] as ExtendedBanner)?.discountText || 'Solo para miembros registrados el 30% de descuentos'}
+                  🎉 {(bannerSlides[currentSlide] as Banner)?.discountText || 'Solo para miembros registrados el 30% de descuentos'}
                 </div>
               </div>
             )}
@@ -169,10 +162,10 @@ export default function BannerCarousel() {
                     className="w-full h-full bg-no-repeat bg-center"
                     style={{
                       backgroundImage: `url(${bannerSlides[currentSlide].image})`,
-                      backgroundSize: `${100 * ((bannerSlides[currentSlide] as ExtendedBanner).imageZoom || 1)}%`,
+                      backgroundSize: `${100 * ((bannerSlides[currentSlide] as Banner).imageZoom || 1)}%`,
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center center',
-                      transform: `translate(${(bannerSlides[currentSlide] as ExtendedBanner).imagePosition?.x || 0}px, ${(bannerSlides[currentSlide] as ExtendedBanner).imagePosition?.y || 0}px)`
+                      transform: `translate(${(bannerSlides[currentSlide] as Banner).imagePosition?.x || 0}px, ${(bannerSlides[currentSlide] as Banner).imagePosition?.y || 0}px)`
                     }}
                   />
                 ) : (

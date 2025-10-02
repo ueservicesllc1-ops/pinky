@@ -16,6 +16,8 @@ export interface Banner {
   createdAt: Date;
   showMemberDiscount?: boolean;
   discountText?: string;
+  imageZoom?: number;
+  imagePosition?: { x: number; y: number };
 }
 
 export function useBanners() {

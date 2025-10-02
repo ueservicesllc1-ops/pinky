@@ -196,8 +196,8 @@ export default function AdminBannersPage() {
       imageUrl: banner.imageUrl,
       isActive: banner.isActive,
       order: banner.order,
-      imageZoom: (banner as Banner & { imageZoom?: number }).imageZoom || 1,
-      imagePosition: (banner as Banner & { imagePosition?: { x: number; y: number } }).imagePosition || { x: 0, y: 0 },
+      imageZoom: banner.imageZoom || 1,
+      imagePosition: banner.imagePosition || { x: 0, y: 0 },
       showMemberDiscount: banner.showMemberDiscount || false,
       discountText: banner.discountText || 'Solo para miembros registrados el 30% de descuentos'
     };
