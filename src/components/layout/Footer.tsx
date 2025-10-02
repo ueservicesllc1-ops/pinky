@@ -7,6 +7,22 @@ import { Heart, Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
+interface BusinessInfo {
+  businessName: string;
+  businessDescription: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  socialMedia: {
+    facebook: string;
+    instagram: string;
+    twitter: string;
+  };
+}
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const [businessInfo, setBusinessInfo] = useState({
@@ -33,7 +49,7 @@ export default function Footer() {
         const docSnap = await getDoc(docRef);
         
         if (docSnap.exists()) {
-          const data = docSnap.data();
+          const data = docSnap.data() as BusinessInfo;
           setBusinessInfo(data);
           console.log('✅ Footer loaded from Firestore:', data);
         }

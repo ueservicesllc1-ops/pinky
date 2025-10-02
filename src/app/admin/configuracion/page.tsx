@@ -7,6 +7,22 @@ import { Save, MapPin, Phone, Mail, Clock, Globe, Facebook, Instagram, Twitter }
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
+interface BusinessInfo {
+  businessName: string;
+  businessDescription: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  socialMedia: {
+    facebook: string;
+    instagram: string;
+    twitter: string;
+  };
+}
+
 export default function AdminConfigPage() {
   const [formData, setFormData] = useState({
     businessName: 'Pinky Flame',
@@ -35,7 +51,7 @@ export default function AdminConfigPage() {
         const docSnap = await getDoc(docRef);
         
         if (docSnap.exists()) {
-          const data = docSnap.data();
+          const data = docSnap.data() as BusinessInfo;
           setFormData(data);
           console.log('✅ Loaded from Firestore:', data);
         }
