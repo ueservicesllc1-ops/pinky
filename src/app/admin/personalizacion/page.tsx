@@ -220,11 +220,8 @@ export default function PersonalizacionAdminPage() {
                 <CardContent>
                   <ImageUpload
                     folder="candles"
+                    onUploadComplete={handleImageUpload}
                     currentImageUrl={formData.imageUrl}
-                    onUploadComplete={(result) => {
-                      console.log("Imagen subida:", result.url);
-                      setFormData((prev) => ({ ...prev, imageUrl: result.url }));
-                    }}
                   />
                 </CardContent>
               </Card>
