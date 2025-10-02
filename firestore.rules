@@ -2,9 +2,9 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Permitir lectura pública de todas las colecciones
+    // Permitir lectura y escritura pública de todas las colecciones (temporalmente)
     match /{document=**} {
-      allow read: if true;
+      allow read, write: if true;
     }
     
     // Reglas específicas para cada colección
