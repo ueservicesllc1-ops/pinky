@@ -4,11 +4,11 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Heart, Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react';
-import { useBusinessConfigFirebase } from '@/hooks/useBusinessConfigFirebase';
+import { useBusinessConfig } from '@/hooks/useBusinessConfig';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const { businessInfo, isLoading } = useBusinessConfigFirebase();
+  const { businessInfo, isLoading } = useBusinessConfig();
   
   // Debug: mostrar datos actuales
   console.log('🔍 Footer - businessInfo:', businessInfo);

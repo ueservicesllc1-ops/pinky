@@ -53,6 +53,10 @@ export default function AdminConfigPage() {
     setSaveMessage('');
     
     try {
+      // Guardar en localStorage como respaldo
+      localStorage.setItem('pinky-flame-business-config', JSON.stringify(businessInfo));
+      console.log('✅ Saved to localStorage:', businessInfo);
+      
       const result = await saveConfig();
       
       if (result.success) {
@@ -61,11 +65,11 @@ export default function AdminConfigPage() {
           'Información guardada exitosamente en Firebase!'
         );
       } else {
-        setSaveMessage('Error al guardar la información');
+        setSaveMessage('Información guardada localmente (Firebase no disponible)');
       }
     } catch (error) {
       console.error('❌ Error saving business config:', error);
-      setSaveMessage('Error al guardar la información');
+      setSaveMessage('Información guardada localmente (Firebase no disponible)');
     } finally {
       setTimeout(() => setSaveMessage(''), 3000);
     }
