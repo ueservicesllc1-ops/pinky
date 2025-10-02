@@ -2,290 +2,244 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Truck, Clock, DollarSign, CheckCircle, Loader2 } from 'lucide-react';
-import { 
-  calculateShipping, 
-  validateAddress, 
-  getCheapestRate, 
-  getFastestRate,
-  ShippingAddress, 
-  ShippingCalculation,
-  ShippingRate 
-} from '@/lib/shipping-api';
-import AddressForm from './AddressForm';
-import { AddressData } from '@/hooks/useAddress';
+import { MapPin, Truck, Clock, DollarSign, CheckCircle, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { calculateShipping, validateAddress, ShippingAddress, ShippingRate } from '@/lib/shipping-api';
+import { SHIPPING_CONFIG } from '@/lib/shipping-config';
 
 interface ShippingCalculatorProps {
-  packageWeight?: number;
-  packageValue: number;
   onShippingSelect: (rate: ShippingRate) => void;
   selectedRate?: ShippingRate;
-  className?: string;
+  orderTotal: number;
 }
 
-export default function ShippingCalculator({
-  packageWeight = 1,
-  packageValue,
-  onShippingSelect,
-  selectedRate,
-  className = ''
+export default function ShippingCalculator({ 
+  onShippingSelect, 
+  selectedRate, 
+  orderTotal 
 }: ShippingCalculatorProps) {
-  const [shippingData, setShippingData] = useState<ShippingCalculation | null>(null);
+  const [address, setAddress] = useState<ShippingAddress>({
+    street: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: 'US'
+  });
+  
+  const [rates, setRates] = useState<ShippingRate[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [addressValid, setAddressValid] = useState<boolean | null>(null);
-  const [destination, setDestination] = useState<ShippingAddress | null>(null);
+  const [isAddressValid, setIsAddressValid] = useState(false);
 
-  const handleAddressChange = (addressData: AddressData) => {
-    const shippingAddress: ShippingAddress = {
-      street: addressData.street,
-      city: addressData.city,
-      state: addressData.state,
-      zipCode: addressData.zipCode,
-      country: addressData.countryCode
-    };
-    setDestination(shippingAddress);
-  };
+  // Verificar si califica para envío gratis
+  const freeShippingEligible = orderTotal >= SHIPPING_CONFIG.freeShipping.threshold;
+  const remainingForFreeShipping = SHIPPING_CONFIG.freeShipping.threshold - orderTotal;
 
+  // Validar dirección cuando cambie
   useEffect(() => {
-    if (destination && destination.street && destination.city && destination.state && destination.zipCode) {
-      calculateShippingRates();
-    }
-  }, [destination, packageWeight, packageValue]);
+    const validateCurrentAddress = async () => {
+      if (address.street && address.city && address.state && address.zipCode) {
+        try {
+          const validation = await validateAddress(address);
+          setIsAddressValid(validation.valid);
+          setError(validation.valid ? null : 'Dirección inválida');
+        } catch (err) {
+          setIsAddressValid(false);
+          setError('Error validando dirección');
+        }
+      } else {
+        setIsAddressValid(false);
+        setError(null);
+      }
+    };
 
-  const calculateShippingRates = async () => {
+    validateCurrentAddress();
+  }, [address]);
+
+  const handleCalculateShipping = async () => {
+    if (!isAddressValid) {
+      setError('Por favor, ingresa una dirección válida');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      // Validar dirección primero
-      if (!destination) {
-        setError('Por favor, ingresa una dirección de envío.');
-        setIsLoading(false);
-        return;
-      }
-      const validation = await validateAddress(destination);
-      setAddressValid(validation.valid);
-      
-      if (!validation.valid) {
-        setError('Dirección de envío no válida. Por favor, verifica los datos.');
-        setIsLoading(false);
-        return;
-      }
-      
-      // Calcular tarifas de envío
-      const rates = await calculateShipping(
-        destination, 
-        packageWeight, 
-        packageValue
-      );
-      
-      setShippingData(rates);
-      
-      // Auto-seleccionar la tarifa más económica si no hay selección
-      if (!selectedRate && rates.rates.length > 0) {
-        const cheapest = getCheapestRate(rates.rates);
-        if (cheapest) {
-          onShippingSelect(cheapest);
-        }
-      }
-      
+      const calculation = await calculateShipping(address, SHIPPING_CONFIG.package.defaultWeight, orderTotal);
+      setRates(calculation.rates);
     } catch (err) {
-      setError('Error al calcular las tarifas de envío. Inténtalo de nuevo.');
+      setError('Error calculando envío. Intenta nuevamente.');
       console.error('Shipping calculation error:', err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const formatPrice = (price: number) => {
-    return price === 0 ? 'Gratis' : `$${price.toFixed(2)}`;
+  const handleRateSelect = (rate: ShippingRate) => {
+    onShippingSelect(rate);
   };
-
-  const getRateIcon = (rate: ShippingRate) => {
-    if (rate.price === 0) return <CheckCircle className="h-4 w-4 text-green-600" />;
-    if (rate.estimatedDays <= 3) return <Clock className="h-4 w-4 text-blue-600" />;
-    return <Truck className="h-4 w-4 text-gray-600" />;
-  };
-
-  const getRateBadge = (rate: ShippingRate) => {
-    if (rate.price === 0) return 'bg-green-100 text-green-800';
-    if (rate.estimatedDays <= 2) return 'bg-blue-100 text-blue-800';
-    if (rate.estimatedDays <= 5) return 'bg-purple-100 text-purple-800';
-    return 'bg-gray-100 text-gray-800';
-  };
-
-  if (isLoading) {
-    return (
-      <div className={`bg-white rounded-xl border border-gray-200 p-6 ${className}`}>
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-6 w-6 text-purple-600 animate-spin mr-3" />
-          <span className="text-gray-600">Calculando opciones de envío...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={`bg-white rounded-xl border border-red-200 p-6 ${className}`}>
-        <div className="flex items-center text-red-600">
-          <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span className="font-medium">Error</span>
-        </div>
-        <p className="text-red-600 mt-2">{error}</p>
-        <button
-          onClick={calculateShippingRates}
-          className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm"
-        >
-          Reintentar
-        </button>
-      </div>
-    );
-  }
-
-  if (!shippingData || shippingData.rates.length === 0) {
-    return (
-      <div className={`bg-white rounded-xl border border-gray-200 p-6 ${className}`}>
-        <p className="text-gray-500 text-center py-4">
-          No se encontraron opciones de envío para esta dirección.
-        </p>
-      </div>
-    );
-  }
 
   return (
-    <div className={`space-y-6 ${className}`}>
-      {/* Formulario de Dirección */}
-      <AddressForm
-        title="Dirección de Destino"
-        onAddressChange={handleAddressChange}
-        showCountry={true}
-      />
-
-      {/* Calculadora de Envío */}
-      {destination && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl border border-gray-200 p-6"
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-              <Truck className="h-5 w-5 mr-2 text-purple-600" />
-              Opciones de Envío
-            </h3>
-            
-            {shippingData?.freeShippingEligible && (
-              <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                ¡Envío Gratis!
-              </span>
-            )}
-          </div>
-
-      {/* Free Shipping Notice */}
-      {shippingData.freeShippingEligible && (
-        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-          <div className="flex items-center">
-            <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
-            <span className="text-green-800 text-sm">
-              Tu pedido califica para envío gratis por ser superior a ${shippingData.freeShippingThreshold}
-            </span>
-          </div>
-        </div>
-      )}
-
-      {/* Shipping Options */}
-      <div className="space-y-3">
-        {shippingData.rates.map((rate, index) => (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Truck className="h-5 w-5 text-pink-600" />
+          Calculadora de Envío
+        </CardTitle>
+      </CardHeader>
+      
+      <CardContent className="space-y-4">
+        {/* Free Shipping Banner */}
+        {freeShippingEligible ? (
           <motion.div
-            key={`${rate.carrier}-${rate.service}`}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className={`
-              border rounded-lg p-4 cursor-pointer transition-all
-              ${selectedRate?.carrier === rate.carrier && selectedRate?.service === rate.service
-                ? 'border-purple-500 bg-purple-50'
-                : 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'
-              }
-            `}
-            onClick={() => onShippingSelect(rate)}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-green-50 border border-green-200 rounded-lg p-4"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
-                  {getRateIcon(rate)}
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <span className="font-medium text-gray-900">
-                        {rate.carrier} {rate.service}
-                      </span>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRateBadge(rate)}`}>
-                        {rate.estimatedDays} día{rate.estimatedDays !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {rate.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="text-right">
-                <div className="text-lg font-bold text-gray-900">
-                  {formatPrice(rate.price)}
-                </div>
-                {rate.price > 0 && (
-                  <div className="text-xs text-gray-500">
-                    {rate.estimatedDays} día{rate.estimatedDays !== 1 ? 's' : ''}
-                  </div>
-                )}
-              </div>
+            <div className="flex items-center gap-2 text-green-700">
+              <CheckCircle className="h-5 w-5" />
+              <span className="font-semibold">¡Envío Gratis!</span>
             </div>
+            <p className="text-sm text-green-600 mt-1">
+              Tu pedido califica para envío gratis
+            </p>
           </motion.div>
-        ))}
-      </div>
+        ) : (
+          <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
+            <div className="flex items-center gap-2 text-pink-700">
+              <DollarSign className="h-5 w-5" />
+              <span className="font-semibold">Envío Gratis</span>
+            </div>
+            <p className="text-sm text-pink-600 mt-1">
+              Agrega ${remainingForFreeShipping.toFixed(2)} más para envío gratis
+            </p>
+          </div>
+        )}
 
-      {/* Quick Stats */}
-      {shippingData.rates.length > 1 && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="flex justify-between text-sm text-gray-600">
-            <span>
-              Más económico: {formatPrice(getCheapestRate(shippingData.rates)?.price || 0)}
-            </span>
-            <span>
-              Más rápido: {getFastestRate(shippingData.rates)?.estimatedDays || 0} días
-            </span>
+        {/* Address Form */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <MapPin className="h-4 w-4" />
+            Dirección de Envío
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input
+              type="text"
+              placeholder="Calle y número"
+              value={address.street}
+              onChange={(e) => setAddress({...address, street: e.target.value})}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+            />
+            
+            <input
+              type="text"
+              placeholder="Ciudad"
+              value={address.city}
+              onChange={(e) => setAddress({...address, city: e.target.value})}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+            />
+            
+            <input
+              type="text"
+              placeholder="Estado"
+              value={address.state}
+              onChange={(e) => setAddress({...address, state: e.target.value})}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+            />
+            
+            <input
+              type="text"
+              placeholder="Código Postal"
+              value={address.zipCode}
+              onChange={(e) => setAddress({...address, zipCode: e.target.value})}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+            />
           </div>
         </div>
-      )}
 
-      {/* Address Validation Status */}
-      {addressValid !== null && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="flex items-center text-xs">
-            {addressValid ? (
-              <>
-                <CheckCircle className="h-4 w-4 text-green-600 mr-1" />
-                <span className="text-green-600">Dirección validada</span>
-              </>
-            ) : (
-              <>
-                <svg className="h-4 w-4 text-red-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="text-red-600">Dirección no válida</span>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-        </motion.div>
-      )}
-    </div>
+        {/* Calculate Button */}
+        <Button
+          onClick={handleCalculateShipping}
+          disabled={!isAddressValid || isLoading}
+          className="w-full bg-pink-600 hover:bg-pink-700"
+        >
+          {isLoading ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              Calculando...
+            </>
+          ) : (
+            <>
+              <Truck className="h-4 w-4 mr-2" />
+              Calcular Envío
+            </>
+          )}
+        </Button>
+
+        {/* Error Message */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2 text-red-600 bg-red-50 border border-red-200 rounded-lg p-3"
+          >
+            <AlertCircle className="h-4 w-4" />
+            <span className="text-sm">{error}</span>
+          </motion.div>
+        )}
+
+        {/* Shipping Rates */}
+        {rates.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-3"
+          >
+            <h4 className="font-semibold text-gray-900">Opciones de Envío:</h4>
+            {rates.map((rate, index) => (
+              <motion.div
+                key={`${rate.carrierId}-${rate.serviceId}`}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                  selectedRate?.carrierId === rate.carrierId && selectedRate?.serviceId === rate.serviceId
+                    ? 'border-pink-500 bg-pink-50'
+                    : 'border-gray-200 hover:border-pink-300'
+                }`}
+                onClick={() => handleRateSelect(rate)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-gray-900">{rate.carrier}</span>
+                      <span className="text-sm text-gray-600">- {rate.service}</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1">{rate.description}</p>
+                    <div className="flex items-center gap-4 mt-2">
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <Clock className="h-3 w-3" />
+                        {rate.estimatedDays} días
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-gray-900">
+                      ${rate.price.toFixed(2)}
+                    </div>
+                    {rate.price === 0 && (
+                      <div className="text-xs text-green-600 font-medium">GRATIS</div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

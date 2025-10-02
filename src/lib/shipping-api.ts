@@ -1,4 +1,5 @@
 // Servicio para calcular costos de envío usando Karrio API
+import { SHIPPING_CONFIG } from './shipping-config';
 
 export interface ShippingAddress {
   street: string;
@@ -24,46 +25,32 @@ export interface ShippingCalculation {
   freeShippingThreshold: number;
 }
 
-// Configuración de Karrio API
-const KARRIO_CONFIG = {
-  baseUrl: process.env.NEXT_PUBLIC_KARRIO_URL || 'http://localhost:5002',
-  apiKey: process.env.KARRIO_API_KEY || 'your-api-key-here',
-  freeShippingThreshold: 50, // USD
-  businessAddress: {
-    street: "123 Main Street",
-    city: "Newark",
-    state: "New Jersey",
-    zipCode: "07102",
-    country: "US"
-  }
-};
-
 /**
  * Calcula el costo de envío usando Karrio API
  */
 export async function calculateShipping(
   destination: ShippingAddress,
-  packageWeight: number = 1, // lbs
+  packageWeight: number = SHIPPING_CONFIG.package.defaultWeight,
   packageValue: number = 0
 ): Promise<ShippingCalculation> {
   try {
     // Verificar si califica para envío gratis
-    const freeShippingEligible = packageValue >= KARRIO_CONFIG.freeShippingThreshold;
+    const freeShippingEligible = packageValue >= SHIPPING_CONFIG.freeShipping.threshold;
 
     // Si califica para envío gratis, retornar directamente
     if (freeShippingEligible) {
       return {
         rates: [{
-          carrier: "Envío Gratis",
-          service: "Standard",
+          carrier: "Pinky Flame",
+          service: "Envío Gratis",
           price: 0,
           estimatedDays: 5,
-          description: `Envío gratis por compra superior a $${KARRIO_CONFIG.freeShippingThreshold}`,
-          carrierId: "free",
-          serviceId: "standard"
+          description: `Envío gratis por compra superior a $${SHIPPING_CONFIG.freeShipping.threshold}`,
+          carrierId: "pinky-flame",
+          serviceId: "free"
         }],
         freeShippingEligible: true,
-        freeShippingThreshold: KARRIO_CONFIG.freeShippingThreshold
+        freeShippingThreshold: SHIPPING_CONFIG.freeShipping.threshold
       };
     }
 
@@ -73,7 +60,7 @@ export async function calculateShipping(
     return {
       rates: karrioRates,
       freeShippingEligible: false,
-      freeShippingThreshold: KARRIO_CONFIG.freeShippingThreshold
+      freeShippingThreshold: SHIPPING_CONFIG.freeShipping.threshold
     };
 
   } catch (error) {
@@ -82,16 +69,16 @@ export async function calculateShipping(
     // Retornar tarifa por defecto en caso de error
     return {
       rates: [{
-        carrier: "Tarifa Estándar",
-        service: "Ground",
+        carrier: "Pinky Flame",
+        service: "Envío Estándar",
         price: 7.99,
         estimatedDays: 7,
         description: "Envío estándar (error en cálculo)",
-        carrierId: "default",
-        serviceId: "ground"
+        carrierId: "pinky-flame",
+        serviceId: "standard"
       }],
       freeShippingEligible: false,
-      freeShippingThreshold: KARRIO_CONFIG.freeShippingThreshold
+      freeShippingThreshold: SHIPPING_CONFIG.freeShipping.threshold
     };
   }
 }
@@ -104,20 +91,20 @@ async function getKarrioShippingRates(
   weight: number
 ): Promise<ShippingRate[]> {
   try {
-    const response = await fetch(`${KARRIO_CONFIG.baseUrl}/api/v1/rates`, {
+    const response = await fetch(`${SHIPPING_CONFIG.karrio.baseUrl}/api/v1/rates`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${KARRIO_CONFIG.apiKey}`,
+        'Authorization': `Bearer ${SHIPPING_CONFIG.karrio.apiKey}`,
       },
       body: JSON.stringify({
         shipper: {
-          street_number: KARRIO_CONFIG.businessAddress.street.split(' ')[0],
-          street_name: KARRIO_CONFIG.businessAddress.street.split(' ').slice(1).join(' '),
-          city: KARRIO_CONFIG.businessAddress.city,
-          state_code: KARRIO_CONFIG.businessAddress.state,
-          postal_code: KARRIO_CONFIG.businessAddress.zipCode,
-          country_code: KARRIO_CONFIG.businessAddress.country,
+          street_number: SHIPPING_CONFIG.businessAddress.street.split(' ')[0],
+          street_name: SHIPPING_CONFIG.businessAddress.street.split(' ').slice(1).join(' '),
+          city: SHIPPING_CONFIG.businessAddress.city,
+          state_code: SHIPPING_CONFIG.businessAddress.state,
+          postal_code: SHIPPING_CONFIG.businessAddress.zipCode,
+          country_code: SHIPPING_CONFIG.businessAddress.country,
         },
         recipient: {
           street_number: destination.street.split(' ')[0],
@@ -131,11 +118,13 @@ async function getKarrioShippingRates(
           weight: weight,
           weight_unit: "LB",
           dimension_unit: "IN",
-          length: 6,
-          width: 4,
-          height: 4,
+          length: SHIPPING_CONFIG.package.dimensions.length,
+          width: SHIPPING_CONFIG.package.dimensions.width,
+          height: SHIPPING_CONFIG.package.dimensions.height,
         }],
         services: [], // Obtener todos los servicios disponibles
+        // Incluir credenciales de carriers configurados
+        carriers: SHIPPING_CONFIG.carriers,
       }),
     });
 

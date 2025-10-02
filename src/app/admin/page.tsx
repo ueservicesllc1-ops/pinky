@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Settings, Upload, BarChart3, Users, Package, Zap, Sparkles, MessageCircle } from 'lucide-react';
+import { Settings, Upload, BarChart3, Users, Package, Zap, Sparkles, MessageCircle, Truck } from 'lucide-react';
 
 export default function AdminDashboard() {
   const adminMenuItems = [
@@ -94,6 +94,14 @@ export default function AdminDashboard() {
       icon: MessageCircle,
       color: 'bg-teal-500',
       hoverColor: 'hover:bg-teal-600'
+    },
+    {
+      title: 'Configuración de Envíos',
+      description: 'Configurar credenciales de UPS, USPS, FedEx y DHL',
+      href: '/admin/envios',
+      icon: Truck,
+      color: 'bg-blue-500',
+      hoverColor: 'hover:bg-blue-600'
     },
     {
       title: 'Estadísticas',

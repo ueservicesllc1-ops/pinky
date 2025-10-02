@@ -6,10 +6,13 @@ import { ShoppingCart, Plus, Minus, Trash2, ArrowRight, ExternalLink } from 'luc
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
+import ShippingCalculator from '@/components/ShippingCalculator';
+import { ShippingRate } from '@/lib/shipping-api';
 import Link from 'next/link';
 
 export default function CarritoPage() {
   const [acceptPolicies, setAcceptPolicies] = useState(false);
+  const [selectedShipping, setSelectedShipping] = useState<ShippingRate | null>(null);
   const { items, total, itemCount, updateQuantity, removeItem, clearCart } = useCart();
 
   if (items.length === 0) {
@@ -61,7 +64,7 @@ export default function CarritoPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-2 space-y-6">
             {items.map((item, index) => (
               <motion.div
                 key={item.product.id}
@@ -172,6 +175,19 @@ export default function CarritoPage() {
                 <Trash2 className="h-4 w-4 mr-2" />
                 Vaciar Carrito
               </Button>
+            </motion.div>
+
+            {/* Shipping Calculator */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+            >
+              <ShippingCalculator
+                onShippingSelect={setSelectedShipping}
+                selectedRate={selectedShipping}
+                orderTotal={total}
+              />
             </motion.div>
           </div>
 
