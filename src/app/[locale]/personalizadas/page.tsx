@@ -1,5 +1,9 @@
-import CandleCustomizer from '@/components/CandleCustomizer';
+import VelaMockupProFinal from '@/components/VelaMockupProFinal';
 
 export default function PersonalizadasPage() {
-  return <CandleCustomizer />;
+  return (
+    <main>
+      <VelaMockupProFinal src="/velas/vela-cilindrica-rosa.jpg" />
+    </main>
+  );
 }

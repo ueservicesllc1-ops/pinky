@@ -16,6 +16,14 @@ export default function AdminDashboard() {
       hoverColor: 'hover:bg-purple-600'
     },
     {
+      title: 'Plantillas de Velas',
+      description: 'Gestionar plantillas base para el editor de personalización',
+      href: '/admin/plantillas-velas',
+      icon: Package,
+      color: 'bg-pink-500',
+      hoverColor: 'hover:bg-pink-600'
+    },
+    {
       title: 'Banners',
       description: 'Crear y gestionar banners del carrusel principal',
       href: '/admin/banners',

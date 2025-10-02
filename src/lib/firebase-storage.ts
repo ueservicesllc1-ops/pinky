@@ -8,7 +8,7 @@ export interface UploadResult {
 
 export async function uploadImage(
   file: File, 
-  folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup',
+  folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup' | 'candle-templates',
   fileName?: string
 ): Promise<UploadResult> {
   try {
@@ -38,7 +38,7 @@ export async function uploadImage(
 
 export async function uploadMultipleImages(
   files: File[], 
-  folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup'
+  folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup' | 'candle-templates'
 ): Promise<UploadResult[]> {
   try {
     const uploadPromises = files.map(file => uploadImage(file, folder));
@@ -74,7 +74,7 @@ export async function deleteImageByUrl(imageUrl: string): Promise<void> {
     const encodedFileName = encodeURIComponent(fileName);
     
     // Buscar en todas las carpetas posibles
-    const folders = ['banners', 'candles', 'promotions', 'offers', 'categories', 'hero-popup'];
+    const folders = ['banners', 'candles', 'promotions', 'offers', 'categories', 'hero-popup', 'candle-templates'];
     
     for (const folder of folders) {
       try {

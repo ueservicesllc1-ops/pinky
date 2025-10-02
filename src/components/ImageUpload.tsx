@@ -6,7 +6,7 @@ import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { uploadImage, deleteImageByUrl, UploadResult } from '@/lib/firebase-storage';
 
 interface ImageUploadProps {
-  folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup';
+  folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup' | 'candle-templates';
   onUpload: (result: UploadResult) => void;
   onDelete?: (url: string) => void;
   currentImage?: string;

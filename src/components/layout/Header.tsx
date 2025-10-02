@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -6,21 +6,33 @@ import { motion } from 'framer-motion';
 import { ShoppingCart, User, Menu, X, Heart, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useCart } from '@/contexts/CartContext';
-import LanguageSelector from '@/components/LanguageSelector';
-import { useTranslations } from 'next-intl';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { itemCount } = useCart();
-  const t = useTranslations('navigation');
+  const [itemCount, setItemCount] = useState(0);
+
+  // Load cart count from localStorage on mount
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedCart = localStorage.getItem('pinky-flame-cart');
+      if (savedCart) {
+        try {
+          const cartItems = JSON.parse(savedCart);
+          const count = cartItems.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0);
+          setItemCount(count);
+        } catch (error) {
+          console.error('Error loading cart count:', error);
+        }
+      }
+    }
+  }, []);
 
   const navItems = [
-    { href: '/', label: t('home') },
-    { href: '/catalogo', label: t('catalog') },
-    { href: '/personalizadas', label: t('custom') },
-    { href: '/ia-generator', label: t('aiGenerator') },
-    { href: '/nosotros', label: t('about') },
+    { href: '/', label: 'Inicio' },
+    { href: '/catalogo', label: 'Catálogo' },
+    { href: '/personalizadas', label: 'Personalizadas' },
+    { href: '/ia-generator', label: 'IA Generator' },
+    { href: '/nosotros', label: 'Nosotros' },
     { href: '/contacto', label: 'Contacto' },
     { href: '/admin', label: 'Admin' },
   ];
@@ -29,23 +41,17 @@ export default function Header() {
     <motion.header 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60"
+      transition={{ duration: 0.5 }}
+      className="bg-white shadow-lg sticky top-0 z-50"
     >
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="flex items-center space-x-2"
-            >
-              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
-                <Heart className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                Pinky Flame
-              </span>
-            </motion.div>
+            <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">P</span>
+            </div>
+            <span className="text-xl font-bold text-gray-900">Pinky Flame</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -54,29 +60,28 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-sm font-medium text-gray-700 hover:text-pink-600 transition-colors"
+                className="text-gray-700 hover:text-pink-600 transition-colors duration-200 font-medium"
               >
                 {item.label}
               </Link>
             ))}
           </nav>
 
-          {/* Search Bar */}
-          <div className="hidden lg:flex flex-1 max-w-sm mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center space-x-4">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
+                type="text"
                 placeholder="Buscar velas..."
-                className="pl-10"
+                className="pl-10 w-64"
               />
             </div>
-          </div>
 
-          {/* Actions */}
-          <div className="flex items-center space-x-4">
-            {/* Mobile Search */}
-            <Button variant="ghost" size="sm" className="lg:hidden">
-              <Search className="h-4 w-4" />
+            {/* Favorites */}
+            <Button variant="ghost" size="sm">
+              <Heart className="h-4 w-4" />
             </Button>
 
             {/* Cart */}
@@ -95,9 +100,6 @@ export default function Header() {
               </Button>
             </Link>
 
-            {/* Language Selector */}
-            <LanguageSelector />
-
             {/* User */}
             <Button variant="ghost" size="sm">
               <User className="h-4 w-4" />
@@ -110,40 +112,30 @@ export default function Header() {
               className="md:hidden"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Navigation */}
         {isMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t bg-white"
+            className="md:hidden border-t border-gray-200 py-4"
           >
-            <nav className="py-4 space-y-2">
+            <nav className="flex flex-col space-y-4">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="block px-4 py-2 text-sm font-medium text-gray-700 hover:text-pink-600 hover:bg-pink-50 transition-colors"
+                  className="text-gray-700 hover:text-pink-600 transition-colors duration-200 font-medium py-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
                 </Link>
               ))}
-              {/* Mobile Search */}
-              <div className="px-4 py-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                  <Input
-                    placeholder="Buscar velas..."
-                    className="pl-10"
-                  />
-                </div>
-              </div>
             </nav>
           </motion.div>
         )}

@@ -43,5 +43,9 @@ service cloud.firestore {
     match /hero-popup/{document} {
       allow write: if true; // Temporalmente permitir a todos
     }
+    
+    match /candle-templates/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
   }
 }

@@ -1,5 +1,6 @@
-import CandleCustomizer from '@/components/CandleCustomizer';
+import { redirect } from 'next/navigation';
 
 export default function PersonalizadasPage() {
-  return <CandleCustomizer />;
+  // Redirect to Spanish by default
+  redirect('/es/personalizadas');
 }

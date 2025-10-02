@@ -32,6 +32,10 @@ service firebase.storage {
       allow write: if true;
     }
     
+    match /candle-templates/{fileName} {
+      allow write: if true;
+    }
+    
     // Permitir eliminación en las mismas carpetas
     match /banners/{fileName} {
       allow delete: if true;
@@ -54,6 +58,10 @@ service firebase.storage {
     }
     
     match /hero-popup/{fileName} {
+      allow delete: if true;
+    }
+    
+    match /candle-templates/{fileName} {
       allow delete: if true;
     }
   }
