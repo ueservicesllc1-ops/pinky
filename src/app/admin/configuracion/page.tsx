@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Save, MapPin, Phone, Mail, Clock, Globe, Facebook, Instagram, Twitter, Cloud, Database } from 'lucide-react';
 import { useBusinessConfigFirebase } from '@/hooks/useBusinessConfigFirebase';
 import BusinessConfigDebug from '@/components/BusinessConfigDebug';
+import FirebaseTest from '@/components/FirebaseTest';
 
 interface BusinessInfo {
   businessName: string;
@@ -511,12 +512,22 @@ export default function AdminConfigPage() {
           </button>
         </motion.div>
 
-        {/* Debug Component */}
+        {/* Firebase Test Component */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
           className="mt-12"
+        >
+          <FirebaseTest />
+        </motion.div>
+
+        {/* Debug Component */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+          className="mt-8"
         >
           <BusinessConfigDebug />
         </motion.div>
