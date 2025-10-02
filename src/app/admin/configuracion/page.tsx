@@ -63,7 +63,7 @@ export default function AdminConfigPage() {
       setBusinessInfo(prev => ({
         ...prev,
         [parent]: {
-          ...(prev as Record<string, unknown>)[parent] as Record<string, unknown>,
+          ...((prev as unknown) as Record<string, unknown>)[parent] as Record<string, unknown>,
           [child]: value
         }
       }));

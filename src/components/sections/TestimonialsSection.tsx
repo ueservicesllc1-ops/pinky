@@ -4,59 +4,59 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-
-const testimonials = [
-  {
-    id: 1,
-    name: 'María González',
-    location: 'Madrid, España',
-    rating: 5,
-    text: 'Las velas de Pinky Flame son absolutamente increíbles. La fragancia dura horas y la calidad es excepcional. ¡Mi favorita es la de lavanda!',
-    avatar: 'MG'
-  },
-  {
-    id: 2,
-    name: 'Carlos Rodríguez',
-    location: 'Barcelona, España',
-    rating: 5,
-    text: 'Pedí una vela personalizada para el cumpleaños de mi esposa y quedó perfecta. El servicio al cliente es excelente y el producto superó mis expectativas.',
-    avatar: 'CR'
-  },
-  {
-    id: 3,
-    name: 'Ana Martín',
-    location: 'Valencia, España',
-    rating: 5,
-    text: 'Me encanta que sean 100% naturales. Como tengo alergias, es difícil encontrar velas que no me afecten. Pinky Flame es la solución perfecta.',
-    avatar: 'AM'
-  },
-  {
-    id: 4,
-    name: 'David López',
-    location: 'Sevilla, España',
-    rating: 5,
-    text: 'El proceso de personalización fue muy fácil y el resultado final fue espectacular. Definitivamente volveré a pedir más velas.',
-    avatar: 'DL'
-  },
-  {
-    id: 5,
-    name: 'Laura Sánchez',
-    location: 'Bilbao, España',
-    rating: 5,
-    text: 'La vela de vainilla que pedí huele exactamente como esperaba. La duración es increíble y el embalaje es precioso. ¡Altamente recomendado!',
-    avatar: 'LS'
-  },
-  {
-    id: 6,
-    name: 'Miguel Torres',
-    location: 'Málaga, España',
-    rating: 5,
-    text: 'Excelente calidad y servicio. Las velas llegaron perfectamente empaquetadas y la fragancia es deliciosa. Sin duda volveré a comprar.',
-    avatar: 'MT'
-  }
-];
+import { useTestimonials } from '@/hooks/useTestimonials';
 
 export default function TestimonialsSection() {
+  const { testimonials, isLoading } = useTestimonials();
+  
+  // Filtrar solo testimonios activos
+  const activeTestimonials = testimonials.filter(testimonial => testimonial.isActive);
+
+  // Si está cargando, mostrar skeleton o loading
+  if (isLoading) {
+    return (
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Lo que dicen nuestros clientes
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Cargando testimonios...
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="animate-pulse">
+                <Card className="h-full">
+                  <CardContent className="p-6">
+                    <div className="h-8 w-8 bg-gray-300 rounded mb-4"></div>
+                    <div className="flex gap-1 mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className="h-4 w-4 bg-gray-300 rounded"></div>
+                      ))}
+                    </div>
+                    <div className="space-y-2 mb-6">
+                      <div className="h-4 bg-gray-300 rounded"></div>
+                      <div className="h-4 bg-gray-300 rounded"></div>
+                      <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                      <div>
+                        <div className="h-4 bg-gray-300 rounded w-24 mb-1"></div>
+                        <div className="h-3 bg-gray-300 rounded w-20"></div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -76,7 +76,7 @@ export default function TestimonialsSection() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
+          {activeTestimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.id}
               initial={{ opacity: 0, y: 20 }}
@@ -120,6 +120,23 @@ export default function TestimonialsSection() {
             </motion.div>
           ))}
         </div>
+
+        {/* Mensaje cuando no hay testimonios */}
+        {activeTestimonials.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-12"
+          >
+            <Quote className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Próximamente testimonios
+            </h3>
+            <p className="text-gray-600">
+              Estamos recopilando las experiencias de nuestros clientes
+            </p>
+          </motion.div>
+        )}
 
         {/* Stats */}
         <motion.div
