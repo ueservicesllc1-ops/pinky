@@ -185,7 +185,7 @@ export default function CarritoPage() {
             >
               <ShippingCalculator
                 onShippingSelect={setSelectedShipping}
-                selectedRate={selectedShipping}
+                selectedRate={selectedShipping || undefined}
                 orderTotal={total}
               />
             </motion.div>
