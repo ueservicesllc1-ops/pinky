@@ -4,21 +4,25 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Heart, Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { useBusinessConfig } from '@/hooks/useBusinessConfig';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { businessInfo, isLoading } = useBusinessConfig();
 
-  // Datos de configuración (en producción vendrían de Firebase)
-  const businessInfo = {
-    email: 'info@pinkyflame.com',
-    phone: '+1 (555) 123-4567',
-    address: '123 Main Street, Newark, NJ 07102',
-    socialMedia: {
-      instagram: 'https://instagram.com/pinkyflame',
-      facebook: 'https://facebook.com/pinkyflame',
-      twitter: 'https://twitter.com/pinkyflame'
-    }
-  };
+  // Mostrar loading si aún está cargando
+  if (isLoading) {
+    return (
+      <footer className="bg-gray-900 text-white">
+        <div className="container mx-auto px-4 py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600 mx-auto mb-4"></div>
+            <p className="text-gray-400">Cargando...</p>
+          </div>
+        </div>
+      </footer>
+    );
+  }
 
   const footerSections = [
     {
@@ -70,22 +74,22 @@ export default function Footer() {
               />
             </Link>
             <p className="text-gray-400 mb-4 max-w-sm -mt-16">
-              Velas artesanales personalizadas que iluminan y aromatizan tus momentos especiales.
+              {businessInfo.businessDescription}
             </p>
             
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-gray-400">
                 <Mail className="h-4 w-4" />
-                <span className="text-sm">hola@pinkyflame.com</span>
+                <span className="text-sm">{businessInfo.email}</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-400">
                 <Phone className="h-4 w-4" />
-                <span className="text-sm">+1 (555) 123-4567</span>
+                <span className="text-sm">{businessInfo.phone}</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-400">
                 <MapPin className="h-4 w-4" />
-                <span className="text-sm">Ciudad, País</span>
+                <span className="text-sm">{businessInfo.address}, {businessInfo.city}, {businessInfo.state} {businessInfo.zipCode}</span>
               </div>
             </div>
           </div>
@@ -146,7 +150,7 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <div className="flex flex-col md:flex-row items-center gap-2">
             <p className="text-gray-400 text-sm">
-              © {currentYear} Pinky Flame. Todos los derechos reservados.
+              © {currentYear} {businessInfo.businessName}. Todos los derechos reservados.
             </p>
             <p className="text-gray-500 text-xs">
               Potenciada por Freedom Labs

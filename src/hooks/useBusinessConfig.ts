@@ -1,162 +1,106 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { useState, useEffect } from 'react';
 
-export interface BusinessInfo {
-  id: string;
-  name: string;
+interface BusinessInfo {
+  businessName: string;
+  businessDescription: string;
   email: string;
   phone: string;
+  whatsapp: string;
   address: string;
   city: string;
   state: string;
   zipCode: string;
   country: string;
-  description: string;
+  businessHours: string;
+  website: string;
   socialMedia: {
-    facebook?: string;
-    instagram?: string;
-    twitter?: string;
-    tiktok?: string;
-    whatsapp?: string;
+    facebook: string;
+    instagram: string;
+    twitter: string;
   };
   shippingInfo: {
     freeShippingThreshold: number;
     estimatedDelivery: string;
   };
-  updatedAt: Date;
 }
 
 const defaultBusinessInfo: BusinessInfo = {
-  id: 'business-config',
-  name: 'Pinky Flame',
+  businessName: 'Pinky Flame',
+  businessDescription: 'Velas artesanales personalizadas que iluminan y aromatizan tus momentos especiales.',
   email: 'info@pinkyflame.com',
   phone: '+1 (555) 123-4567',
+  whatsapp: '+1 (555) 123-4567',
   address: '123 Main Street',
-  city: 'New York',
-  state: 'NY',
-  zipCode: '10001',
+  city: 'Newark',
+  state: 'New Jersey',
+  zipCode: '07102',
   country: 'Estados Unidos',
-  description: 'Somos una empresa creada en New Jersey, dedicada a hacer velas aromáticas decorativas y personalizadas para cada cliente, cada momento, cada ocasión.',
+  businessHours: 'Lunes a Viernes: 9:00 AM - 6:00 PM, Sábados: 10:00 AM - 4:00 PM',
+  website: 'https://pinkyflame.com',
   socialMedia: {
-    facebook: '',
-    instagram: '',
-    twitter: '',
-    tiktok: '',
-    whatsapp: ''
+    facebook: 'https://facebook.com/pinkyflame',
+    instagram: 'https://instagram.com/pinkyflame',
+    twitter: 'https://twitter.com/pinkyflame'
   },
   shippingInfo: {
     freeShippingThreshold: 50,
     estimatedDelivery: '5-7 días hábiles'
-  },
-  updatedAt: new Date()
+  }
 };
 
 export function useBusinessConfig() {
   const [businessInfo, setBusinessInfo] = useState<BusinessInfo>(defaultBusinessInfo);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Cargar configuración desde Firestore
-  const loadConfig = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const configRef = doc(db, 'business_config', 'main');
-      const configSnap = await getDoc(configRef);
-      
-      if (configSnap.exists()) {
-        const data = configSnap.data();
-        setBusinessInfo({
-          ...data,
-          updatedAt: data.updatedAt?.toDate() || new Date()
-        } as BusinessInfo);
-      } else {
-        // Si no existe, crear con configuración por defecto
-        await setDoc(configRef, {
-          ...defaultBusinessInfo,
-          updatedAt: new Date()
-        });
-        setBusinessInfo(defaultBusinessInfo);
+  useEffect(() => {
+    // Cargar configuración guardada
+    const savedConfig = localStorage.getItem('pinky-flame-business-config');
+    if (savedConfig) {
+      try {
+        const parsedConfig = JSON.parse(savedConfig);
+        setBusinessInfo(parsedConfig);
+        console.log('✅ Loaded business config in hook:', parsedConfig);
+      } catch (error) {
+        console.error('❌ Error loading business config in hook:', error);
       }
-    } catch (err) {
-      console.error('Error loading business config:', err);
-      setError('Error al cargar la configuración');
-      setBusinessInfo(defaultBusinessInfo);
-    } finally {
-      setIsLoading(false);
     }
+    setIsLoading(false);
   }, []);
 
-  // Guardar configuración en Firestore
-  const saveConfig = useCallback(async (newConfig: Partial<BusinessInfo>) => {
-    try {
-      setError(null);
-      
-      const configToSave = {
-        ...businessInfo,
-        ...newConfig,
-        updatedAt: new Date()
-      };
-      
-      const configRef = doc(db, 'business_config', 'main');
-      await setDoc(configRef, {
-        ...configToSave,
-        updatedAt: configToSave.updatedAt
-      });
-      
-      setBusinessInfo(configToSave);
-      return true;
-    } catch (err) {
-      console.error('Error saving business config:', err);
-      setError('Error al guardar la configuración');
-      return false;
+  const updateField = (field: string, value: string | number) => {
+    if (field.includes('.')) {
+      const [parent, child] = field.split('.');
+      setBusinessInfo(prev => ({
+        ...prev,
+        [parent]: {
+          ...((prev as unknown) as Record<string, unknown>)[parent] as Record<string, unknown>,
+          [child]: value
+        }
+      }));
+    } else {
+      setBusinessInfo(prev => ({
+        ...prev,
+        [field]: value
+      }));
     }
-  }, [businessInfo]);
+  };
 
-  // Actualizar campo específico
-  const updateField = useCallback((field: keyof BusinessInfo, value: string | number | boolean | Date | Record<string, unknown>) => {
+  const updateNestedField = (parent: string, child: string, value: string | number) => {
     setBusinessInfo(prev => ({
       ...prev,
-      [field]: value,
-      updatedAt: new Date()
-    }));
-  }, []);
-
-  // Actualizar campo anidado (como socialMedia)
-  const updateNestedField = useCallback((path: string, value: string | number | boolean) => {
-    setBusinessInfo(prev => {
-      const keys = path.split('.');
-      const newInfo = { ...prev };
-      let current: Record<string, unknown> = newInfo as Record<string, unknown>;
-      
-      for (let i = 0; i < keys.length - 1; i++) {
-        current = current[keys[i]] as Record<string, unknown>;
+      [parent]: {
+        ...((prev as unknown) as Record<string, unknown>)[parent] as Record<string, unknown>,
+        [child]: value
       }
-      current[keys[keys.length - 1]] = value;
-      
-      return {
-        ...newInfo,
-        updatedAt: new Date()
-      };
-    });
-  }, []);
-
-  // Cargar configuración al montar el componente
-  useEffect(() => {
-    loadConfig();
-  }, [loadConfig]);
+    }));
+  };
 
   return {
     businessInfo,
     isLoading,
-    error,
-    saveConfig,
     updateField,
-    updateNestedField,
-    reloadConfig: loadConfig
+    updateNestedField
   };
 }
