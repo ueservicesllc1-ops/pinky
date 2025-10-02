@@ -47,5 +47,9 @@ service cloud.firestore {
     match /candle-templates/{document} {
       allow write: if true; // Temporalmente permitir a todos
     }
+    
+    match /testimonials/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
   }
 }
