@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Upload, Plus, Trash2, Edit, Eye, EyeOff, ZoomIn, ZoomOut } from 'lucide-react';
+import { Upload, Trash2, Edit, Eye, EyeOff, ZoomIn, ZoomOut } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 import { UploadResult } from '@/lib/firebase-storage';
 import { useBanners, Banner } from '@/hooks/useBanners';
@@ -196,8 +196,8 @@ export default function AdminBannersPage() {
       imageUrl: banner.imageUrl,
       isActive: banner.isActive,
       order: banner.order,
-      imageZoom: (banner as any).imageZoom || 1,
-      imagePosition: (banner as any).imagePosition || { x: 0, y: 0 },
+      imageZoom: (banner as Banner & { imageZoom?: number }).imageZoom || 1,
+      imagePosition: (banner as Banner & { imagePosition?: { x: number; y: number } }).imagePosition || { x: 0, y: 0 },
       showMemberDiscount: banner.showMemberDiscount || false,
       discountText: banner.discountText || 'Solo para miembros registrados el 30% de descuentos'
     };
@@ -737,7 +737,7 @@ export default function AdminBannersPage() {
                 No hay banners creados aún
               </p>
               <p className="text-gray-400 text-sm mt-2">
-                Haz clic en "Nuevo Banner" para agregar tu primer banner
+                Haz clic en &quot;Nuevo Banner&quot; para agregar tu primer banner
               </p>
             </div>
           ) : (

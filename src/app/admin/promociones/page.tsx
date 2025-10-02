@@ -383,7 +383,7 @@ export default function AdminPromotionsPage() {
                 No hay promociones creadas aún
               </p>
               <p className="text-gray-400 text-sm mt-2">
-                Haz clic en "Nueva Promoción" para crear tu primera promoción
+                Haz clic en &quot;Nueva Promoción&quot; para crear tu primera promoción
               </p>
             </div>
           ) : (

@@ -466,7 +466,7 @@ export default function AdminOffersPage() {
                 No hay ofertas creadas aún
               </p>
               <p className="text-gray-400 text-sm mt-2">
-                Haz clic en "Nueva Oferta" para crear tu primera oferta especial
+                Haz clic en &quot;Nueva Oferta&quot; para crear tu primera oferta especial
               </p>
             </div>
           ) : (

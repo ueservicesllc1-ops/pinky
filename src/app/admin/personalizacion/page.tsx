@@ -19,7 +19,7 @@ export default function PersonalizacionAdminPage() {
     setFormData(config);
   }, [config]);
 
-  const handleInputChange = (field: keyof CustomizationConfig, value: any) => {
+  const handleInputChange = (field: keyof CustomizationConfig, value: string | number | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -103,7 +103,7 @@ export default function PersonalizacionAdminPage() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Configuración de Personalización</h1>
-              <p className="text-gray-600 mt-2">Edita la sección "Crea la vela perfecta"</p>
+              <p className="text-gray-600 mt-2">Edita la sección &quot;Crea la vela perfecta&quot;</p>
             </div>
             
             <Button

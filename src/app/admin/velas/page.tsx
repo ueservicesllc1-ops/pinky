@@ -358,7 +358,7 @@ export default function AdminCandlesPage() {
                     </label>
                     <select
                       value={formData.type}
-                      onChange={(e) => setFormData({...formData, type: e.target.value as any})}
+                      onChange={(e) => setFormData({...formData, type: e.target.value as 'cilindrica' | 'conica' | 'frasco' | 'columna'})}
                       className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
                       required
                     >
