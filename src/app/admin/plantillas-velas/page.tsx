@@ -111,8 +111,9 @@ export default function AdminPlantillasVelasPage() {
       alert('Plantilla agregada exitosamente');
     } catch (error) {
       console.error('Error saving template:', error);
-      console.error('Error details:', error.message);
-      alert(`Error al guardar la plantilla: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      console.error('Error details:', errorMessage);
+      alert(`Error al guardar la plantilla: ${errorMessage}`);
     } finally {
       setIsUploading(false);
     }
