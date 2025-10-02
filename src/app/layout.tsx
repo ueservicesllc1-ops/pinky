@@ -12,11 +12,24 @@ export const metadata: Metadata = {
   description: "Velas artesanales personalizadas que iluminan y aromatizan tus momentos especiales. Descubre nuestra colección única de velas de alta calidad.",
   keywords: "velas, personalizadas, artesanales, aromáticas, decoración, hogar",
   authors: [{ name: "Pinky Flame" }],
+  icons: {
+    icon: '/images/icono.png',
+    shortcut: '/images/icono.png',
+    apple: '/images/icono.png',
+  },
   openGraph: {
     title: "Pinky Flame - Velas Personalizadas",
     description: "Velas artesanales personalizadas que iluminan y aromatizan tus momentos especiales.",
     type: "website",
     locale: "es_ES",
+    images: [
+      {
+        url: '/images/logo2.png',
+        width: 1200,
+        height: 630,
+        alt: 'Pinky Flame - Velas Personalizadas',
+      },
+    ],
   },
 };
 

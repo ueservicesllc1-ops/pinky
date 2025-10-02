@@ -379,61 +379,63 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
             </div>
 
 
-            {/* Elementos Decorativos */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Elementos Decorativos
-                </label>
-                {decorativeElements.length > 0 && (
-                  <button
-                    onClick={clearDecorativeElements}
-                    className="text-xs text-red-600 hover:text-red-800"
-                  >
-                    Limpiar todo
-                  </button>
-                )}
-              </div>
-
-              {/* Categorías */}
-              <div className="flex flex-wrap gap-1 mb-3">
-                {decorativeCategories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-2 py-1 text-xs rounded-full transition-colors ${
-                      selectedCategory === category
-                        ? 'bg-pink-500 text-white'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-
-              {/* Librería de elementos */}
-              <div className="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto">
-                {decorativeLibrary
-                  .filter(item => selectedCategory === "Todos" || item.category === selectedCategory)
-                  .map((item) => (
+            {/* Elementos Decorativos - TEMPORALMENTE OCULTO */}
+            {false && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Elementos Decorativos
+                  </label>
+                  {decorativeElements.length > 0 && (
                     <button
-                      key={item.type}
-                      onClick={() => addDecorativeElement(item.type)}
-                      className="p-2 border border-gray-200 rounded-lg hover:border-pink-300 hover:bg-pink-50 transition-colors group"
-                      title={item.name}
+                      onClick={clearDecorativeElements}
+                      className="text-xs text-red-600 hover:text-red-800"
                     >
-                      <item.icon className="h-6 w-6 mx-auto text-gray-600 group-hover:text-pink-600" />
-                      <p className="text-xs text-gray-500 mt-1">{item.name}</p>
+                      Limpiar todo
+                    </button>
+                  )}
+                </div>
+
+                {/* Categorías */}
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {decorativeCategories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`px-2 py-1 text-xs rounded-full transition-colors ${
+                        selectedCategory === category
+                          ? 'bg-pink-500 text-white'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      {category}
                     </button>
                   ))}
+                </div>
+
+                {/* Librería de elementos */}
+                <div className="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto">
+                  {decorativeLibrary
+                    .filter(item => selectedCategory === "Todos" || item.category === selectedCategory)
+                    .map((item) => (
+                      <button
+                        key={item.type}
+                        onClick={() => addDecorativeElement(item.type)}
+                        className="p-2 border border-gray-200 rounded-lg hover:border-pink-300 hover:bg-pink-50 transition-colors group"
+                        title={item.name}
+                      >
+                        <item.icon className="h-6 w-6 mx-auto text-gray-600 group-hover:text-pink-600" />
+                        <p className="text-xs text-gray-500 mt-1">{item.name}</p>
+                      </button>
+                    ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Instrucciones */}
             <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
               <p className="text-sm text-blue-700">
-                💡 <strong>Tips:</strong> Arrastra el texto y elementos para posicionarlos. Doble click en elementos para eliminarlos.
+                💡 <strong>Tip:</strong> Puedes arrastrar el texto directamente en la vista previa para posicionarlo donde quieras.
               </p>
             </div>
 
