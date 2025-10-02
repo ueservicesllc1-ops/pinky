@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import { CartProvider } from "@/contexts/CartContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,12 +23,8 @@ export default function LocaleLayout({
   children: React.ReactNode;
 }) {
   return (
-    <CartProvider>
-      <Header />
-      <main>
-        {children}
-      </main>
-      <Footer />
-    </CartProvider>
+    <>
+      {children}
+    </>
   );
 }
