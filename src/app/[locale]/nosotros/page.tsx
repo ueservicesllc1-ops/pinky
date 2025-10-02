@@ -39,7 +39,7 @@ export default function NosotrosPage() {
     {
       name: 'Georgina',
       role: 'Mamá & Co-Fundadora',
-      description: 'El corazón y alma de Pinky Flame, brinda apoyo incondicional y sabiduría en cada paso del emprendimiento.',
+      description: 'El corazón y alma de Pinky Flames, brinda apoyo incondicional y sabiduría en cada paso del emprendimiento.',
       isFamily: true
     },
     {
@@ -51,7 +51,7 @@ export default function NosotrosPage() {
     {
       name: 'Juan Pablo',
       role: 'Hermano & Apoyo Técnico',
-      description: 'El hermano mayor que aporta su energía y creatividad para hacer de Pinky Flame una realidad.',
+      description: 'El hermano mayor que aporta su energía y creatividad para hacer de Pinky Flames una realidad.',
       isFamily: true
     },
     {
@@ -63,7 +63,7 @@ export default function NosotrosPage() {
     {
       name: 'Annabell',
       role: 'Abuelita & Guía Espiritual',
-      description: 'La matriarca de la familia que aporta la sabiduría tradicional y el amor infinito que caracteriza a Pinky Flame.',
+      description: 'La matriarca de la familia que aporta la sabiduría tradicional y el amor infinito que caracteriza a Pinky Flames.',
       isFamily: true
     }
   ];
@@ -156,7 +156,7 @@ export default function NosotrosPage() {
                 &ldquo;Cada llama cuenta una historia, cada fragancia evoca un recuerdo&rdquo;
               </h3>
               <p className="text-gray-600 italic">
-                - Pinky Flame
+                - Pinky Flames
               </p>
             </div>
           </motion.div>
@@ -233,7 +233,7 @@ export default function NosotrosPage() {
                 Todo comenzó con el sueño de <strong>Lugina Annabella</strong>, una joven emprendedora de 17 años 
                 que decidió transformar su pasión por las velas en algo más grande. Con el apoyo incondicional 
                 de su familia, <strong>Georgina</strong> (mamá), <strong>Luis</strong> (papá), <strong>Juan Pablo</strong> (hermano), 
-                <strong>Ginita</strong> (hermanita) y <strong>Annabell</strong> (abuelita), nació Pinky Flame.
+                <strong>Ginita</strong> (hermanita) y <strong>Annabell</strong> (abuelita), nació Pinky Flames.
               </p>
               
               <p className="text-lg text-gray-700 leading-relaxed">
@@ -257,7 +257,7 @@ export default function NosotrosPage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Nuestra Familia Pinky Flame
+              Nuestra Familia Pinky Flames
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Conoce a cada miembro de esta hermosa familia emprendedora
@@ -320,7 +320,7 @@ export default function NosotrosPage() {
               Únete a Nuestra Historia
             </h2>
             <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-              Sé parte de la familia Pinky Flame y descubre cómo nuestras velas 
+              Sé parte de la familia Pinky Flames y descubre cómo nuestras velas 
               pueden iluminar y aromatizar los momentos más especiales de tu vida.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
