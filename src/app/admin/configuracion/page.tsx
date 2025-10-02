@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Save, MapPin, Phone, Mail, Clock, Globe, Facebook, Instagram, Twitter } from 'lucide-react';
+import { Save, MapPin, Phone, Mail, Clock, Globe, Facebook, Instagram, Twitter, Cloud, Database } from 'lucide-react';
+import { useBusinessConfigFirebase } from '@/hooks/useBusinessConfigFirebase';
 
 interface BusinessInfo {
   businessName: string;
@@ -30,85 +31,40 @@ interface BusinessInfo {
 }
 
 export default function AdminConfigPage() {
-  const [businessInfo, setBusinessInfo] = useState<BusinessInfo>({
-    businessName: 'Pinky Flame',
-    businessDescription: 'Somos una empresa creada en New Jersey, dedicada a hacer velas aromáticas, decorativas y personalizadas para cada cliente, cada momento y cada ocasión especial.',
-    email: 'info@pinkyflame.com',
-    phone: '+1 (555) 123-4567',
-    whatsapp: '+1 (555) 123-4567',
-    address: '123 Main Street',
-    city: 'Newark',
-    state: 'New Jersey',
-    zipCode: '07102',
-    country: 'Estados Unidos',
-    businessHours: 'Lunes a Viernes: 9:00 AM - 6:00 PM, Sábados: 10:00 AM - 4:00 PM',
-    website: 'https://pinkyflame.com',
-    socialMedia: {
-      facebook: 'https://facebook.com/pinkyflame',
-      instagram: 'https://instagram.com/pinkyflame',
-      twitter: 'https://twitter.com/pinkyflame'
-    },
-    shippingInfo: {
-      freeShippingThreshold: 50,
-      estimatedDelivery: '5-7 días hábiles'
-    }
-  });
+  const { 
+    businessInfo, 
+    isLoading, 
+    isSaving, 
+    lastUpdated, 
+    updateField, 
+    updateNestedField, 
+    saveConfig 
+  } = useBusinessConfigFirebase();
 
-  const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Cargar datos guardados al montar el componente
-  useEffect(() => {
-    const savedConfig = localStorage.getItem('pinky-flame-business-config');
-    if (savedConfig) {
-      try {
-        const parsedConfig = JSON.parse(savedConfig);
-        setBusinessInfo(parsedConfig);
-        console.log('✅ Loaded saved business config:', parsedConfig);
-      } catch (error) {
-        console.error('❌ Error loading saved config:', error);
-      }
-    }
-    setIsLoading(false);
-  }, []);
 
   const handleInputChange = (field: string, value: string | number) => {
-    if (field.includes('.')) {
-      const [parent, child] = field.split('.');
-      setBusinessInfo(prev => ({
-        ...prev,
-        [parent]: {
-          ...((prev as unknown) as Record<string, unknown>)[parent] as Record<string, unknown>,
-          [child]: value
-        }
-      }));
-    } else {
-      setBusinessInfo(prev => ({
-        ...prev,
-        [field]: value
-      }));
-    }
+    updateField(field, value);
   };
 
   const handleSave = async () => {
-    setIsSaving(true);
     setSaveMessage('');
     
     try {
-      // Guardar en localStorage primero
-      localStorage.setItem('pinky-flame-business-config', JSON.stringify(businessInfo));
+      const result = await saveConfig();
       
-      // Simular guardado en Firebase (en producción, aquí harías la llamada real)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setSaveMessage('Información guardada exitosamente!');
-      console.log('✅ Business config saved:', businessInfo);
+      if (result.success) {
+        setSaveMessage(result.fallback ? 
+          'Información guardada localmente (Firebase no disponible)' : 
+          'Información guardada exitosamente en Firebase!'
+        );
+      } else {
+        setSaveMessage('Error al guardar la información');
+      }
     } catch (error) {
       console.error('❌ Error saving business config:', error);
       setSaveMessage('Error al guardar la información');
     } finally {
-      setIsSaving(false);
       setTimeout(() => setSaveMessage(''), 3000);
     }
   };
@@ -502,6 +458,31 @@ export default function AdminConfigPage() {
             </div>
           </div>
         </motion.div>
+
+        {/* Sync Status */}
+        {lastUpdated && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Cloud className="h-5 w-5 text-blue-600" />
+                <span className="text-sm font-medium text-blue-800">
+                  Sincronizado en tiempo real
+                </span>
+              </div>
+              <div className="text-xs text-blue-600">
+                Última actualización: {lastUpdated.toLocaleString()}
+              </div>
+            </div>
+            <p className="text-xs text-blue-700 mt-1">
+              Los cambios se sincronizan automáticamente con todos los dispositivos y usuarios
+            </p>
+          </motion.div>
+        )}
 
         {/* Save Button */}
         <motion.div
