@@ -39,7 +39,7 @@ export default function AdminCandlesPage() {
     description: '',
     price: 0,
     category: '',
-    type: 'cylindrical' as const,
+    type: 'cylindrical' as 'cylindrical' | 'tapered' | 'pillar' | 'jar',
     isActive: true,
     imageUrl: ''
   });
