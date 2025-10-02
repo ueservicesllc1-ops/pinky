@@ -1,32 +1,49 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Heart, Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react';
-import { useBusinessConfig } from '@/hooks/useBusinessConfig';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const { businessInfo, isLoading } = useBusinessConfig();
-  
-  // Debug: mostrar datos actuales
-  console.log('🔍 Footer - businessInfo:', businessInfo);
-  console.log('🔍 Footer - isLoading:', isLoading);
+  const [businessInfo, setBusinessInfo] = useState({
+    businessName: 'Pinky Flame',
+    businessDescription: 'Velas artesanales personalizadas que iluminan y aromatizan tus momentos especiales.',
+    email: 'info@pinkyflame.com',
+    phone: '+1 (555) 123-4567',
+    address: '123 Main Street',
+    city: 'Newark',
+    state: 'New Jersey',
+    zipCode: '07102',
+    socialMedia: {
+      facebook: 'https://facebook.com/pinkyflame',
+      instagram: 'https://instagram.com/pinkyflame',
+      twitter: 'https://twitter.com/pinkyflame'
+    }
+  });
 
-  // Mostrar loading si aún está cargando
-  if (isLoading) {
-    return (
-      <footer className="bg-gray-900 text-white">
-        <div className="container mx-auto px-4 py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600 mx-auto mb-4"></div>
-            <p className="text-gray-400">Cargando...</p>
-          </div>
-        </div>
-      </footer>
-    );
-  }
+  // Cargar datos de Firestore
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const docRef = doc(db, 'business_config', 'main');
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setBusinessInfo(data);
+          console.log('✅ Footer loaded from Firestore:', data);
+        }
+      } catch (error) {
+        console.error('❌ Error loading from Firestore:', error);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const footerSections = [
     {

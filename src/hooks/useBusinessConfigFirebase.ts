@@ -78,23 +78,15 @@ export function useBusinessConfigFirebase() {
             createdAt: new Date(),
             updatedAt: new Date()
           });
+          setBusinessInfo(defaultBusinessInfo);
+          setLastUpdated(new Date());
           console.log('✅ Created default business config in Firebase');
         }
       } catch (error) {
         console.error('❌ Error loading business config from Firebase:', error);
-        // Fallback a localStorage si Firebase falla
-        const savedConfig = localStorage.getItem('pinky-flame-business-config');
-        if (savedConfig) {
-          try {
-            const parsedConfig = JSON.parse(savedConfig);
-            setBusinessInfo(parsedConfig);
-            console.log('✅ Fallback to localStorage config');
-          } catch (parseError) {
-            console.error('❌ Error parsing localStorage config:', parseError);
-          }
-        }
+        setBusinessInfo(defaultBusinessInfo);
       } finally {
-          setIsLoading(false);
+        setIsLoading(false);
       }
     };
 
