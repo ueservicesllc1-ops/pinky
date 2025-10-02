@@ -6,7 +6,7 @@ import { Plus, Edit, Trash2, Star, User, MapPin, Eye, EyeOff, Download } from 'l
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import Textarea from '@/components/ui/textarea';
 import { useTestimonials, Testimonial } from '@/hooks/useTestimonials';
 import { migrateTestimonials } from '@/lib/migrate-testimonials';
 
