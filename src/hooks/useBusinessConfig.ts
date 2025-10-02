@@ -56,17 +56,40 @@ export function useBusinessConfig() {
 
   useEffect(() => {
     // Cargar configuración guardada
-    const savedConfig = localStorage.getItem('pinky-flame-business-config');
-    if (savedConfig) {
-      try {
-        const parsedConfig = JSON.parse(savedConfig);
-        setBusinessInfo(parsedConfig);
-        console.log('✅ Loaded business config in hook:', parsedConfig);
-      } catch (error) {
-        console.error('❌ Error loading business config in hook:', error);
+    const loadConfig = () => {
+      const savedConfig = localStorage.getItem('pinky-flame-business-config');
+      if (savedConfig) {
+        try {
+          const parsedConfig = JSON.parse(savedConfig);
+          setBusinessInfo(parsedConfig);
+          console.log('✅ Loaded business config in hook:', parsedConfig);
+        } catch (error) {
+          console.error('❌ Error loading business config in hook:', error);
+        }
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+
+    loadConfig();
+
+    // Escuchar cambios en localStorage
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'pinky-flame-business-config' && e.newValue) {
+        try {
+          const parsedConfig = JSON.parse(e.newValue);
+          setBusinessInfo(parsedConfig);
+          console.log('🔄 Business config updated from localStorage:', parsedConfig);
+        } catch (error) {
+          console.error('❌ Error parsing updated config:', error);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const updateField = (field: string, value: string | number) => {
