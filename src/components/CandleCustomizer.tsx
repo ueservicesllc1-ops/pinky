@@ -109,7 +109,7 @@ export default function CandleCustomizer() {
   const [selectedTemplate, setSelectedTemplate] = useState<string>('cylindrical');
   const [selectedVariant, setSelectedVariant] = useState<string>('cylindrical-1');
   const [showVariantPopup, setShowVariantPopup] = useState<boolean>(false);
-  const [currentTemplate, setCurrentTemplate] = useState<any>(null);
+  const [currentTemplate, setCurrentTemplate] = useState<{ id: string; name: string; image: string } | null>(null);
   const [selectedColor, setSelectedColor] = useState<string>('#f472b6');
   const [textContent, setTextContent] = useState<string>('');
   const [selectedFont, setSelectedFont] = useState<string>('Dancing Script');
@@ -297,7 +297,7 @@ export default function CandleCustomizer() {
     setTextContent('');
   };
 
-  const handleVariantSelect = (variant: any) => {
+  const handleVariantSelect = (variant: { id: string; name: string; image: string }) => {
     setSelectedVariant(variant.id);
     setSelectedTemplate(currentTemplate?.id || 'cylindrical');
     setShowVariantPopup(false);
@@ -624,7 +624,7 @@ export default function CandleCustomizer() {
             
             <div className="p-6 overflow-y-auto max-h-[60vh]">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {currentTemplate.variants?.map((variant: any) => (
+                {currentTemplate.variants?.map((variant: { id: string; name: string; image: string }) => (
                   <motion.div
                     key={variant.id}
                     whileHover={{ scale: 1.02 }}

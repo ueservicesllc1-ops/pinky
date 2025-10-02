@@ -107,7 +107,7 @@ export default function AddressAutocomplete({
       if (data.status === 'OK') {
         // Obtener detalles completos para cada predicción
         const detailedPredictions = await Promise.all(
-          data.predictions.slice(0, 5).map(async (prediction: any) => {
+          data.predictions.slice(0, 5).map(async (prediction: { place_id: string; description: string }) => {
             try {
               const detailsResponse = await fetch(
                 `https://maps.googleapis.com/maps/api/place/details/json?place_id=${prediction.place_id}&fields=address_components,formatted_address,geometry&key=${GOOGLE_MAPS_API_KEY}`

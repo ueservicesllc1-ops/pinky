@@ -18,7 +18,7 @@ export default function Header() {
       if (savedCart) {
         try {
           const cartItems = JSON.parse(savedCart);
-          const count = cartItems.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0);
+          const count = cartItems.reduce((sum: number, item: { quantity?: number }) => sum + (item.quantity || 0), 0);
           setItemCount(count);
         } catch (error) {
           console.error('Error loading cart count:', error);

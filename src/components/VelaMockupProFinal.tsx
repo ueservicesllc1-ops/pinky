@@ -80,7 +80,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
   const [selectedCategory, setSelectedCategory] = useState("Todos");
 
   // Seleccionar plantilla existente
-  const handleTemplateSelect = (template: any) => {
+  const handleTemplateSelect = (template: { imageUrl: string }) => {
     setCurrentImageSrc(template.imageUrl);
   };
 
@@ -135,7 +135,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
 
     // Limpiar textos anteriores
     const existingTexts = layerRef.current.find('.simple-text');
-    existingTexts.forEach((node: any) => node.destroy());
+    existingTexts.forEach((node: Konva.Node) => node.destroy());
 
     // Crear texto simple y movible
     const textNode = new Konva.Text({
@@ -197,7 +197,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
 
     // Limpiar elementos anteriores
     const existingElements = layerRef.current.find('.decorative-element');
-    existingElements.forEach((node: any) => node.destroy());
+    existingElements.forEach((node: Konva.Node) => node.destroy());
 
     // Crear elementos decorativos
     decorativeElements.forEach((element) => {
