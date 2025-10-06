@@ -325,7 +325,7 @@ export default function NosotrosPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.a
-                href="/catalogo"
+                href="/es/catalogo"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="bg-white text-pink-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
@@ -333,7 +333,7 @@ export default function NosotrosPage() {
                 Ver Nuestros Productos
               </motion.a>
               <motion.a
-                href="/contacto"
+                href="/es/contacto"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-pink-600 transition-colors"

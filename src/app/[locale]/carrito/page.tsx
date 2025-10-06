@@ -32,7 +32,7 @@ export default function CarritoPage() {
             <p className="text-lg text-gray-600 mb-8">
               ¡Explora nuestra colección y encuentra la vela perfecta para ti!
             </p>
-            <Link href="/catalogo">
+            <Link href="/es/catalogo">
               <Button size="lg" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">
                 Explorar Catálogo
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -244,7 +244,7 @@ export default function CarritoPage() {
                     <label htmlFor="acceptPolicies" className="text-sm text-gray-700">
                       Acepto las{' '}
                       <Link 
-                        href="/politicas-envio" 
+                        href="/es/politicas-envio" 
                         target="_blank"
                         className="text-pink-600 hover:text-pink-700 underline inline-flex items-center gap-1"
                       >
@@ -263,7 +263,7 @@ export default function CarritoPage() {
 
                 {/* Checkout Button */}
                 {acceptPolicies ? (
-                  <Link href="/checkout" className="block">
+                  <Link href="/es/checkout" className="block">
                     <Button
                       size="lg"
                       className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 mb-4"
@@ -284,7 +284,7 @@ export default function CarritoPage() {
                 )}
 
                 {/* Continue Shopping */}
-                <Link href="/catalogo" className="block">
+                <Link href="/es/catalogo" className="block">
                   <Button variant="outline" size="lg" className="w-full">
                     Continuar Comprando
                   </Button>

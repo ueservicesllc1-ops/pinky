@@ -82,7 +82,12 @@ export default function FeaturedProducts() {
             <p className="text-gray-600 mb-8">
               Pronto tendremos productos destacados disponibles
             </p>
-            <Button size="lg" variant="outline" className="border-2 border-pink-300 text-pink-600 hover:bg-pink-50">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-2 border-pink-300 text-pink-600 hover:bg-pink-50"
+              onClick={() => window.location.href = '/es/catalogo'}
+            >
               Ver Catálogo Completo
             </Button>
           </div>
@@ -234,7 +239,7 @@ export default function FeaturedProducts() {
             size="lg" 
             variant="outline" 
             className="border-2 border-pink-300 text-pink-600 hover:bg-pink-50"
-            onClick={() => window.location.href = '/catalogo'}
+            onClick={() => window.location.href = '/es/catalogo'}
           >
             Ver Todos los Productos
           </Button>
