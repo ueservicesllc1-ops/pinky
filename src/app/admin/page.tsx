@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Settings, Upload, BarChart3, Users, Package, Zap, Sparkles, MessageCircle, Truck, Mail } from 'lucide-react';
+import { Settings, Upload, BarChart3, Users, Package, Zap, Sparkles, MessageCircle, Truck, Mail, Palette } from 'lucide-react';
 import { useContactMessages } from '@/hooks/useContactMessages';
 import { useCustomCandleOrders } from '@/hooks/useCustomCandleOrders';
 
@@ -136,6 +136,14 @@ export default function AdminDashboard() {
       icon: Truck,
       color: 'bg-blue-500',
       hoverColor: 'hover:bg-blue-600'
+    },
+    {
+      title: 'Personalizar Apariencia',
+      description: 'Configurar colores y temas de la web',
+      href: '/admin/apariencia',
+      icon: Palette,
+      color: 'bg-gradient-to-r from-pink-500 to-purple-600',
+      hoverColor: 'hover:from-pink-600 hover:to-purple-700'
     },
     {
       title: 'Estadísticas',

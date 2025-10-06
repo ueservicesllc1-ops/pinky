@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, User, Menu, X, Heart, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,7 +41,7 @@ export default function Header() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white shadow-lg sticky top-0 z-50"
+      className="bg-white dark:bg-gray-900 shadow-lg sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700"
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
@@ -59,7 +60,7 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-gray-700 hover:text-pink-600 transition-colors duration-200 font-medium"
+                className="text-gray-700 dark:text-gray-300 hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 font-medium"
               >
                 {item.label}
               </Link>
@@ -70,7 +71,7 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
               <Input
                 type="text"
                 placeholder="Buscar velas..."
@@ -82,6 +83,9 @@ export default function Header() {
             <Button variant="ghost" size="sm">
               <Heart className="h-4 w-4" />
             </Button>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Cart */}
             <Link href="/es/carrito">
@@ -102,6 +106,7 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-2">
+            <ThemeToggle />
             <Link href="/es/carrito">
               <Button variant="ghost" size="sm" className="relative">
                 <ShoppingCart className="h-4 w-4" />
@@ -127,7 +132,7 @@ export default function Header() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed inset-y-0 right-0 w-64 bg-white shadow-lg z-50 p-4 md:hidden"
+            className="fixed inset-y-0 right-0 w-64 bg-white dark:bg-gray-900 shadow-lg z-50 p-4 md:hidden"
           >
             <div className="flex justify-end mb-4">
               <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(false)}>
@@ -139,7 +144,7 @@ export default function Header() {
                 <Link 
                   key={item.href} 
                   href={item.href} 
-                  className="text-gray-700 hover:text-pink-500 transition-colors font-medium text-lg"
+                  className="text-gray-700 dark:text-gray-300 hover:text-pink-500 dark:hover:text-pink-400 transition-colors font-medium text-lg"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}

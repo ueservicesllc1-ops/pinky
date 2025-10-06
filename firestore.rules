@@ -67,5 +67,9 @@ service cloud.firestore {
     match /customCandleOrders/{document} {
       allow write: if true; // Temporalmente permitir a todos
     }
+    
+    match /appearance/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
   }
 }

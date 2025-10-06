@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/contexts/CartContext";
+import ThemeProviderWrapper from "@/components/ThemeProviderWrapper";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CartNotificationProvider from "@/components/CartNotificationProvider";
@@ -43,14 +44,16 @@ export default function RootLayout({
   return (
     <html lang="es" data-scroll-behavior="smooth">
       <body className={inter.className}>
-        <CartProvider>
-          <Header />
-          <main>
-            {children}
-          </main>
-          <Footer />
-          <CartNotificationProvider />
-        </CartProvider>
+        <ThemeProviderWrapper>
+          <CartProvider>
+            <Header />
+            <main>
+              {children}
+            </main>
+            <Footer />
+            <CartNotificationProvider />
+          </CartProvider>
+        </ThemeProviderWrapper>
       </body>
     </html>
   );
