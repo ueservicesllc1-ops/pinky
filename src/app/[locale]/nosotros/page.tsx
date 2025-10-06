@@ -99,7 +99,7 @@ export default function NosotrosPage() {
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
               Somos
               <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                {' '}Pinky Flame
+                {' '}Pinky Flames
               </span>
             </h1>
 

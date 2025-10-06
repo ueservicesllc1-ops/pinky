@@ -35,9 +35,9 @@ const defaultConfig: HeroPopupConfig = {
   autoCloseSeconds: 10,
   showDelay: 1000,
   ctaButton1Text: 'Explorar Catálogo',
-  ctaButton1Link: '/catalogo',
+  ctaButton1Link: '/es/catalogo',
   ctaButton2Text: 'Personalizar Ahora',
-  ctaButton2Link: '/personalizadas',
+  ctaButton2Link: '/es/personalizadas',
   createdAt: new Date(),
   updatedAt: new Date()
 };

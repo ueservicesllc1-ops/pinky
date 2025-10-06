@@ -51,5 +51,21 @@ service cloud.firestore {
     match /testimonials/{document} {
       allow write: if true; // Temporalmente permitir a todos
     }
+    
+    match /userImages/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
+    
+    match /contactMessages/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
+    
+    match /customFonts/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
+    
+    match /customCandleOrders/{document} {
+      allow write: if true; // Temporalmente permitir a todos
+    }
   }
 }

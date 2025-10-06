@@ -3,9 +3,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Settings, Upload, BarChart3, Users, Package, Zap, Sparkles, MessageCircle, Truck } from 'lucide-react';
+import { Settings, Upload, BarChart3, Users, Package, Zap, Sparkles, MessageCircle, Truck, Mail } from 'lucide-react';
+import { useContactMessages } from '@/hooks/useContactMessages';
+import { useCustomCandleOrders } from '@/hooks/useCustomCandleOrders';
 
 export default function AdminDashboard() {
+  const { unreadCount } = useContactMessages();
+  const { getPendingCount } = useCustomCandleOrders();
+  const pendingOrdersCount = getPendingCount();
+  
   const adminMenuItems = [
     {
       title: 'Galería de Velas',
@@ -64,6 +70,16 @@ export default function AdminDashboard() {
       hoverColor: 'hover:bg-purple-600'
     },
     {
+      title: 'Mensajes de Usuarios',
+      description: 'Ver y gestionar mensajes de contacto de clientes',
+      href: '/admin/mensajes',
+      icon: Mail,
+      color: 'bg-pink-500',
+      hoverColor: 'hover:bg-pink-600',
+      hasNotification: true,
+      notificationCount: unreadCount
+    },
+    {
       title: 'Configuración',
       description: 'Datos de contacto, redes sociales y configuración',
       href: '/admin/configuracion',
@@ -94,6 +110,24 @@ export default function AdminDashboard() {
       icon: MessageCircle,
       color: 'bg-teal-500',
       hoverColor: 'hover:bg-teal-600'
+    },
+    {
+      title: 'Gestión de Fuentes',
+      description: 'Subir y gestionar fuentes personalizadas para las velas',
+      href: '/admin/fuentes',
+      icon: Settings,
+      color: 'bg-purple-500',
+      hoverColor: 'hover:bg-purple-600'
+    },
+    {
+      title: 'Pedidos Personalizados',
+      description: 'Gestionar pedidos de velas personalizadas',
+      href: '/admin/pedidos-personalizados',
+      icon: Package,
+      color: 'bg-indigo-500',
+      hoverColor: 'hover:bg-indigo-600',
+      hasNotification: true,
+      notificationCount: pendingOrdersCount
     },
     {
       title: 'Configuración de Envíos',
@@ -196,7 +230,7 @@ export default function AdminDashboard() {
             Herramientas de Administración
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {adminMenuItems.map((item, index) => (
               <motion.div
                 key={item.href}
@@ -205,21 +239,31 @@ export default function AdminDashboard() {
                 transition={{ delay: 0.3 + index * 0.1 }}
               >
                 <Link href={item.href}>
-                  <div className={`${item.color} ${item.hoverColor} rounded-2xl p-6 text-white transition-all duration-300 hover:shadow-xl cursor-pointer group`}>
-                    <div className="flex items-start justify-between mb-4">
-                      <item.icon className="h-8 w-8 text-white/80 group-hover:text-white transition-colors" />
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                  <div className={`${item.color} ${item.hoverColor} rounded-xl p-4 text-white transition-all duration-300 hover:shadow-lg cursor-pointer group h-full relative`}>
+                    <div className="flex items-start justify-between mb-3">
+                      <item.icon className="h-6 w-6 text-white/80 group-hover:text-white transition-colors" />
+                      <div className="flex items-center space-x-2">
+                        {item.hasNotification && item.notificationCount > 0 && (
+                          <div className="relative">
+                            <div className="w-6 h-6 bg-yellow-500 rounded-full animate-pulse"></div>
+                            <div className="absolute -top-4 -right-4 bg-blue-500 text-white text-sm rounded-full min-w-[36px] h-[36px] flex items-center justify-center font-bold animate-bounce">
+                              {item.notificationCount}
+                            </div>
+                          </div>
+                        )}
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
                       </div>
                     </div>
                     
-                    <h3 className="text-xl font-semibold mb-2">
+                    <h3 className="text-lg font-semibold mb-2">
                       {item.title}
                     </h3>
                     
-                    <p className="text-white/80 text-sm leading-relaxed">
+                    <p className="text-white/80 text-xs leading-relaxed">
                       {item.description}
                     </p>
                   </div>

@@ -2,16 +2,14 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { ShoppingCart, User, Menu, X, Heart, Search, Globe } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingCart, User, Menu, X, Heart, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [itemCount, setItemCount] = useState(0);
-  const [currentLanguage, setCurrentLanguage] = useState('es');
 
   // Load cart count from localStorage on mount
   React.useEffect(() => {
@@ -36,20 +34,6 @@ export default function Header() {
     { href: '/es/nosotros', label: 'Nosotros' },
     { href: '/admin', label: 'Admin' },
   ];
-
-  const languages = [
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-  ];
-
-  const handleLanguageChange = (langCode: string) => {
-    setCurrentLanguage(langCode);
-    setIsLanguageOpen(false);
-    // Redirect to the same page but with different language
-    const currentPath = window.location.pathname;
-    const newPath = currentPath.replace(/^\/[a-z]{2}/, `/${langCode}`);
-    window.location.href = newPath;
-  };
 
   return (
     <motion.header 
@@ -114,75 +98,48 @@ export default function Header() {
                 )}
               </Button>
             </Link>
+          </div>
 
-            {/* Language Selector */}
-            <div className="relative">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsLanguageOpen(!isLanguageOpen)}
-                className="flex items-center space-x-1"
-              >
-                <Globe className="h-4 w-4" />
-                <span className="text-sm">
-                  {languages.find(lang => lang.code === currentLanguage)?.flag}
-                </span>
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center space-x-2">
+            <Link href="/es/carrito">
+              <Button variant="ghost" size="sm" className="relative">
+                <ShoppingCart className="h-4 w-4" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-pink-500 text-white text-xs flex items-center justify-center">
+                    {itemCount}
+                  </span>
+                )}
               </Button>
-              
-              {isLanguageOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50"
-                >
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      onClick={() => handleLanguageChange(lang.code)}
-                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center space-x-2 ${
-                        currentLanguage === lang.code ? 'bg-pink-50 text-pink-600' : 'text-gray-700'
-                      }`}
-                    >
-                      <span>{lang.flag}</span>
-                      <span>{lang.name}</span>
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </div>
-
-            {/* User */}
-            <Button variant="ghost" size="sm">
-              <User className="h-4 w-4" />
-            </Button>
-
-            {/* Mobile Menu */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="md:hidden"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Link>
+            <Button variant="ghost" size="sm" onClick={() => setIsMenuOpen(true)}>
+              <Menu className="h-5 w-5" />
             </Button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Navigation */}
+      {/* Mobile Menu */}
+      <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-gray-200 py-4"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed inset-y-0 right-0 w-64 bg-white shadow-lg z-50 p-4 md:hidden"
           >
+            <div className="flex justify-end mb-4">
+              <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(false)}>
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
             <nav className="flex flex-col space-y-4">
               {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="text-gray-700 hover:text-pink-600 transition-colors duration-200 font-medium py-2"
+                <Link 
+                  key={item.href} 
+                  href={item.href} 
+                  className="text-gray-700 hover:text-pink-500 transition-colors font-medium text-lg"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
@@ -191,7 +148,7 @@ export default function Header() {
             </nav>
           </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </motion.header>
   );
 }

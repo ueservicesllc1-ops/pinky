@@ -1,0 +1,170 @@
+// ========================================
+// REGLAS DE FIREBASE STORAGE - ACTUALIZADAS
+// ========================================
+
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Permitir lectura pública de todas las imágenes
+    match /{allPaths=**} {
+      allow read: if true;
+    }
+    
+    // Permitir escritura en carpetas específicas
+    match /banners/{fileName} {
+      allow write: if true;
+    }
+    
+    match /candles/{fileName} {
+      allow write: if true;
+    }
+    
+    match /promotions/{fileName} {
+      allow write: if true;
+    }
+    
+    match /offers/{fileName} {
+      allow write: if true;
+    }
+    
+    match /categories/{fileName} {
+      allow write: if true;
+    }
+    
+    match /hero-popup/{fileName} {
+      allow write: if true;
+    }
+    
+    match /candle-templates/{fileName} {
+      allow write: if true;
+    }
+    
+    // NUEVO: Permitir subida de imágenes de usuarios para personalización
+    match /user-images/{fileName} {
+      allow write: if true;
+    }
+    
+    // Permitir eliminación en las mismas carpetas
+    match /banners/{fileName} {
+      allow delete: if true;
+    }
+    
+    match /candles/{fileName} {
+      allow delete: if true;
+    }
+    
+    match /promotions/{fileName} {
+      allow delete: if true;
+    }
+    
+    match /offers/{fileName} {
+      allow delete: if true;
+    }
+    
+    match /categories/{fileName} {
+      allow delete: if true;
+    }
+    
+    match /hero-popup/{fileName} {
+      allow delete: if true;
+    }
+    
+    match /candle-templates/{fileName} {
+      allow delete: if true;
+    }
+    
+    // NUEVO: Permitir eliminación de imágenes de usuarios
+    match /user-images/{fileName} {
+      allow delete: if true;
+    }
+  }
+}
+
+// ========================================
+// REGLAS DE FIRESTORE - ACTUALIZADAS
+// ========================================
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Permitir lectura y escritura pública de todas las colecciones (temporalmente)
+    match /{document=**} {
+      allow read, write: if true;
+    }
+    
+    // Reglas específicas para cada colección
+    match /categories/{document} {
+      allow write: if true;
+    }
+    
+    match /candles/{document} {
+      allow write: if true;
+    }
+    
+    match /banners/{document} {
+      allow write: if true;
+    }
+    
+    match /promotions/{document} {
+      allow write: if true;
+    }
+    
+    match /special_offers/{document} {
+      allow write: if true;
+    }
+    
+    match /business_config/{document} {
+      allow write: if true;
+    }
+    
+    match /orders/{document} {
+      allow write: if true;
+    }
+    
+    match /newsletter_subscriptions/{document} {
+      allow write: if true;
+    }
+    
+    match /hero-popup/{document} {
+      allow write: if true;
+    }
+    
+    match /candle-templates/{document} {
+      allow write: if true;
+    }
+    
+    match /testimonials/{document} {
+      allow write: if true;
+    }
+    
+    // NUEVO: Permitir escritura de metadatos de imágenes de usuarios
+    match /userImages/{document} {
+      allow write: if true;
+    }
+    
+    // NUEVO: Permitir escritura de mensajes de contacto
+    match /contactMessages/{document} {
+      allow write: if true;
+    }
+  }
+}
+
+// ========================================
+// INSTRUCCIONES PARA APLICAR
+// ========================================
+
+// 1. FIREBASE STORAGE:
+//    - Ve a Firebase Console > Storage > Rules
+//    - Copia y pega solo la sección "REGLAS DE FIREBASE STORAGE"
+//    - Haz clic en "Publish"
+
+// 2. FIRESTORE:
+//    - Ve a Firebase Console > Firestore Database > Rules
+//    - Copia y pega solo la sección "REGLAS DE FIRESTORE"
+//    - Haz clic en "Publish"
+
+// 3. VERIFICAR:
+//    - Las reglas deben aplicarse inmediatamente
+//    - Prueba subir una imagen de nuevo

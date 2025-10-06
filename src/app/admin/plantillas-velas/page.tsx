@@ -17,6 +17,7 @@ interface CandleTemplate {
   description: string;
   imageUrl: string;
   category: string;
+  price: number;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -34,6 +35,7 @@ export default function AdminPlantillasVelasPage() {
     name: '',
     description: '',
     category: 'Cilíndrica',
+    price: 25,
     isActive: true
   });
 
@@ -101,6 +103,7 @@ export default function AdminPlantillasVelasPage() {
         name: '',
         description: '',
         category: 'Cilíndrica',
+        price: 25,
         isActive: true
       });
       setShowUploadForm(false);
@@ -239,6 +242,28 @@ export default function AdminPlantillasVelasPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Precio de la Plantilla *
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                  <input
+                    type="number"
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                    placeholder="25.00"
+                    min="0"
+                    step="0.01"
+                    className="w-full pl-8 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <p className="text-sm text-gray-500 mt-1">
+                  Precio base para velas personalizadas con esta plantilla
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Imagen de la Vela
                 </label>
                 <ImageUpload
@@ -280,6 +305,7 @@ export default function AdminPlantillasVelasPage() {
                   <div>
                     <CardTitle className="text-lg">{template.name}</CardTitle>
                     <p className="text-sm text-gray-600 mt-1">{template.category}</p>
+                    <p className="text-lg font-semibold text-green-600 mt-1">${template.price}</p>
                   </div>
                   <div className="flex gap-2">
                     <Button

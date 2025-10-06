@@ -9,6 +9,11 @@ export default function BannerCarousel() {
   const { banners, isLoading } = useBanners();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Filtrar solo banners activos
   const activeBanners = banners.filter(banner => banner.isActive);
@@ -23,6 +28,8 @@ export default function BannerCarousel() {
 
     return () => clearInterval(interval);
   }, [isAutoPlay, activeBanners.length]);
+
+  if (!isClient) return null;
 
   // Mostrar loading si está cargando
   if (isLoading) {

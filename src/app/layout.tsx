@@ -9,6 +9,7 @@ import CartNotificationProvider from "@/components/CartNotificationProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
   title: "Pinky Flame - Velas Personalizadas",
   description: "Velas artesanales personalizadas que iluminan y aromatizan tus momentos especiales. Descubre nuestra colección única de velas de alta calidad.",
   keywords: "velas, personalizadas, artesanales, aromáticas, decoración, hogar",

@@ -3,50 +3,67 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, Sparkles, Heart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useHeroPopupConfig } from '@/hooks/useHeroPopupConfig';
 
 export default function HeroPopup() {
   const [isOpen, setIsOpen] = useState(false);
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+  const router = useRouter();
   
   // Obtener configuración desde Firebase
   const { config: popupConfig, isLoading } = useHeroPopupConfig();
 
   useEffect(() => {
-    if (!popupConfig.isActive) return;
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!popupConfig.isActive || isLoading) return;
+
+    // Initialize countdown with the correct value from config
+    setCountdown(popupConfig.autoCloseSeconds || 10);
+
+    let countdownTimer: NodeJS.Timeout | null = null;
 
     // Show popup after delay
     const showTimer = setTimeout(() => {
       setIsOpen(true);
-    }, popupConfig.showDelay);
+      
+      // Start countdown when popup shows
+      countdownTimer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            if (countdownTimer) clearInterval(countdownTimer);
+            setIsOpen(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }, popupConfig.showDelay || 1000);
 
     // Auto-close after specified seconds
     const autoCloseTimer = setTimeout(() => {
       setIsOpen(false);
-    }, popupConfig.showDelay + (popupConfig.autoCloseSeconds * 1000));
-
-    // Countdown timer
-    const countdownTimer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(countdownTimer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    }, (popupConfig.showDelay || 1000) + ((popupConfig.autoCloseSeconds || 10) * 1000));
 
     return () => {
       clearTimeout(showTimer);
       clearTimeout(autoCloseTimer);
-      clearInterval(countdownTimer);
+      if (countdownTimer) {
+        clearInterval(countdownTimer);
+      }
     };
-  }, [popupConfig]);
+  }, [popupConfig, isLoading]);
 
   const handleClose = () => {
     setIsOpen(false);
   };
+
+  if (!isClient) return null;
 
   return (
     <AnimatePresence>
@@ -113,15 +130,7 @@ export default function HeroPopup() {
                       transition={{ delay: 0.3, duration: 0.6 }}
                       className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
                     >
-                      {popupConfig.title.split(' ').map((word, index) => 
-                        index === popupConfig.title.split(' ').length - 2 ? (
-                          <span key={index} className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                            {' '}{word}
-                          </span>
-                        ) : (
-                          <span key={index}>{index === 0 ? word : ` ${word}`}</span>
-                        )
-                      )}
+                      {popupConfig.title}
                     </motion.h1>
 
                     {/* Subtitle */}
@@ -158,7 +167,8 @@ export default function HeroPopup() {
                         size="lg"
                         className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-6 py-3"
                         onClick={() => {
-                          window.location.href = popupConfig.ctaButton1Link;
+                          handleClose();
+                          router.push(popupConfig.ctaButton1Link);
                         }}
                       >
                         {popupConfig.ctaButton1Text}
@@ -169,7 +179,8 @@ export default function HeroPopup() {
                         size="lg"
                         className="border-2 border-pink-300 text-pink-600 hover:bg-pink-50 px-6 py-3"
                         onClick={() => {
-                          window.location.href = popupConfig.ctaButton2Link;
+                          handleClose();
+                          router.push(popupConfig.ctaButton2Link);
                         }}
                       >
                         {popupConfig.ctaButton2Text}

@@ -1,4 +1,4 @@
-// Reglas de Firebase Storage para Pinky Flame
+// Reglas de Firebase Storage para Pinky Flame - ACTUALIZADAS
 // Copia y pega estas reglas en Firebase Console > Storage > Rules
 
 rules_version = '2';
@@ -35,23 +35,9 @@ service firebase.storage {
       allow write: if true; // Temporalmente permitir a todos, cambiar por autenticación si es necesario
     }
     
-    match /candle-templates/{fileName} {
-      allow write: if true; // Temporalmente permitir a todos, cambiar por autenticación si es necesario
-    }
-    
-    // Permitir subida de imágenes de usuarios para personalización
+    // NUEVO: Permitir subida de imágenes de usuarios para personalización
     match /user-images/{fileName} {
-      allow read, write: if true; // Temporalmente permitir a todos, cambiar por autenticación si es necesario
-    }
-    
-    // Permitir subida de fuentes personalizadas
-    match /custom-fonts/{fileName} {
-      allow read, write: if true; // Temporalmente permitir a todos, cambiar por autenticación si es necesario
-    }
-    
-    // Permitir subida de velas personalizadas completas
-    match /custom-candles/{fileName} {
-      allow read, write: if true; // Temporalmente permitir a todos, cambiar por autenticación si es necesario
+      allow write: if true; // Temporalmente permitir a todos, cambiar por autenticación si es necesario
     }
     
     // Permitir eliminación en las mismas carpetas
@@ -79,22 +65,8 @@ service firebase.storage {
       allow delete: if true; // Temporalmente permitir a todos
     }
     
-    match /candle-templates/{fileName} {
-      allow delete: if true; // Temporalmente permitir a todos
-    }
-    
-    // Permitir eliminación de imágenes de usuarios
+    // NUEVO: Permitir eliminación de imágenes de usuarios
     match /user-images/{fileName} {
-      allow delete: if true; // Temporalmente permitir a todos
-    }
-    
-    // Permitir eliminación de fuentes personalizadas
-    match /custom-fonts/{fileName} {
-      allow delete: if true; // Temporalmente permitir a todos
-    }
-    
-    // Permitir eliminación de velas personalizadas completas
-    match /custom-candles/{fileName} {
       allow delete: if true; // Temporalmente permitir a todos
     }
   }
@@ -102,8 +74,9 @@ service firebase.storage {
 
 // INSTRUCCIONES PARA APLICAR ESTAS REGLAS:
 // 1. Ve a https://console.firebase.google.com/
-// 2. Selecciona tu proyecto "mysetlistapp-bb4c6"
+// 2. Selecciona tu proyecto "pinky-flame" (o el nombre de tu proyecto)
 // 3. En el menú lateral, haz clic en "Storage"
 // 4. Haz clic en la pestaña "Rules"
 // 5. Reemplaza todo el contenido con las reglas de arriba
 // 6. Haz clic en "Publish"
+// 7. ¡Listo! Ahora los usuarios pueden subir imágenes

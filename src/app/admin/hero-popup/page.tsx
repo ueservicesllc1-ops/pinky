@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Save, Eye, Upload, Settings, Clock, Sparkles } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
+import PageLinkSelector from '@/components/PageLinkSelector';
+import SuccessModal from '@/components/SuccessModal';
 import { UploadResult } from '@/lib/firebase-storage';
 import { useHeroPopupConfig } from '@/hooks/useHeroPopupConfig';
 
@@ -29,14 +31,32 @@ interface HeroPopupConfig {
 
 export default function AdminHeroPopupPage() {
   // Usar el hook de Firebase para la configuración
-  const { config, saveConfig, isLoading, error } = useHeroPopupConfig();
+  const { config: firebaseConfig, saveConfig, isLoading, error } = useHeroPopupConfig();
   
+  // Estado local para los cambios no guardados
+  const [config, setConfig] = useState<HeroPopupConfig>(firebaseConfig);
   const [saveMessage, setSaveMessage] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  // Sincronizar el estado local con Firebase cuando cambie
+  useEffect(() => {
+    setConfig(firebaseConfig);
+  }, [firebaseConfig]);
 
   const handleInputChange = (field: keyof HeroPopupConfig, value: string | number | boolean) => {
-    // Actualizar el campo específico usando el hook
-    saveConfig({ [field]: value });
+    // Solo actualizar el estado local, no guardar automáticamente
+    setConfig(prev => ({
+      ...prev,
+      [field]: value,
+      updatedAt: new Date()
+    }));
+  };
+
+  const handleNumberChange = (field: keyof HeroPopupConfig, value: string, defaultValue: number) => {
+    const numValue = parseInt(value) || defaultValue;
+    handleInputChange(field, numValue);
   };
 
   const handleImageUpload = (result: UploadResult) => {
@@ -45,20 +65,30 @@ export default function AdminHeroPopupPage() {
 
   const handleSave = async () => {
     setSaveMessage('');
+    setIsSaving(true);
     
     try {
+      console.log('Guardando configuración:', config);
+      
+      // Guardar la configuración actual completa
       const success = await saveConfig(config);
       
       if (success) {
-        setSaveMessage('Configuración del popup guardada exitosamente!');
+        setSaveMessage('✅ Configuración del popup guardada exitosamente!');
+        setShowSuccessModal(true);
+        console.log('✅ Configuración guardada exitosamente');
       } else {
-        setSaveMessage('Error al guardar la configuración. Inténtalo de nuevo.');
+        setSaveMessage('❌ Error al guardar la configuración. Inténtalo de nuevo.');
+        console.error('❌ Error al guardar la configuración');
       }
     } catch (err) {
-      setSaveMessage('Error al guardar la configuración. Inténtalo de nuevo.');
+      console.error('❌ Error saving config:', err);
+      setSaveMessage('❌ Error al guardar la configuración. Inténtalo de nuevo.');
+    } finally {
+      setIsSaving(false);
     }
     
-    setTimeout(() => setSaveMessage(''), 3000);
+    setTimeout(() => setSaveMessage(''), 5000);
   };
 
   // Mostrar loading mientras se cargan los datos
@@ -159,8 +189,8 @@ export default function AdminHeroPopupPage() {
                     </label>
                     <input
                       type="number"
-                      value={config.autoCloseSeconds}
-                      onChange={(e) => handleInputChange('autoCloseSeconds', parseInt(e.target.value))}
+                      value={config.autoCloseSeconds || 10}
+                      onChange={(e) => handleNumberChange('autoCloseSeconds', e.target.value, 10)}
                       className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
                       min="5"
                       max="60"
@@ -173,8 +203,8 @@ export default function AdminHeroPopupPage() {
                     </label>
                     <input
                       type="number"
-                      value={config.showDelay}
-                      onChange={(e) => handleInputChange('showDelay', parseInt(e.target.value))}
+                      value={config.showDelay || 1000}
+                      onChange={(e) => handleNumberChange('showDelay', e.target.value, 1000)}
                       className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
                       min="0"
                       max="10000"
@@ -252,8 +282,8 @@ export default function AdminHeroPopupPage() {
                   </label>
                   <input
                     type="number"
-                    value={config.discount}
-                    onChange={(e) => handleInputChange('discount', parseInt(e.target.value))}
+                    value={config.discount || 20}
+                    onChange={(e) => handleNumberChange('discount', e.target.value, 20)}
                     className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
                     min="0"
                     max="100"
@@ -284,18 +314,12 @@ export default function AdminHeroPopupPage() {
                       placeholder="Explorar Catálogo"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Enlace
-                    </label>
-                    <input
-                      type="text"
-                      value={config.ctaButton1Link}
-                      onChange={(e) => handleInputChange('ctaButton1Link', e.target.value)}
-                      className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      placeholder="/catalogo"
-                    />
-                  </div>
+                  <PageLinkSelector
+                    value={config.ctaButton1Link}
+                    onChange={(value) => handleInputChange('ctaButton1Link', value)}
+                    label="Enlace"
+                    placeholder="Seleccionar página..."
+                  />
                 </div>
 
                 <div className="space-y-4">
@@ -312,18 +336,12 @@ export default function AdminHeroPopupPage() {
                       placeholder="Personalizar Ahora"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Enlace
-                    </label>
-                    <input
-                      type="text"
-                      value={config.ctaButton2Link}
-                      onChange={(e) => handleInputChange('ctaButton2Link', e.target.value)}
-                      className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      placeholder="/personalizadas"
-                    />
-                  </div>
+                  <PageLinkSelector
+                    value={config.ctaButton2Link}
+                    onChange={(value) => handleInputChange('ctaButton2Link', value)}
+                    label="Enlace"
+                    placeholder="Seleccionar página..."
+                  />
                 </div>
               </div>
             </div>
@@ -426,10 +444,10 @@ export default function AdminHeroPopupPage() {
         >
           <button
             onClick={handleSave}
-            disabled={isLoading}
+            disabled={isLoading || isSaving}
             className="px-8 py-4 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center mx-auto"
           >
-            {isLoading ? (
+            {isSaving ? (
               <>
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                 Guardando...
@@ -443,6 +461,13 @@ export default function AdminHeroPopupPage() {
           </button>
         </motion.div>
       </div>
+
+      {/* Success Modal */}
+      <SuccessModal 
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        message="¡Éxito guardado brother!"
+      />
     </div>
   );
 }

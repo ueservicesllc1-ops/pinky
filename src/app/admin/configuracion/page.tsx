@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Save, MapPin, Phone, Mail, Clock, Globe, Facebook, Instagram, Twitter } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import SuccessModal from '@/components/SuccessModal';
 
 interface BusinessInfo {
   businessName: string;
@@ -42,6 +43,7 @@ export default function AdminConfigPage() {
 
   const [saveMessage, setSaveMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Cargar datos existentes
   useEffect(() => {
@@ -74,6 +76,7 @@ export default function AdminConfigPage() {
       });
       
       setSaveMessage('✅ Información guardada exitosamente!');
+      setShowSuccessModal(true);
       console.log('✅ Saved to Firestore:', formData);
     } catch (error) {
       console.error('❌ Error saving:', error);
@@ -227,6 +230,64 @@ export default function AdminConfigPage() {
             </div>
           </div>
 
+          {/* Redes Sociales */}
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6">Redes Sociales</h3>
+            <p className="text-gray-600 mb-6">
+              Configura los enlaces de tus redes sociales que aparecerán en el footer de tu sitio web.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Facebook
+                </label>
+                <input
+                  type="url"
+                  value={formData.socialMedia.facebook}
+                  onChange={(e) => setFormData({
+                    ...formData, 
+                    socialMedia: {...formData.socialMedia, facebook: e.target.value}
+                  })}
+                  placeholder="https://facebook.com/tu-pagina"
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Instagram
+                </label>
+                <input
+                  type="url"
+                  value={formData.socialMedia.instagram}
+                  onChange={(e) => setFormData({
+                    ...formData, 
+                    socialMedia: {...formData.socialMedia, instagram: e.target.value}
+                  })}
+                  placeholder="https://instagram.com/tu-perfil"
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Twitter
+                </label>
+                <input
+                  type="url"
+                  value={formData.socialMedia.twitter}
+                  onChange={(e) => setFormData({
+                    ...formData, 
+                    socialMedia: {...formData.socialMedia, twitter: e.target.value}
+                  })}
+                  placeholder="https://twitter.com/tu-perfil"
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Save Button */}
           <div className="mt-8 text-center">
             <button
@@ -239,6 +300,13 @@ export default function AdminConfigPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Success Modal */}
+      <SuccessModal 
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        message="¡Éxito guardado brother!"
+      />
     </div>
   );
 }
