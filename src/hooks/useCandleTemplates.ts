@@ -9,6 +9,7 @@ export interface CandleTemplate {
   imageUrl: string;
   category: string;
   type: string;
+  price: number;
   variants?: Array<{
     id: string;
     name: string;
@@ -47,6 +48,7 @@ export function useCandleTemplates() {
           imageUrl: data.imageUrl || '',
           category: data.category || 'Sin categoría',
           type: data.type || 'cylindrical',
+          price: data.price || 25, // Precio por defecto
           isActive: data.isActive !== false, // Si no está definido, asumir true
           createdAt: data.createdAt?.toDate() || new Date(),
           updatedAt: data.updatedAt?.toDate() || new Date()

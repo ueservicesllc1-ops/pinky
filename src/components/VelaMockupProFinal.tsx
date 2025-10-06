@@ -11,8 +11,6 @@ import { getProxyImageUrl } from "@/lib/image-proxy";
 import { uploadBytes, ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/lib/firebase';
 import { Heart, Flower2 as Flower, Leaf, Star, Sparkles, Sun, Moon, Crown, Gift, Diamond, Zap, Image as ImageIcon } from "lucide-react";
-import DraggableText from './DraggableText';
-import DraggableImage from './DraggableImage';
 import SimpleImageUploadModal from './SimpleImageUploadModal';
 import CustomCandleOrderModal from './CustomCandleOrderModal';
 
@@ -398,7 +396,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
     }
   };
 
-  // Renderizar texto simple y movible (ahora se maneja en el JSX con DraggableText)
+  // Renderizar texto simple y movible (ahora se maneja directamente en Konva)
   const renderSimpleText = () => {
     // Esta función ya no es necesaria, el texto se renderiza en el JSX
     // pero la mantenemos para compatibilidad con useEffect
