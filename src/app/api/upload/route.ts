@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 
 // Configuración de Backblaze B2 (S3 compatible)
 const B2_CONFIG = {
   accessKeyId: '005c2b526be0baa000000001c',
   secretAccessKey: 'K005fAx5JipaFKVz4AxAfguok4xkI5E',
-  bucketName: 'pinkynewapp', // Bucket encontrado en la lista
+  bucketName: 'pinkynewapp',
   region: 'us-east-005',
   endpoint: 'https://s3.us-east-005.backblazeb2.com'
 };
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ Error subiendo archivo a B2 S3:', error);
-    console.error('❌ Error stack:', error.stack);
+    console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     return NextResponse.json({ 
       error: 'Error al subir la imagen a B2 S3',
       details: error instanceof Error ? error.message : 'Unknown error',
@@ -111,16 +111,10 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });
     }
 
-    console.log(`🗑️ Eliminando imagen de B2: ${imageUrl}`);
-
-    // Autorizar B2
-    const authorized = await authorizeB2();
-    if (!authorized) {
-      throw new Error('No se pudo autorizar con B2');
-    }
+    console.log(`🗑️ Eliminando imagen de B2 S3: ${imageUrl}`);
 
     // Verificar si es una URL de B2
-    if (!imageUrl.includes(B2_CONFIG.endpoint)) {
+    if (!imageUrl.includes(B2_CONFIG.endpoint.replace('https://', ''))) {
       console.warn('La URL no es de B2, no se puede eliminar:', imageUrl);
       return NextResponse.json({ 
         success: true, 
@@ -134,19 +128,16 @@ export async function DELETE(request: NextRequest) {
     const folder = urlParts[urlParts.length - 2];
     const filePath = `${folder}/${fileName}`;
 
-    // Obtener información del archivo
-    const fileInfo = await b2.getFileInfo({
-      bucketId: B2_CONFIG.bucketId,
-      fileName: filePath
+    // Crear comando de eliminación
+    const deleteCommand = new DeleteObjectCommand({
+      Bucket: B2_CONFIG.bucketName,
+      Key: filePath,
     });
 
     // Eliminar archivo
-    await b2.deleteFileVersion({
-      fileId: fileInfo.fileId,
-      fileName: filePath
-    });
+    await s3Client.send(deleteCommand);
 
-    console.log('✅ Archivo eliminado de B2:', filePath);
+    console.log('✅ Archivo eliminado de B2 S3:', filePath);
 
     return NextResponse.json({
       success: true,
@@ -154,10 +145,12 @@ export async function DELETE(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('❌ Error eliminando archivo de B2:', error);
+    console.error('❌ Error eliminando archivo de B2 S3:', error);
+    console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     return NextResponse.json({ 
-      error: 'Error al eliminar la imagen de B2',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Error al eliminar la imagen de B2 S3',
+      details: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
     }, { status: 500 });
   }
 }
