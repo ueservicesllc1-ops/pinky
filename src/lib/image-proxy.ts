@@ -1,21 +1,27 @@
 /**
- * Convierte una URL de Firebase Storage a una URL del proxy local
+ * Convierte una URL de Backblaze B2 a una URL del proxy local
  * para evitar problemas de CORS
  */
-export function getProxyImageUrl(firebaseUrl: string): string {
+export function getProxyImageUrl(imageUrl: string): string {
   // Si ya es una URL local o blob, no necesita proxy
-  if (firebaseUrl.startsWith('/') || firebaseUrl.startsWith('blob:')) {
-    return firebaseUrl;
+  if (imageUrl.startsWith('/') || imageUrl.startsWith('blob:')) {
+    return imageUrl;
   }
   
-  // Si es una URL de Firebase Storage, usar el proxy
-  if (firebaseUrl.includes('firebasestorage.googleapis.com')) {
-    const encodedUrl = encodeURIComponent(firebaseUrl);
+  // Si es una URL de Backblaze B2, usar el proxy
+  if (imageUrl.includes('backblazeb2.com')) {
+    const encodedUrl = encodeURIComponent(imageUrl);
+    return `/api/b2-proxy?url=${encodedUrl}`;
+  }
+  
+  // Si es una URL de Firebase Storage (legacy), usar el proxy de Firebase
+  if (imageUrl.includes('firebasestorage.googleapis.com')) {
+    const encodedUrl = encodeURIComponent(imageUrl);
     return `/api/image-proxy?url=${encodedUrl}`;
   }
   
   // Para otras URLs, retornar tal como están
-  return firebaseUrl;
+  return imageUrl;
 }
 
 /**

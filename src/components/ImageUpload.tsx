@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { uploadImage, deleteImageByUrl, UploadResult } from '@/lib/firebase-storage';
+import { uploadImage, deleteImageByUrl, UploadResult } from '@/lib/storage-service';
 
 interface ImageUploadProps {
   folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup' | 'candle-templates';

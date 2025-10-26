@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Upload, Trash2, Edit, Eye, EyeOff, ZoomIn, ZoomOut } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
-import { UploadResult } from '@/lib/firebase-storage';
+import { UploadResult } from '@/lib/storage-service';
 import { useBanners, Banner } from '@/hooks/useBanners';
 
 

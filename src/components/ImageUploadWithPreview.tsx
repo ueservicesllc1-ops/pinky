@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, X, Move, ZoomIn, ZoomOut, RotateCw, Crop, Check } from 'lucide-react';
-import { uploadImage, UploadResult } from '@/lib/firebase-storage';
+import { uploadImage, UploadResult } from '@/lib/storage-service';
 
 interface ImageUploadWithPreviewProps {
   folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup';

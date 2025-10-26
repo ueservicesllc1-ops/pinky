@@ -27,15 +27,24 @@ export function useCandles() {
       setIsLoading(true);
       setError(null);
       
-      const candlesRef = collection(db, 'candles');
-      const q = query(candlesRef, orderBy('uploadedAt', 'desc'));
+      const productsRef = collection(db, 'test');
+      const q = query(productsRef, orderBy('createdAt', 'desc'));
       const querySnapshot = await getDocs(q);
       
-      const candlesData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        uploadedAt: doc.data().uploadedAt?.toDate() || new Date()
-      })) as Candle[];
+      const candlesData = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          name: data.name || '',
+          description: data.description || '',
+          price: data.price || 0,
+          category: data.category || '',
+          type: 'cylindrical' as const, // Valor por defecto
+          imageUrl: data.image || data.imageUrl || '', // Usar image o imageUrl
+          uploadedAt: data.createdAt?.toDate() || data.updatedAt?.toDate() || new Date(),
+          isActive: data.active !== false // Asumir activo si no se especifica
+        };
+      }) as Candle[];
       
       setCandles(candlesData);
     } catch (err) {
@@ -56,7 +65,16 @@ export function useCandles() {
         uploadedAt: new Date()
       };
       
-      const docRef = await addDoc(collection(db, 'candles'), data);
+      const docRef = await addDoc(collection(db, 'test'), {
+        name: candleData.name,
+        description: candleData.description,
+        price: candleData.price,
+        category: candleData.category,
+        image: candleData.imageUrl, // Guardar como 'image' para consistencia
+        active: candleData.isActive,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
       
       const newCandle: Candle = {
         id: docRef.id,
@@ -77,7 +95,15 @@ export function useCandles() {
     try {
       setError(null);
       
-      await updateDoc(doc(db, 'candles', id), updates);
+      await updateDoc(doc(db, 'test', id), {
+        name: updates.name,
+        description: updates.description,
+        price: updates.price,
+        category: updates.category,
+        image: updates.imageUrl,
+        active: updates.isActive,
+        updatedAt: new Date()
+      });
       
       setCandles(prev => prev.map(candle => 
         candle.id === id ? { ...candle, ...updates } : candle
@@ -96,7 +122,7 @@ export function useCandles() {
     try {
       setError(null);
       
-      await deleteDoc(doc(db, 'candles', id));
+      await deleteDoc(doc(db, 'test', id));
       setCandles(prev => prev.filter(candle => candle.id !== id));
       return { success: true };
     } catch (err) {

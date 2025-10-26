@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, Plus, Trash2, Edit, Settings } from 'lucide-react';
 import ImageUploadWithPreview from '@/components/ImageUploadWithPreview';
-import { UploadResult } from '@/lib/firebase-storage';
+import { UploadResult } from '@/lib/storage-service';
 import { useCategories } from '@/hooks/useCategories';
 import { useCandles, Candle } from '@/hooks/useCandles';
 import { useInitializeData } from '@/hooks/useInitializeData';
