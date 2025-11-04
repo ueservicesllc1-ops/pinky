@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 import { useBanners, Banner } from '@/hooks/useBanners';
+import { getProxyImageUrl } from '@/lib/image-proxy';
 
 export default function BannerCarousel() {
   const { banners, isLoading } = useBanners();
@@ -183,7 +184,7 @@ export default function BannerCarousel() {
                   <div 
                     className="w-full h-full bg-no-repeat bg-center"
                     style={{
-                      backgroundImage: `url(${activeBanners[currentSlide].imageUrl})`,
+                      backgroundImage: `url(${getProxyImageUrl(activeBanners[currentSlide].imageUrl)})`,
                       backgroundSize: `${100 * (activeBanners[currentSlide].imageZoom || 1)}%`,
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center center',

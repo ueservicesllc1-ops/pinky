@@ -18,7 +18,8 @@ export async function uploadImage(
       formData.append('fileName', fileName);
     }
 
-    const response = await fetch('http://localhost:3001/upload', {
+    // Usar la ruta de Next.js API que funciona en desarrollo y producción
+    const response = await fetch('/api/upload', {
       method: 'POST',
       body: formData,
     });
@@ -66,9 +67,10 @@ export async function deleteImage(imagePath: string): Promise<void> {
     console.log(`🗑️ Eliminando imagen de B2 via API: ${imagePath}`);
     
     // Construir URL completa para la eliminación
-    const imageUrl = `https://pinkyflameapp.s3.us-east-005.backblazeb2.com/${imagePath}`;
+    const imageUrl = `https://pinkynewapp.s3.us-east-005.backblazeb2.com/${imagePath}`;
     
-    const response = await fetch(`http://localhost:3001/delete?url=${encodeURIComponent(imageUrl)}`, {
+    // Usar la ruta de Next.js API que funciona en desarrollo y producción
+    const response = await fetch(`/api/upload?url=${encodeURIComponent(imageUrl)}`, {
       method: 'DELETE',
     });
 
@@ -88,7 +90,8 @@ export async function deleteImageByUrl(imageUrl: string): Promise<void> {
   try {
     console.log(`🗑️ Eliminando imagen por URL de B2 via API: ${imageUrl}`);
     
-    const response = await fetch(`http://localhost:3001/delete?url=${encodeURIComponent(imageUrl)}`, {
+    // Usar la ruta de Next.js API que funciona en desarrollo y producción
+    const response = await fetch(`/api/upload?url=${encodeURIComponent(imageUrl)}`, {
       method: 'DELETE',
     });
 

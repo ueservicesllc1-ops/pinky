@@ -7,6 +7,7 @@ import { Upload, Trash2, Edit, Eye, EyeOff, ZoomIn, ZoomOut } from 'lucide-react
 import ImageUpload from '@/components/ImageUpload';
 import { UploadResult } from '@/lib/storage-service';
 import { useBanners, Banner } from '@/hooks/useBanners';
+import { getProxyImageUrl } from '@/lib/image-proxy';
 
 
 // Lista de páginas disponibles para el botón
@@ -512,7 +513,7 @@ export default function AdminBannersPage() {
                             isDragging ? 'cursor-grabbing' : 'cursor-grab'
                           }`}
                           style={{
-                            backgroundImage: `url(${formData.imageUrl})`,
+                            backgroundImage: `url(${getProxyImageUrl(formData.imageUrl)})`,
                             backgroundSize: `${100 * (formData.imageZoom || 1)}%`,
                             backgroundRepeat: 'no-repeat',
                             backgroundPosition: 'center center',
@@ -823,7 +824,7 @@ export default function AdminBannersPage() {
                     
                     <div className="aspect-[2/1] bg-gray-100 rounded-lg overflow-hidden">
                       <img
-                        src={banner.imageUrl}
+                        src={getProxyImageUrl(banner.imageUrl)}
                         alt={banner.title}
                         className="w-full h-full object-cover"
                       />

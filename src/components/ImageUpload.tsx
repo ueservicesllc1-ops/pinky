@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { uploadImage, deleteImageByUrl, UploadResult } from '@/lib/storage-service';
+import { getProxyImageUrl } from '@/lib/image-proxy';
 
 interface ImageUploadProps {
   folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup' | 'candle-templates';
@@ -28,6 +29,14 @@ export default function ImageUpload({
   const [uploadedImages, setUploadedImages] = useState<string[]>(currentImage ? [currentImage] : []);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Actualizar uploadedImages cuando cambie currentImage
+  useEffect(() => {
+    if (currentImage && !uploadedImages.includes(currentImage)) {
+      setUploadedImages([currentImage]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentImage]);
 
   const handleFileSelect = async (files: FileList | null) => {
     if (!files) return;
@@ -160,7 +169,7 @@ export default function ImageUpload({
               >
                 <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
                   <img
-                    src={imageUrl}
+                    src={getProxyImageUrl(imageUrl)}
                     alt={`Uploaded ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -193,7 +202,7 @@ export default function ImageUpload({
           <div className="relative inline-block">
             <div className="aspect-video w-48 bg-gray-100 rounded-lg overflow-hidden">
               <img
-                src={currentImage}
+                src={getProxyImageUrl(currentImage)}
                 alt="Current image"
                 className="w-full h-full object-cover"
               />
