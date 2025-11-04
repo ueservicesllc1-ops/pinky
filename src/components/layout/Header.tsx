@@ -44,18 +44,18 @@ export default function Header() {
       className="bg-white dark:bg-gray-900 shadow-lg sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700"
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-24 md:h-28 relative">
           {/* Logo */}
           <Link href="/es" className="flex items-center">
             <img 
               src="/images/logo2.png" 
               alt="Pinky Flame Logo" 
-              className="w-36 h-36 object-contain hover:scale-105 transition-transform duration-200"
+              className="w-32 h-32 md:w-40 md:h-40 object-contain hover:scale-105 transition-transform duration-200"
             />
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          {/* Desktop Navigation - Centered */}
+          <nav className="hidden md:flex items-center space-x-8 self-end pb-2 md:pb-3 absolute left-1/2 transform -translate-x-1/2">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -68,7 +68,7 @@ export default function Header() {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-4 self-end pb-2 md:pb-3">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />

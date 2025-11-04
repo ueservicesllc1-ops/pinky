@@ -16,9 +16,9 @@ export const metadata: Metadata = {
   keywords: "velas, personalizadas, artesanales, aromáticas, decoración, hogar",
   authors: [{ name: "Pinky Flame" }],
   icons: {
-    icon: '/images/icono.png',
-    shortcut: '/images/icono.png',
-    apple: '/images/icono.png',
+    icon: '/images/favicon.ico',
+    shortcut: '/images/favicon.ico',
+    apple: '/images/favicon.ico',
   },
   openGraph: {
     title: "Pinky Flame - Velas Personalizadas",
