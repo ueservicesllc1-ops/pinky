@@ -3,6 +3,51 @@
 import { useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useCandles } from "@/hooks/useCandles";
+function DigitalFooter({ locale }: { locale: Locale }) {
+  const labels = {
+    es: {
+      site: "PinkyFlames.com",
+      terms: "Términos y Condiciones",
+      shipping: "Políticas de Envío",
+      credit: "Potenciado y diseñado por Freedom Labs · +1 551 301 4573",
+    },
+    en: {
+      site: "PinkyFlames.com",
+      terms: "Terms & Conditions",
+      shipping: "Shipping Policies",
+      credit: "Powered and designed by Freedom Labs · +1 551 301 4573",
+    },
+  } as const;
+
+  const copy = labels[locale];
+
+  return (
+    <footer className="bg-pink-500">
+      <div className="mx-auto flex max-w-[393px] flex-col items-center justify-center gap-4 px-6 py-6 text-sm font-medium text-white">
+        <a
+          href="https://www.pinkyflanes.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="order-2 transition hover:opacity-80"
+        >
+          {copy.site}
+        </a>
+        <a
+          href="/politicas-envio"
+          className="order-1 transition hover:opacity-80"
+        >
+          {copy.shipping}
+        </a>
+        <a href="/terminos" className="order-3 transition hover:opacity-80">
+          {copy.terms}
+        </a>
+        <p className="order-4 text-xs font-semibold text-white/80 text-center">
+          {copy.credit}
+        </p>
+      </div>
+    </footer>
+  );
+}
 
 type Locale = "es" | "en";
 
@@ -573,6 +618,7 @@ export default function DigitalCatalogPage({ locale }: { locale: Locale }) {
           </div>
         </div>
       )}
+      <DigitalFooter locale={locale} />
     </div>
   );
 }
