@@ -3,6 +3,7 @@
 import DigitalCatalogPage from "@/components/pages/digital/DigitalCatalogPage";
 
 export default function DigitalPage() {
-  return <DigitalCatalogPage locale="es" />;
+  return <DigitalCatalogPage locale="en" />;
 }
+
 

@@ -5,6 +5,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import ThemeProviderWrapper from "@/components/ThemeProviderWrapper";
 import CartNotificationProvider from "@/components/CartNotificationProvider";
 import Footer from "@/components/layout/Footer";
+import HeaderSwitcher from "@/components/layout/HeaderSwitcher";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -45,6 +46,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProviderWrapper>
           <CartProvider>
+            <HeaderSwitcher />
             <main>
               {children}
             </main>
