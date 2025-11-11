@@ -3,11 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
-import { useBanners, Banner } from '@/hooks/useBanners';
+import { useBanners } from '@/hooks/useBanners';
 import { getProxyImageUrl } from '@/lib/image-proxy';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function BannerCarousel() {
   const { banners, isLoading } = useBanners();
+  const { language } = useLanguage();
+  const localePrefix = language === 'en' ? '/en' : '/es';
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const [isClient, setIsClient] = useState(false);
@@ -17,7 +20,7 @@ export default function BannerCarousel() {
   }, []);
 
   // Filtrar solo banners activos
-  const activeBanners = banners.filter(banner => banner.isActive);
+  const activeBanners = banners.filter((banner) => banner.isActive);
 
   // Auto-play functionality
   useEffect(() => {
@@ -144,27 +147,59 @@ export default function BannerCarousel() {
           
           {/* Contenido principal */}
           <div className="max-w-sm relative z-10">
-            {/* Etiqueta de descuento para miembros */}
-            {activeBanners[currentSlide]?.showMemberDiscount && (
+            {(() => {
+              const currentBanner = activeBanners[currentSlide];
+              const title =
+                currentBanner?.translations?.title?.[language] || currentBanner?.title || 'Personaliza tus velas';
+              const subtitle =
+                currentBanner?.translations?.subtitle?.[language] ||
+                currentBanner?.subtitle ||
+                'Crea velas únicas con tus propios diseños. Desde aromas personalizados hasta imágenes especiales.';
+              const buttonText =
+                currentBanner?.translations?.buttonText?.[language] || currentBanner?.buttonText || 'Crear ahora';
+              const discountLabel =
+                currentBanner?.translations?.discountText?.[language] || currentBanner?.discountText;
+              const rawLink = currentBanner?.buttonLink || '/personalizadas';
+              const normalizedLink = rawLink.replace(/^\/(es|en)/, '').replace(/^\/+/, '');
+              const buttonHref = normalizedLink ? `${localePrefix}/${normalizedLink}` : localePrefix;
+
+              return (
+                <>
+                  {currentBanner?.showMemberDiscount && discountLabel && (
+                    <div className="mb-4">
+                      <div className="inline-flex items-center px-4 py-2 bg-yellow-400 text-yellow-900 text-sm font-bold rounded-full shadow-lg animate-pulse">
+                        🎉 {discountLabel}
+                      </div>
+                    </div>
+                  )}
+
+                  <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">{title}</h2>
+                  <p className="text-lg md:text-xl mb-6 text-purple-100 leading-relaxed">{subtitle}</p>
+                  <a
+                    href={buttonHref}
+                    className="inline-flex items-center px-6 py-3 bg-white text-purple-600 font-semibold rounded-lg hover:bg-purple-50 transition-colors duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    {buttonText}
+                  </a>
+                </>
+              );
+            })()}
+
+            {/* Legacy discount tag is now handled within localized block */}
+            {/* {activeBanners[currentSlide]?.showMemberDiscount && (
               <div className="mb-4">
                 <div className="inline-flex items-center px-4 py-2 bg-yellow-400 text-yellow-900 text-sm font-bold rounded-full shadow-lg animate-pulse">
                   🎉 {activeBanners[currentSlide]?.discountText || 'Solo para miembros registrados el 30% de descuentos'}
                 </div>
               </div>
-            )}
-            
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
-              {activeBanners[currentSlide]?.title || 'Personaliza tus velas'}
-            </h2>
-            <p className="text-lg md:text-xl mb-6 text-purple-100 leading-relaxed">
-              {activeBanners[currentSlide]?.subtitle || 'Crea velas únicas con tus propios diseños. Desde aromas personalizados hasta imágenes especiales.'}
-            </p>
-            <a 
+            )} */}
+
+            {/* <a 
               href={activeBanners[currentSlide]?.buttonLink || '/personalizadas'}
               className="inline-flex items-center px-6 py-3 bg-white text-purple-600 font-semibold rounded-lg hover:bg-purple-50 transition-colors duration-300 shadow-lg hover:shadow-xl"
             >
               {activeBanners[currentSlide]?.buttonText || 'Crear ahora'}
-            </a>
+            </a> */}
           </div>
         </div>
 

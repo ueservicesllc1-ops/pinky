@@ -6,18 +6,20 @@ import { Mail, Gift, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { subscribeToNewsletter } from '@/lib/newsletter';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function NewsletterSection() {
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email.trim()) {
-      setMessage('Por favor ingresa tu email');
+      setMessage(t('newsletter.errorRequired'));
       return;
     }
 
@@ -41,7 +43,7 @@ export default function NewsletterSection() {
         setMessage(result.message);
       }
     } catch (error) {
-      setMessage('Hubo un error. Por favor intenta de nuevo.');
+      setMessage(t('newsletter.errorGeneric'));
     } finally {
       setIsLoading(false);
     }
@@ -72,11 +74,11 @@ export default function NewsletterSection() {
           </div>
 
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Mantente al día con Pinky Flame
+            {t('newsletter.headline')}
           </h2>
           
           <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-            Recibe noticias exclusivas sobre nuevos productos, ofertas especiales y consejos para crear la atmósfera perfecta en tu hogar.
+            {t('newsletter.descriptionExtended')}
           </p>
 
           {!isSubscribed ? (
@@ -92,7 +94,7 @@ export default function NewsletterSection() {
                     <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <Input
                       type="email"
-                      placeholder="Tu dirección de email"
+                    placeholder={t('newsletter.emailPlaceholderDetailed')}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-10 h-12 bg-white/10 border-white/20 text-white placeholder:text-white/70 focus:bg-white/20"
@@ -106,7 +108,7 @@ export default function NewsletterSection() {
                     disabled={isLoading}
                     className="h-12 bg-white text-pink-600 hover:bg-white/90 font-semibold px-8 disabled:opacity-50"
                   >
-                    {isLoading ? 'Suscribiendo...' : 'Suscribirse'}
+                    {isLoading ? t('newsletter.subscribing') : t('newsletter.subscribe')}
                   </Button>
             </motion.form>
           ) : (
@@ -117,7 +119,7 @@ export default function NewsletterSection() {
             >
               <div className="flex items-center justify-center space-x-2 text-white">
                 <Sparkles className="h-5 w-5" />
-                <span className="font-semibold">¡Gracias por suscribirte!</span>
+                <span className="font-semibold">{t('newsletter.success')}</span>
               </div>
             </motion.div>
           )}
@@ -147,9 +149,9 @@ export default function NewsletterSection() {
             className="mt-8 text-sm text-white/70"
           >
             <p>
-              Al suscribirte, aceptas recibir emails promocionales. 
+              {t('newsletter.policyNotice')}
               <br />
-              Puedes cancelar tu suscripción en cualquier momento.
+              {t('newsletter.policyDetail')}
             </p>
           </motion.div>
 
@@ -165,24 +167,36 @@ export default function NewsletterSection() {
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Gift className="h-6 w-6 text-white" />
               </div>
-              <h3 className="font-semibold text-white mb-2">Ofertas Exclusivas</h3>
-              <p className="text-white/80 text-sm">Descuentos especiales solo para suscriptores</p>
+              <h3 className="font-semibold text-white mb-2">
+                {t('newsletter.benefit.exclusive.title')}
+              </h3>
+              <p className="text-white/80 text-sm">
+                {t('newsletter.benefit.exclusive.description')}
+              </p>
             </div>
             
             <div className="text-center">
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
-              <h3 className="font-semibold text-white mb-2">Nuevos Productos</h3>
-              <p className="text-white/80 text-sm">Sé el primero en conocer nuestras novedades</p>
+              <h3 className="font-semibold text-white mb-2">
+                {t('newsletter.benefit.products.title')}
+              </h3>
+              <p className="text-white/80 text-sm">
+                {t('newsletter.benefit.products.description')}
+              </p>
             </div>
             
             <div className="text-center">
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Mail className="h-6 w-6 text-white" />
               </div>
-              <h3 className="font-semibold text-white mb-2">Consejos Útiles</h3>
-              <p className="text-white/80 text-sm">Tips para crear ambientes perfectos</p>
+              <h3 className="font-semibold text-white mb-2">
+                {t('newsletter.benefit.tips.title')}
+              </h3>
+              <p className="text-white/80 text-sm">
+                {t('newsletter.benefit.tips.description')}
+              </p>
             </div>
           </motion.div>
         </motion.div>

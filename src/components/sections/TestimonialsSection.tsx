@@ -5,9 +5,11 @@ import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useTestimonials } from '@/hooks/useTestimonials';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function TestimonialsSection() {
   const { testimonials, isLoading } = useTestimonials();
+  const { t } = useLanguage();
   
   // Filtrar solo testimonios activos
   const activeTestimonials = testimonials.filter(testimonial => testimonial.isActive);
@@ -19,10 +21,10 @@ export default function TestimonialsSection() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Lo que dicen nuestros clientes
+              {t('testimonials.title')}
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Cargando testimonios...
+              {t('testimonials.loading')}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -68,10 +70,10 @@ export default function TestimonialsSection() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Lo que dicen nuestros clientes
+            {t('testimonials.title')}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Miles de clientes felices han transformado sus espacios con nuestras velas artesanales
+            {t('testimonials.description')}
           </p>
         </motion.div>
 
@@ -130,10 +132,10 @@ export default function TestimonialsSection() {
           >
             <Quote className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Próximamente testimonios
+              {t('testimonials.emptyTitle')}
             </h3>
             <p className="text-gray-600">
-              Estamos recopilando las experiencias de nuestros clientes
+              {t('testimonials.emptyDescription')}
             </p>
           </motion.div>
         )}
@@ -149,19 +151,19 @@ export default function TestimonialsSection() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-3xl font-bold text-gray-900 mb-2">500+</div>
-              <div className="text-gray-600">Clientes Satisfechos</div>
+              <div className="text-gray-600">{t('testimonials.stats.clients')}</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-gray-900 mb-2">4.9</div>
-              <div className="text-gray-600">Valoración Promedio</div>
+              <div className="text-gray-600">{t('testimonials.stats.rating')}</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-gray-900 mb-2">1000+</div>
-              <div className="text-gray-600">Velas Vendidas</div>
+              <div className="text-gray-600">{t('testimonials.stats.sales')}</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-gray-900 mb-2">50+</div>
-              <div className="text-gray-600">Fragancias Disponibles</div>
+              <div className="text-gray-600">{t('testimonials.stats.fragrances')}</div>
             </div>
           </div>
         </motion.div>

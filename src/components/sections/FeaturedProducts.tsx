@@ -9,6 +9,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useCandles } from '@/hooks/useCandles';
 import ProductModal from '@/components/ProductModal';
 import { CartItem } from '@/types';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 
 export default function FeaturedProducts() {
@@ -16,28 +17,36 @@ export default function FeaturedProducts() {
   const { candles, isLoading } = useCandles();
   const [selectedProduct, setSelectedProduct] = React.useState<CartItem['product'] | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const { language, t } = useLanguage();
+  const localePrefix = language === 'en' ? '/en' : '/es';
 
   // Convertir velas de Firebase al formato esperado por el carrito
   const featuredProducts = candles
-    .filter(candle => candle.isActive) // Solo velas activas
-    .slice(0, 4) // Tomar máximo 4 velas
-    .map(candle => ({
-      id: candle.id,
-      name: candle.name,
-      description: candle.description,
-      price: candle.price,
-      images: [candle.imageUrl],
-      category: candle.category,
-      stock: 10, // Asumir stock disponible
-      isCustomizable: true,
-      customizationOptions: {
-        scents: ['Personalizado'],
-        sizes: ['Único'],
-        colors: ['Personalizable']
-      },
-      createdAt: candle.uploadedAt,
-      updatedAt: candle.uploadedAt
-    }));
+    .filter((candle) => candle.isActive)
+    .slice(0, 4)
+    .map((candle) => {
+      const localizedName = candle.translations?.name?.[language] || candle.name;
+      const localizedDescription =
+        candle.translations?.description?.[language] || candle.description;
+
+      return {
+        id: candle.id,
+        name: localizedName,
+        description: localizedDescription,
+        price: candle.price,
+        images: [candle.imageUrl],
+        category: candle.translations?.category?.[language] || candle.category,
+        stock: 10,
+        isCustomizable: true,
+        customizationOptions: {
+          scents: ['Personalizado'],
+          sizes: ['Único'],
+          colors: ['Personalizable'],
+        },
+        createdAt: candle.uploadedAt,
+        updatedAt: candle.uploadedAt,
+      };
+    });
 
   const handleAddToCart = (product: CartItem['product']) => {
     addItem({
@@ -61,9 +70,9 @@ export default function FeaturedProducts() {
     return (
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Cargando productos destacados...</p>
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">{t('products.loading')}</p>
           </div>
         </div>
       </section>
@@ -77,18 +86,18 @@ export default function FeaturedProducts() {
         <div className="container mx-auto px-4">
           <div className="text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-              Productos Destacados
+              {t('products.featured')}
             </h2>
             <p className="text-gray-600 mb-8">
-              Pronto tendremos productos destacados disponibles
+              {t('products.comingSoon')}
             </p>
             <Button 
               size="lg" 
               variant="outline" 
               className="border-2 border-pink-300 text-pink-600 hover:bg-pink-50"
-              onClick={() => window.location.href = '/es/catalogo'}
+              onClick={() => window.location.href = `${localePrefix}/catalogo`}
             >
-              Ver Catálogo Completo
+              {t('products.viewAllProducts')}
             </Button>
           </div>
         </div>
@@ -107,10 +116,10 @@ export default function FeaturedProducts() {
           className="text-center mb-12"
         >
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-              Productos Destacados
+              {t('products.featured')}
             </h2>
           <p className="text-base text-gray-600 max-w-2xl mx-auto">
-            Descubre nuestras velas más populares, creadas con los mejores ingredientes naturales
+            {t('products.featuredDescription')}
           </p>
         </motion.div>
 
@@ -150,7 +159,9 @@ export default function FeaturedProducts() {
                     <div className="absolute inset-0 flex items-center justify-center" style={{ display: product.images && product.images[0] ? 'none' : 'flex' }}>
                       <div className="text-center text-gray-600">
                         <Heart className="h-16 w-16 mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">Imagen de {product.name}</p>
+                        <p className="text-sm">
+                          {`${t('products.imagePlaceholder')} ${product.name}`}
+                        </p>
                       </div>
                     </div>
                     
@@ -166,7 +177,7 @@ export default function FeaturedProducts() {
                           className="bg-white text-gray-900 hover:bg-gray-100"
                         >
                           <ShoppingCart className="h-4 w-4 mr-2" />
-                          Agregar
+                        {t('products.addToCart')}
                         </Button>
                         <Button 
                           size="sm" 
@@ -182,7 +193,7 @@ export default function FeaturedProducts() {
                     {/* Badge */}
                     {product.isCustomizable && (
                       <div className="absolute top-3 left-3 bg-pink-500 text-white text-xs px-2 py-1 rounded-full">
-                        Personalizable
+                        {t('products.customizable')}
                       </div>
                     )}
                   </div>
@@ -217,7 +228,7 @@ export default function FeaturedProducts() {
                         className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
                       >
                         <ShoppingCart className="h-4 w-4 mr-2" />
-                        Comprar
+                        {t('products.buy')}
                       </Button>
                     </div>
                   </div>
@@ -239,9 +250,9 @@ export default function FeaturedProducts() {
             size="lg" 
             variant="outline" 
             className="border-2 border-pink-300 text-pink-600 hover:bg-pink-50"
-            onClick={() => window.location.href = '/es/catalogo'}
+            onClick={() => window.location.href = `${localePrefix}/catalogo`}
           >
-            Ver Todos los Productos
+            {t('products.viewAllProducts')}
           </Button>
         </motion.div>
       </div>

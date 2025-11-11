@@ -6,6 +6,7 @@ import { Palette, Sparkles, Gift, Heart, Star, Zap, Award, Crown } from 'lucide-
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useCustomizationConfig } from '@/hooks/useCustomizationConfig';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Mapeo de iconos disponibles
 const iconMap = {
@@ -21,6 +22,8 @@ const iconMap = {
 
 export default function CustomizationSection() {
   const { config, isLoading } = useCustomizationConfig();
+  const { language, t } = useLanguage();
+  const localePrefix = language === 'en' ? '/en' : '/es';
 
   // Si no está activa la sección, no mostrar nada
   if (!config.isActive) {
@@ -48,6 +51,34 @@ export default function CustomizationSection() {
     );
   }
 
+  const titleText = language === 'en' ? t('custom.title') : config.title;
+  const subtitleText = language === 'en' ? t('custom.subtitle') : config.subtitle;
+  const descriptionText = language === 'en' ? t('custom.description') : config.description;
+  const buttonText = language === 'en' ? t('custom.button') : config.buttonText;
+
+  const buttonLinkPath =
+    config.buttonLink?.replace(/^\/(es|en)/, '').replace(/^\/+/, '') || 'personalizadas';
+  const localizedButtonLink = `${localePrefix}/${buttonLinkPath}`;
+
+  const featureTranslations = {
+    Palette: {
+      title: t('custom.feature.colors.title'),
+      description: t('custom.feature.colors.description'),
+    },
+    Heart: {
+      title: t('custom.feature.messages.title'),
+      description: t('custom.feature.messages.description'),
+    },
+    Sparkles: {
+      title: t('custom.feature.fragrances.title'),
+      description: t('custom.feature.fragrances.description'),
+    },
+    Gift: {
+      title: t('custom.feature.packaging.title'),
+      description: t('custom.feature.packaging.description'),
+    },
+  } as const;
+
   return (
     <section className="py-16 bg-gradient-to-br from-pink-50 to-purple-50">
       <div className="container mx-auto px-4">
@@ -61,12 +92,13 @@ export default function CustomizationSection() {
           >
             <div className="flex items-center mb-6">
               <Sparkles className="h-6 w-6 text-pink-500 mr-2" />
-              <span className="text-pink-600 font-semibold">{config.subtitle}</span>
+              <span className="text-pink-600 font-semibold">{subtitleText}</span>
             </div>
 
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              {config.title.split(' ').map((word, index) => {
-                const isLastWord = index === config.title.split(' ').length - 1;
+              {titleText.split(' ').map((word, index) => {
+                const words = titleText.split(' ');
+                const isLastWord = index === words.length - 1;
                 return isLastWord ? (
                   <span key={index} className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
                     {' '}{word}
@@ -78,12 +110,20 @@ export default function CustomizationSection() {
             </h2>
 
             <p className="text-lg text-gray-600 mb-8">
-              {config.description}
+              {descriptionText}
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               {config.features.map((feature, index) => {
                 const IconComponent = iconMap[feature.icon as keyof typeof iconMap] || Sparkles;
+                const translated = featureTranslations[feature.icon as keyof typeof featureTranslations];
+                const featureTitle =
+                  language === 'en' && translated?.title ? translated.title : feature.title;
+                const featureDescription =
+                  language === 'en' && translated?.description
+                    ? translated.description
+                    : feature.description;
+
                 return (
                   <motion.div
                     key={feature.title}
@@ -98,10 +138,10 @@ export default function CustomizationSection() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-1">
-                        {feature.title}
+                        {featureTitle}
                       </h3>
                       <p className="text-sm text-gray-600">
-                        {feature.description}
+                        {featureDescription}
                       </p>
                     </div>
                   </motion.div>
@@ -109,10 +149,10 @@ export default function CustomizationSection() {
               })}
             </div>
 
-            <Link href={config.buttonLink}>
+            <Link href={localizedButtonLink}>
               <Button size="lg" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-8 py-3">
                 <Sparkles className="mr-2 h-5 w-5" />
-                {config.buttonText}
+                {buttonText}
               </Button>
             </Link>
           </motion.div>

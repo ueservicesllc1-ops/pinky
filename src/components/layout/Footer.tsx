@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Heart, Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface BusinessInfo {
   businessName: string;
@@ -25,6 +26,8 @@ interface BusinessInfo {
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { language, t } = useLanguage();
+  const localePrefix = language === 'en' ? '/en' : '/es';
   const [businessInfo, setBusinessInfo] = useState({
     businessName: 'Pinky Flame',
     businessDescription: 'Velas artesanales personalizadas que iluminan y aromatizan tus momentos especiales.',
@@ -62,32 +65,32 @@ export default function Footer() {
 
   const footerSections = [
     {
-      title: 'Tienda',
+      title: t('footer.shop'),
       links: [
-        { label: 'Catálogo', href: '/es/catalogo' },
-        { label: 'Velas Personalizadas', href: '/es/personalizadas' },
-        { label: 'IA Generator', href: '/es/ia-generator' },
-        { label: 'Ofertas', href: '/ofertas' },
-      ]
+        { label: t('footer.catalog'), href: `${localePrefix}/catalogo` },
+        { label: t('footer.custom'), href: `${localePrefix}/personalizadas` },
+        { label: t('footer.ai'), href: `${localePrefix}/ia-generator` },
+        { label: t('footer.offers'), href: '/ofertas' },
+      ],
     },
     {
-      title: 'Ayuda',
+      title: t('footer.help'),
       links: [
-        { label: 'Preguntas Frecuentes', href: '/faq' },
-        { label: 'Guía de Tamaños', href: '/guias' },
-        { label: 'Cuidado de Velas', href: '/cuidado' },
-        { label: 'Contacto', href: '/contacto' },
-      ]
+        { label: t('footer.faq'), href: '/faq' },
+        { label: t('footer.guide'), href: '/guias' },
+        { label: t('footer.care'), href: '/cuidado' },
+        { label: t('footer.contact'), href: '/contacto' },
+      ],
     },
     {
-      title: 'Empresa',
+      title: t('footer.company'),
       links: [
-        { label: 'Nosotros', href: '/es/nosotros' },
-        { label: 'Nuestra Historia', href: '/historia' },
-        { label: 'Trabaja con Nosotros', href: '/trabajo' },
-        { label: 'Prensa', href: '/prensa' },
-      ]
-    }
+        { label: t('footer.about'), href: `${localePrefix}/nosotros` },
+        { label: t('footer.history'), href: '/historia' },
+        { label: t('footer.work'), href: '/trabajo' },
+        { label: t('footer.press'), href: '/prensa' },
+      ],
+    },
   ];
 
   const socialLinks = [
@@ -101,7 +104,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 pt-20 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-1">
-            <Link href="/es" className="block">
+            <Link href={localePrefix} className="block">
               <img 
                 src="/images/logo2.png" 
                 alt="Pinky Flame Logo" 
@@ -161,18 +164,18 @@ export default function Footer() {
           className="mt-12 pt-8 border-t border-gray-800"
         >
           <div className="max-w-md mx-auto text-center">
-            <h3 className="font-semibold text-white mb-2">Mantente al día</h3>
+            <h3 className="font-semibold text-white mb-2">{t('footer.newsletter')}</h3>
             <p className="text-gray-400 text-sm mb-4">
-              Recibe noticias sobre nuevos productos y ofertas especiales
+              {t('footer.newsletterDesc')}
             </p>
             <div className="flex gap-2">
               <input
                 type="email"
-                placeholder="Tu email"
+                placeholder={t('footer.newsletterPlaceholder')}
                 className="flex-1 px-4 py-2 bg-gray-800 dark:bg-gray-700 border border-gray-700 dark:border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
               <button className="px-6 py-2 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg hover:from-pink-600 hover:to-purple-700 transition-all">
-                Suscribirse
+                {t('footer.newsletterSubscribe')}
               </button>
             </div>
           </div>
@@ -181,10 +184,10 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <div className="flex flex-col md:flex-row items-center gap-2">
             <p className="text-gray-400 text-sm">
-              © {currentYear} {businessInfo.businessName}. Todos los derechos reservados.
+              © {currentYear} {businessInfo.businessName}. {t('footer.rights')}
             </p>
             <p className="text-gray-500 text-xs">
-              Potenciada por Freedom Labs
+              {t('footer.powered')}
             </p>
           </div>
           
@@ -205,13 +208,13 @@ export default function Footer() {
 
           <div className="flex items-center space-x-6 mt-4 md:mt-0">
             <Link href="/politicas-envio" className="text-gray-400 hover:text-pink-400 transition-colors text-sm">
-              Políticas de Envío
+              {t('footer.shipping')}
             </Link>
             <Link href="/terminos" className="text-gray-400 hover:text-pink-400 transition-colors text-sm">
-              Términos y Condiciones
+              {t('footer.terms')}
             </Link>
             <Link href="/privacidad" className="text-gray-400 hover:text-pink-400 transition-colors text-sm">
-              Privacidad
+              {t('footer.privacy')}
             </Link>
           </div>
         </div>

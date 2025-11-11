@@ -1,6 +1,7 @@
 'use client';
 
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 
 interface ThemeProviderWrapperProps {
   children: React.ReactNode;
@@ -9,7 +10,9 @@ interface ThemeProviderWrapperProps {
 export default function ThemeProviderWrapper({ children }: ThemeProviderWrapperProps) {
   return (
     <ThemeProvider>
-      {children}
+      <LanguageProvider>
+        {children}
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

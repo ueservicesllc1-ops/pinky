@@ -7,10 +7,14 @@ import { ShoppingCart, User, Menu, X, Heart, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ThemeToggle from '@/components/ThemeToggle';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSwitcher from '@/components/layout/LanguageSwitcher';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [itemCount, setItemCount] = useState(0);
+  const { language, t } = useLanguage();
+  const localePrefix = language === 'en' ? '/en' : '/es';
 
   // Load cart count from localStorage on mount
   React.useEffect(() => {
@@ -29,11 +33,11 @@ export default function Header() {
   }, []);
 
   const navItems = [
-    { href: '/es', label: 'Inicio' },
-    { href: '/es/catalogo', label: 'Catálogo' },
-    { href: '/es/personalizadas', label: 'Personalizadas' },
-    { href: '/es/nosotros', label: 'Nosotros' },
-    { href: '/admin', label: 'Admin' },
+    { href: localePrefix, label: t('header.home') },
+    { href: `${localePrefix}/catalogo`, label: t('header.catalog') },
+    { href: `${localePrefix}/personalizadas`, label: t('header.custom') },
+    { href: `${localePrefix}/nosotros`, label: t('header.about') },
+    { href: '/admin', label: t('header.admin') },
   ];
 
   return (
@@ -46,7 +50,7 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-24 md:h-28 relative">
           {/* Logo */}
-          <Link href="/es" className="flex items-center">
+          <Link href={localePrefix} className="flex items-center">
             <img 
               src="/images/logo2.png" 
               alt="Pinky Flame Logo" 
@@ -74,10 +78,12 @@ export default function Header() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
               <Input
                 type="text"
-                placeholder="Buscar velas..."
+                placeholder={t('header.searchPlaceholder')}
                 className="pl-10 w-64"
               />
             </div>
+
+            <LanguageSwitcher />
 
             {/* Favorites */}
             <Button variant="ghost" size="sm">
@@ -88,7 +94,7 @@ export default function Header() {
             <ThemeToggle />
 
             {/* Cart */}
-            <Link href="/es/carrito">
+            <Link href={`${localePrefix}/carrito`}>
               <Button variant="ghost" size="sm" className="relative">
                 <ShoppingCart className="h-4 w-4" />
                 {itemCount > 0 && (
@@ -107,7 +113,8 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-2">
             <ThemeToggle />
-            <Link href="/es/carrito">
+            <LanguageSwitcher variant="mobile" />
+            <Link href={`${localePrefix}/carrito`}>
               <Button variant="ghost" size="sm" className="relative">
                 <ShoppingCart className="h-4 w-4" />
                 {itemCount > 0 && (
@@ -134,7 +141,8 @@ export default function Header() {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="fixed inset-y-0 right-0 w-64 bg-white dark:bg-gray-900 shadow-lg z-50 p-4 md:hidden"
           >
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-between items-center mb-6">
+              <LanguageSwitcher variant="mobile" />
               <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(false)}>
                 <X className="h-5 w-5" />
               </Button>
