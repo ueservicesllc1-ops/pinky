@@ -8,8 +8,6 @@ import { Rnd } from "react-rnd";
 import { useCandleTemplates } from "@/hooks/useCandleTemplates";
 import { useCustomFonts } from "@/hooks/useCustomFonts";
 import { getProxyImageUrl } from "@/lib/image-proxy";
-import { uploadBytes, ref, getDownloadURL } from 'firebase/storage';
-import { storage } from '@/lib/firebase';
 import { Heart, Flower2 as Flower, Leaf, Star, Sparkles, Sun, Moon, Crown, Gift, Diamond, Zap, Image as ImageIcon } from "lucide-react";
 import SimpleImageUploadModal from './SimpleImageUploadModal';
 import CustomCandleOrderModal from './CustomCandleOrderModal';
@@ -21,16 +19,16 @@ interface VelaMockupProFinalProps {
 export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFinalProps) {
   const stageRef = useRef<Konva.Stage>(null);
   const layerRef = useRef<Konva.Layer>(null);
-  
+
   // Hook para fuentes personalizadas
   const { customFonts, loading: fontsLoading } = useCustomFonts();
-  
+
   // Estados de imagen
   const [currentImageSrc, setCurrentImageSrc] = useState(initialSrc || "/velas/vela-cilindrica-rosa.jpg");
   // Usar proxy para evitar problemas de CORS con Firebase Storage
   const proxyImageSrc = getProxyImageUrl(currentImageSrc);
   const [image] = useImage(proxyImageSrc, 'anonymous');
-  
+
   // Estados para imágenes subidas por el usuario (solo URLs locales)
   const [uploadedImages, setUploadedImages] = useState<Array<{
     id: string;
@@ -41,13 +39,13 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
     height: number;
     zIndex: number;
   }>>([]);
-  const [uploadedImageObjects, setUploadedImageObjects] = useState<{[key: string]: HTMLImageElement}>({});
-  
+  const [uploadedImageObjects, setUploadedImageObjects] = useState<{ [key: string]: HTMLImageElement }>({});
+
   // Estados de texto
   const [text, setText] = useState("Tu mensaje aquí");
   const [fontSize, setFontSize] = useState(28);
   const [fontColor, setFontColor] = useState("#000000");
-  const [fontFamily, setFontFamily] = useState("Arial");
+  const [fontFamily, setFontFamily] = useState("Dancing Script");
   const [textY, setTextY] = useState(250);
   const [textPosition, setTextPosition] = useState({ x: 0, y: 250 });
   const [showImageUploadModal, setShowImageUploadModal] = useState(false);
@@ -55,7 +53,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
   const [generatedImage, setGeneratedImage] = useState<string>('');
   const [textZIndex, setTextZIndex] = useState(1000);
   const [nextZIndex, setNextZIndex] = useState(1001);
-  
+
   // Función para manejar el cambio de posición del texto
   const handleTextPositionChange = (x: number, y: number) => {
     setTextPosition({ x, y });
@@ -66,7 +64,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
   const handleImageUploaded = (imageFile: File) => {
     const imageUrl = URL.createObjectURL(imageFile);
     const imageId = `local_image_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     const newImage = {
       id: imageId,
       url: imageUrl,
@@ -83,7 +81,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
 
   // Función para actualizar la posición de una imagen
   const handleImagePositionChange = (imageId: string, x: number, y: number, width: number, height: number) => {
-    setUploadedImages(prev => prev.map(img => 
+    setUploadedImages(prev => prev.map(img =>
       img.id === imageId ? { ...img, x, y, width, height } : img
     ));
   };
@@ -96,8 +94,8 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
   // Funciones para controlar el orden de las capas
   const bringTextToFront = () => {
     // Calcular el z-index más alto de las imágenes y agregar 1
-    const maxImageZIndex = uploadedImages.length > 0 
-      ? Math.max(...uploadedImages.map(img => img.zIndex)) 
+    const maxImageZIndex = uploadedImages.length > 0
+      ? Math.max(...uploadedImages.map(img => img.zIndex))
       : 0;
     const newTextZIndex = Math.max(maxImageZIndex + 1, 1000);
     setTextZIndex(newTextZIndex);
@@ -105,12 +103,12 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
   };
 
   const bringImageToFront = (imageId: string) => {
-    setUploadedImages(prev => prev.map(img => 
+    setUploadedImages(prev => prev.map(img =>
       img.id === imageId ? { ...img, zIndex: nextZIndex } : img
     ));
     setNextZIndex(prev => prev + 1);
   };
-  
+
   // Estados de elementos decorativos
   const [decorativeElements, setDecorativeElements] = useState<Array<{
     id: string;
@@ -121,7 +119,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
     color: string;
     rotation: number;
   }>>([]);
-  
+
   // Cargar plantillas desde Firebase
   const { templates, isLoading: templatesLoading } = useCandleTemplates();
 
@@ -149,18 +147,39 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
     "#4B0082", // Índigo
   ];
 
-  // Fuentes disponibles (sistema + personalizadas)
+  // Fuentes disponibles (sistema)
   const systemFonts = [
     "Arial", "Georgia", "Times New Roman", "Impact",
-    "Brush Script MT", "Lucida Handwriting", "Comic Sans MS",
-    "Papyrus", "Chalkduster", "Marker Felt", "Bradley Hand",
-    "Snell Roundhand", "Apple Chancery", "Zapfino", "Optima",
-    "Palatino", "Garamond", "Baskerville", "Didot",
-    "Futura", "Century Gothic", "Tahoma", "Geneva"
+    "Comic Sans MS", "Optima", "Palatino", "Garamond",
+    "Baskerville", "Futura", "Century Gothic", "Tahoma", "Geneva"
   ];
 
-  // Combinar fuentes del sistema con fuentes personalizadas
+  // Fuentes de Google (Elegantes y Manuscritas)
+  const googleFontsList = [
+    "Dancing Script",
+    "Great Vibes",
+    "Alex Brush",
+    "Pacifico",
+    "Parisienne",
+    "Playfair Display",
+    "Cinzel",
+    "Montserrat"
+  ];
+
+  // Cargar Google Fonts dinámicamente
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.href = `https://fonts.googleapis.com/css2?family=${googleFontsList.map(f => f.replace(/ /g, '+')).join('&family=')}&display=swap`;
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, []);
+
+  // Combinar fuentes del sistema, de Google y personalizadas
   const fonts = [
+    ...googleFontsList,
     ...systemFonts,
     ...customFonts.map(font => font.name)
   ];
@@ -263,40 +282,51 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
 
   const generateFinalImage = async (): Promise<string> => {
     if (!stageRef.current) return '';
-    
+
     try {
       // Usar el canvas de Konva directamente que ya maneja las imágenes sin problemas de CORS
       const stage = stageRef.current;
-      
+
       // Exportar usando el método nativo de Konva
       const dataURL = stage.toDataURL({
         pixelRatio: 3,
         quality: 1.0,
         mimeType: 'image/png'
       });
-      
+
       console.log('✅ Imagen exportada exitosamente usando Konva');
-      
+
       // Convertir dataURL a blob
       const response = await fetch(dataURL);
       const blob = await response.blob();
-      
+
       // Crear nombre único para la imagen
       const timestamp = Date.now();
       const randomId = Math.random().toString(36).substring(2, 15);
       const fileName = `custom-candle-${timestamp}-${randomId}.png`;
-      
-      // Subir a Firebase Storage
-      const storageRef = ref(storage, `custom-candles/${fileName}`);
-      await uploadBytes(storageRef, blob);
-      
-      // Obtener URL de descarga
-      const downloadURL = await getDownloadURL(storageRef);
-      console.log('✅ Imagen guardada en Firebase Storage:', downloadURL);
-      
-      // Retornar la URL del proxy para evitar problemas de CORS
-      return getProxyImageUrl(downloadURL);
-      
+
+      // Crear archivo para enviar al API
+      const file = new File([blob], fileName, { type: 'image/png' });
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'candles'); // Usar carpeta candles autorizada
+
+      // Subir a la nube B2 mediante nuestra API Proxy (esto soluciona el error 403 de Firebase)
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Error al subir la imagen generada al almacenamiento.');
+      }
+
+      const result = await uploadResponse.json();
+      console.log('✅ Imagen guardada en la Nube Segura:', result.url);
+
+      // Retornar la URL oficial
+      return result.url;
+
     } catch (error) {
       console.error('Error al generar y guardar imagen:', error);
       return '';
@@ -321,20 +351,20 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
 
   const handleExport = async () => {
     if (!stageRef.current) return;
-    
+
     try {
       // Crear un canvas temporal limpio
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = canvasWidth * 3; // 3x resolución
       tempCanvas.height = canvasHeight * 3;
       const ctx = tempCanvas.getContext('2d');
-      
+
       if (!ctx) return;
-      
+
       // Dibujar fondo blanco
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-      
+
       // Dibujar la imagen de la vela
       if (image) {
         const scale = Math.min(tempCanvas.width / image.width, tempCanvas.height / image.height);
@@ -342,27 +372,27 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
         const scaledHeight = image.height * scale;
         const x = (tempCanvas.width - scaledWidth) / 2;
         const y = (tempCanvas.height - scaledHeight) / 2;
-        
+
         ctx.drawImage(image, x, y, scaledWidth, scaledHeight);
       }
-      
+
       // Dibujar el texto
       if (text.trim() !== "Tu mensaje aquí" && text.trim() !== "") {
         ctx.font = `${fontSize * 3}px ${fontFamily}`;
         ctx.fillStyle = fontColor;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        
+
         const textX = (textPosition.x * 3);
         const textY = (textPosition.y * 3);
         ctx.fillText(text, textX, textY);
       }
-      
+
       // Dibujar imágenes subidas (si las hay)
       for (const img of uploadedImages) {
         try {
           const imgElement = new Image();
-          
+
           await new Promise((resolve, reject) => {
             imgElement.onload = () => {
               const scale = Math.min(tempCanvas.width / canvasWidth, tempCanvas.height / canvasHeight);
@@ -370,7 +400,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
               const y = img.y * scale;
               const width = img.width * scale;
               const height = img.height * scale;
-              
+
               ctx.drawImage(imgElement, x, y, width, height);
               resolve(true);
             };
@@ -381,15 +411,15 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
           console.warn('No se pudo incluir imagen en la exportación:', img.url);
         }
       }
-      
+
       // Exportar el canvas temporal
       const dataURL = tempCanvas.toDataURL('image/png', 1.0);
-      
+
       const link = document.createElement("a");
       link.download = `vela-mockup-profesional-${Date.now()}.png`;
       link.href = dataURL;
       link.click();
-      
+
     } catch (error) {
       console.error('Error al exportar:', error);
       alert('Error al exportar la imagen. Inténtalo de nuevo.');
@@ -414,7 +444,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
     decorativeElements.forEach((element) => {
       // Crear formas simples usando Konva
       let shape;
-      
+
       switch (element.type) {
         case 'heart':
           shape = new Konva.Path({
@@ -470,9 +500,9 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
 
       if (shape) {
         // Agregar eventos de interacción
-        shape.on('dragmove', function() {
+        shape.on('dragmove', function () {
           const box = this.getClientRect();
-          
+
           // Limitar movimiento dentro del canvas
           const radius = (this as any).radius ? (this as any).radius() : element.size / 2;
           if (box.x < 0) this.x(radius);
@@ -481,16 +511,16 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
           if (box.y + box.height > canvasHeight) this.y(canvasHeight - radius);
         });
 
-        shape.on('mouseenter', function() {
+        shape.on('mouseenter', function () {
           document.body.style.cursor = 'move';
         });
 
-        shape.on('mouseleave', function() {
+        shape.on('mouseleave', function () {
           document.body.style.cursor = 'default';
         });
 
         // Doble click para eliminar
-        shape.on('dblclick', function() {
+        shape.on('dblclick', function () {
           removeDecorativeElement(element.id);
         });
 
@@ -539,7 +569,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
           Personaliza tu vela
         </h1>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Panel de Controles */}
           <div className="lg:col-span-1 bg-white rounded-xl shadow-lg p-6">
@@ -549,8 +579,8 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
                 <label className="block text-sm font-medium text-gray-700">
-                Texto Personalizado
-              </label>
+                  Texto Personalizado
+                </label>
                 <button
                   onClick={bringTextToFront}
                   className="bg-green-500 text-white text-xs py-1 px-2 rounded hover:bg-green-600 transition-colors"
@@ -587,7 +617,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
                   💡 Recomendado: 800x800px o más
                 </p>
               </button>
-              
+
               {/* Lista de imágenes subidas */}
               {uploadedImages.length > 0 && (
                 <div className="mt-3">
@@ -684,11 +714,10 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
                     <button
                       key={category}
                       onClick={() => setSelectedCategory(category)}
-                      className={`px-2 py-1 text-xs rounded-full transition-colors ${
-                        selectedCategory === category
-                          ? 'bg-pink-500 text-white'
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                      }`}
+                      className={`px-2 py-1 text-xs rounded-full transition-colors ${selectedCategory === category
+                        ? 'bg-pink-500 text-white'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
                     >
                       {category}
                     </button>
@@ -736,9 +765,8 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
                   <button
                     key={color}
                     onClick={() => setFontColor(color)}
-                    className={`w-10 h-10 rounded-full border-2 transition-all ${
-                      fontColor === color ? 'border-pink-500 scale-110' : 'border-gray-300'
-                    }`}
+                    className={`w-10 h-10 rounded-full border-2 transition-all ${fontColor === color ? 'border-pink-500 scale-110' : 'border-gray-300'
+                      }`}
                     style={{ backgroundColor: color }}
                   />
                 ))}
@@ -766,13 +794,13 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
               >
                 Enviar Imagen y Hacer Pedido
               </button>
-              
-            <button
-              onClick={handleExport}
-              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-700 transition-all duration-200 shadow-lg"
-            >
-              Descargar Imagen
-            </button>
+
+              <button
+                onClick={handleExport}
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-700 transition-all duration-200 shadow-lg"
+              >
+                Descargar Imagen
+              </button>
             </div>
           </div>
 
@@ -782,89 +810,89 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
               <div className="flex justify-center">
                 <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
                   <div className="relative">
-                  <Stage width={canvasWidth} height={canvasHeight} ref={stageRef}>
-                    <Layer ref={layerRef}>
-                      {image && (() => {
-                        // Calcular escala para mantener proporción
-                        const scale = Math.min(canvasWidth / image.width, canvasHeight / image.height);
-                        const scaledWidth = image.width * scale;
-                        const scaledHeight = image.height * scale;
-                        
-                        // Centrar la imagen
-                        const x = (canvasWidth - scaledWidth) / 2;
-                        const y = (canvasHeight - scaledHeight) / 2;
-                        
-                        return (
-                          <KonvaImage
-                            image={image}
-                            x={x}
-                            y={y}
-                            width={scaledWidth}
-                            height={scaledHeight}
-                            listening={false}
-                          />
-                        );
-                      })()}
-                      
-                      {/* Texto personalizado en Konva */}
-                      {text.trim() !== "Tu mensaje aquí" && text.trim() !== "" && (
-                        <Text
-                          text={text}
-                          x={textPosition.x - 100}
-                          y={textPosition.y - 15}
-                          fontSize={fontSize}
-                          fontFamily={fontFamily}
-                          fill={fontColor}
-                          fontStyle="bold"
-                          draggable={true}
-                          onDragEnd={(e) => {
-                            const newX = Math.max(0, Math.min(canvasWidth, e.target.x() + 100));
-                            const newY = Math.max(0, Math.min(canvasHeight, e.target.y() + 15));
-                            setTextPosition({ x: newX, y: newY });
-                            setTextY(newY);
-                          }}
-                        />
-                      )}
-                      
-                      {/* Imágenes subidas por el usuario en Konva */}
-                      {uploadedImages.map((img) => {
-                        if (img.url.startsWith('blob:') && uploadedImageObjects[img.id]) {
+                    <Stage width={canvasWidth} height={canvasHeight} ref={stageRef}>
+                      <Layer ref={layerRef}>
+                        {image && (() => {
+                          // Calcular escala para mantener proporción
+                          const scale = Math.min(canvasWidth / image.width, canvasHeight / image.height);
+                          const scaledWidth = image.width * scale;
+                          const scaledHeight = image.height * scale;
+
+                          // Centrar la imagen
+                          const x = (canvasWidth - scaledWidth) / 2;
+                          const y = (canvasHeight - scaledHeight) / 2;
+
                           return (
                             <KonvaImage
-                              key={img.id}
-                              image={uploadedImageObjects[img.id]}
-                              x={img.x}
-                              y={img.y}
-                              width={img.width}
-                              height={img.height}
-                              draggable={true}
-                              onDragEnd={(e) => {
-                                const newX = Math.max(0, Math.min(canvasWidth - img.width, e.target.x()));
-                                const newY = Math.max(0, Math.min(canvasHeight - img.height, e.target.y()));
-                                setUploadedImages(prev => prev.map(i => 
-                                  i.id === img.id ? { ...i, x: newX, y: newY } : i
-                                ));
-                              }}
-                              onMouseDown={(e) => {
-                                // Traer al frente
-                                const newZIndex = nextZIndex;
-                                setUploadedImages(prev => prev.map(i => 
-                                  i.id === img.id ? { ...i, zIndex: newZIndex } : i
-                                ));
-                                setNextZIndex(newZIndex + 1);
-                              }}
+                              image={image}
+                              x={x}
+                              y={y}
+                              width={scaledWidth}
+                              height={scaledHeight}
+                              listening={false}
                             />
                           );
-                        }
-                        return null;
-                      })}
-                        
-                        
-                    </Layer>
-                  </Stage>
-                    
-                    
-                    
+                        })()}
+
+                        {/* Texto personalizado en Konva */}
+                        {text.trim() !== "Tu mensaje aquí" && text.trim() !== "" && (
+                          <Text
+                            text={text}
+                            x={textPosition.x - 100}
+                            y={textPosition.y - 15}
+                            fontSize={fontSize}
+                            fontFamily={fontFamily}
+                            fill={fontColor}
+                            fontStyle="bold"
+                            draggable={true}
+                            onDragEnd={(e) => {
+                              const newX = Math.max(0, Math.min(canvasWidth, e.target.x() + 100));
+                              const newY = Math.max(0, Math.min(canvasHeight, e.target.y() + 15));
+                              setTextPosition({ x: newX, y: newY });
+                              setTextY(newY);
+                            }}
+                          />
+                        )}
+
+                        {/* Imágenes subidas por el usuario en Konva */}
+                        {uploadedImages.map((img) => {
+                          if (img.url.startsWith('blob:') && uploadedImageObjects[img.id]) {
+                            return (
+                              <KonvaImage
+                                key={img.id}
+                                image={uploadedImageObjects[img.id]}
+                                x={img.x}
+                                y={img.y}
+                                width={img.width}
+                                height={img.height}
+                                draggable={true}
+                                onDragEnd={(e) => {
+                                  const newX = Math.max(0, Math.min(canvasWidth - img.width, e.target.x()));
+                                  const newY = Math.max(0, Math.min(canvasHeight - img.height, e.target.y()));
+                                  setUploadedImages(prev => prev.map(i =>
+                                    i.id === img.id ? { ...i, x: newX, y: newY } : i
+                                  ));
+                                }}
+                                onMouseDown={(e) => {
+                                  // Traer al frente
+                                  const newZIndex = nextZIndex;
+                                  setUploadedImages(prev => prev.map(i =>
+                                    i.id === img.id ? { ...i, zIndex: newZIndex } : i
+                                  ));
+                                  setNextZIndex(newZIndex + 1);
+                                }}
+                              />
+                            );
+                          }
+                          return null;
+                        })}
+
+
+                      </Layer>
+                    </Stage>
+
+
+
                   </div>
                 </div>
               </div>
@@ -874,7 +902,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
           {/* Panel de Plantillas */}
           <div className="lg:col-span-1 bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-semibold mb-6 text-gray-700">Plantillas</h2>
-            
+
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {templatesLoading ? (
                 <div className="text-center py-8">
@@ -886,11 +914,10 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
                   <button
                     key={template.id}
                     onClick={() => handleTemplateSelect(template)}
-                    className={`w-full rounded-lg overflow-hidden border-2 transition-all ${
-                      currentImageSrc === template.imageUrl
-                        ? 'border-pink-500 scale-105'
-                        : 'border-gray-200 hover:border-pink-300'
-                    }`}
+                    className={`w-full rounded-lg overflow-hidden border-2 transition-all ${currentImageSrc === template.imageUrl
+                      ? 'border-pink-500 scale-105'
+                      : 'border-gray-200 hover:border-pink-300'
+                      }`}
                   >
                     <img
                       src={template.imageUrl}
