@@ -12,8 +12,25 @@ import Link from 'next/link';
 
 export default function CarritoPage() {
   const [acceptPolicies, setAcceptPolicies] = useState(false);
-  const [selectedShipping, setSelectedShipping] = useState<ShippingRate | null>(null);
-  const { items, total, itemCount, updateQuantity, removeItem, clearCart } = useCart();
+  const { items, total, itemCount, updateQuantity, removeItem, clearCart, setShippingRate, shippingRate, shippingOption } = useCart();
+
+  // Mantenemos sincronizado el estado local con el context, 
+  // en el carrito esto nos permite mostrar que ya eligieron algo de envíos
+  const [selectedShipping, setSelectedShipping] = useState<ShippingRate | null>(shippingOption);
+
+  // Cada vez que seleccionan un nuevo transporte, lo guardamos globalmente
+  const handleShippingSelect = (rate: ShippingRate | null) => {
+    setSelectedShipping(rate);
+    if (rate) {
+      setShippingRate(rate.price, rate);
+    } else {
+      setShippingRate(0, null);
+    }
+  };
+
+  // Cálculo del costo de envío final para la pantalla del carrito
+  // Si total >= 50, forzamos $0 independientemente. Si no, tomamos el valor seleccionado o un estimado base.
+  const finalShippingCost = total >= 50 ? 0 : (shippingRate !== null ? shippingRate : 9.99);
 
   if (items.length === 0) {
     return (
@@ -101,7 +118,7 @@ export default function CarritoPage() {
                         <p className="text-gray-600 text-sm mb-2">
                           {item.product.description}
                         </p>
-                        
+
                         {/* Customizations */}
                         {item.customizations && (
                           <div className="text-sm text-gray-500 mb-2">
@@ -184,7 +201,7 @@ export default function CarritoPage() {
               transition={{ delay: 0.4, duration: 0.6 }}
             >
               <ShippingCalculator
-                onShippingSelect={setSelectedShipping}
+                onShippingSelect={handleShippingSelect}
                 selectedRate={selectedShipping || undefined}
                 orderTotal={total}
               />
@@ -209,24 +226,24 @@ export default function CarritoPage() {
                     <span>Subtotal ({itemCount} {itemCount === 1 ? 'artículo' : 'artículos'})</span>
                     <span>${total.toFixed(2)}</span>
                   </div>
-                  
+
                   <div className="flex justify-between text-gray-600">
                     <span>Envío</span>
-                    <span className="text-green-600">
-                      {total >= 50 ? 'Gratis' : '$9.99'}
+                    <span className={total >= 50 ? "text-green-600 font-medium" : ""}>
+                      {total >= 50 ? 'Gratis' : (shippingRate !== null ? `$${shippingRate.toFixed(2)}` : '$9.99 (Estimado)')}
                     </span>
                   </div>
-                  
+
                   {total < 50 && (
                     <div className="text-sm text-pink-600 bg-pink-50 p-3 rounded-lg">
                       💡 Agrega ${(50 - total).toFixed(2)} más para envío gratis
                     </div>
                   )}
-                  
+
                   <div className="border-t pt-4">
                     <div className="flex justify-between text-lg font-bold text-gray-900">
                       <span>Total</span>
-                      <span>${(total + (total >= 50 ? 0 : 9.99)).toFixed(2)}</span>
+                      <span>${(total + finalShippingCost).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -243,8 +260,8 @@ export default function CarritoPage() {
                     />
                     <label htmlFor="acceptPolicies" className="text-sm text-gray-700">
                       Acepto las{' '}
-                      <Link 
-                        href="/es/politicas-envio" 
+                      <Link
+                        href="/es/politicas-envio"
                         target="_blank"
                         className="text-pink-600 hover:text-pink-700 underline inline-flex items-center gap-1"
                       >

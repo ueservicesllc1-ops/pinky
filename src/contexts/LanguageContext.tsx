@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface LanguageContextType {
   language: 'es' | 'en';
@@ -232,7 +232,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<'es' | 'en'>('es');
   const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!pathname) return;
@@ -264,8 +263,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const localePrefix = target === 'en' ? '/en' : '/es';
     const newPath = restPath ? `${localePrefix}/${restPath}` : localePrefix;
 
-    const queryString = searchParams?.toString();
-    const finalUrl = queryString && queryString.length > 0 ? `${newPath}?${queryString}` : newPath;
+    const queryString = typeof window !== 'undefined' ? window.location.search : '';
+    const finalUrl = queryString ? `${newPath}${queryString}` : newPath;
 
     router.push(finalUrl);
   };

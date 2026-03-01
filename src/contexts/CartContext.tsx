@@ -9,6 +9,14 @@ interface CartState {
   itemCount: number;
   showNotification: boolean;
   lastAddedProduct: string;
+  shippingRate: number | null;
+  shippingOption: any | null;
+  customerDetails: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  } | null;
 }
 
 type CartAction =
@@ -18,7 +26,9 @@ type CartAction =
   | { type: 'CLEAR_CART' }
   | { type: 'LOAD_CART'; payload: CartItem[] }
   | { type: 'SHOW_NOTIFICATION'; payload: string }
-  | { type: 'HIDE_NOTIFICATION' };
+  | { type: 'HIDE_NOTIFICATION' }
+  | { type: 'SET_SHIPPING_RATE'; payload: { rate: number; option: any } }
+  | { type: 'SET_CUSTOMER_DETAILS'; payload: any };
 
 const initialState: CartState = {
   items: [],
@@ -26,6 +36,9 @@ const initialState: CartState = {
   itemCount: 0,
   showNotification: false,
   lastAddedProduct: '',
+  shippingRate: null,
+  shippingOption: null,
+  customerDetails: null,
 };
 
 function cartReducer(state: CartState, action: CartAction): CartState {
@@ -34,7 +47,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       const existingItemIndex = state.items.findIndex(
         (item) => item.product.id === action.payload.product.id
       );
-      
+
       let newItems;
       if (existingItemIndex > -1) {
         newItems = [...state.items];
@@ -42,7 +55,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       } else {
         newItems = [...state.items, action.payload];
       }
-      
+
       return {
         ...state,
         items: newItems,
@@ -52,7 +65,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         lastAddedProduct: action.payload.product.name,
       };
     }
-    
+
     case 'REMOVE_ITEM': {
       const newItems = state.items.filter(item => item.product.id !== action.payload);
       return {
@@ -62,14 +75,14 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         itemCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
       };
     }
-    
+
     case 'UPDATE_QUANTITY': {
       const newItems = state.items.map(item =>
         item.product.id === action.payload.id
           ? { ...item, quantity: action.payload.quantity }
           : item
       ).filter(item => item.quantity > 0);
-      
+
       return {
         ...state,
         items: newItems,
@@ -77,10 +90,10 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         itemCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
       };
     }
-    
+
     case 'CLEAR_CART':
       return initialState;
-      
+
     case 'LOAD_CART':
       return {
         ...state,
@@ -88,21 +101,34 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         total: action.payload.reduce((sum, item) => sum + (item.product.price * item.quantity), 0),
         itemCount: action.payload.reduce((sum, item) => sum + item.quantity, 0),
       };
-      
+
     case 'SHOW_NOTIFICATION':
       return {
         ...state,
         showNotification: true,
         lastAddedProduct: action.payload,
       };
-      
+
     case 'HIDE_NOTIFICATION':
       return {
         ...state,
         showNotification: false,
         lastAddedProduct: '',
       };
-      
+
+    case 'SET_SHIPPING_RATE':
+      return {
+        ...state,
+        shippingRate: action.payload.rate,
+        shippingOption: action.payload.option,
+      };
+
+    case 'SET_CUSTOMER_DETAILS':
+      return {
+        ...state,
+        customerDetails: action.payload,
+      };
+
     default:
       return state;
   }
@@ -114,6 +140,8 @@ interface CartContextType extends CartState {
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   hideNotification: () => void;
+  setShippingRate: (rate: number, option: any) => void;
+  setCustomerDetails: (details: any) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -163,6 +191,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'HIDE_NOTIFICATION' });
   };
 
+  const setShippingRate = (rate: number, option: any) => {
+    dispatch({ type: 'SET_SHIPPING_RATE', payload: { rate, option } });
+  };
+
+  const setCustomerDetails = (details: any) => {
+    dispatch({ type: 'SET_CUSTOMER_DETAILS', payload: details });
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -172,6 +208,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         updateQuantity,
         clearCart,
         hideNotification,
+        setShippingRate,
+        setCustomerDetails,
       }}
     >
       {children}

@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Truck, Clock, DollarSign, CheckCircle, AlertCircle } from 'lucide-react';
+import { MapPin, Truck, Clock, DollarSign, CheckCircle, AlertCircle, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useCart } from '@/contexts/CartContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { calculateShipping, validateAddress, ShippingAddress, ShippingRate } from '@/lib/shipping-api';
 import { SHIPPING_CONFIG } from '@/lib/shipping-config';
@@ -14,10 +15,10 @@ interface ShippingCalculatorProps {
   orderTotal: number;
 }
 
-export default function ShippingCalculator({ 
-  onShippingSelect, 
-  selectedRate, 
-  orderTotal 
+export default function ShippingCalculator({
+  onShippingSelect,
+  selectedRate,
+  orderTotal
 }: ShippingCalculatorProps) {
   const [address, setAddress] = useState<ShippingAddress>({
     street: '',
@@ -26,7 +27,21 @@ export default function ShippingCalculator({
     zipCode: '',
     country: 'US'
   });
-  
+
+  const { customerDetails, setCustomerDetails } = useCart();
+  const [contact, setContact] = useState({
+    firstName: customerDetails?.firstName || '',
+    lastName: customerDetails?.lastName || '',
+    email: customerDetails?.email || '',
+    phone: customerDetails?.phone || ''
+  });
+
+  const handleContactChange = (field: string, value: string) => {
+    const newContact = { ...contact, [field]: value };
+    setContact(newContact);
+    setCustomerDetails(newContact);
+  };
+
   const [rates, setRates] = useState<ShippingRate[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -89,7 +104,7 @@ export default function ShippingCalculator({
           Calculadora de Envío
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* Free Shipping Banner */}
         {freeShippingEligible ? (
@@ -118,43 +133,85 @@ export default function ShippingCalculator({
           </div>
         )}
 
+        {/* Contact Form */}
+        <div className="space-y-3 pt-2">
+          <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <User className="h-4 w-4" />
+            Datos de Contacto
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+            <input
+              type="text"
+              placeholder="Nombre"
+              value={contact.firstName}
+              onChange={(e) => handleContactChange('firstName', e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+            />
+
+            <input
+              type="text"
+              placeholder="Apellido"
+              value={contact.lastName}
+              onChange={(e) => handleContactChange('lastName', e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+            />
+
+            <input
+              type="email"
+              placeholder="Correo electrónico"
+              value={contact.email}
+              onChange={(e) => handleContactChange('email', e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+            />
+
+            <input
+              type="tel"
+              placeholder="Teléfono"
+              value={contact.phone}
+              onChange={(e) => handleContactChange('phone', e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+            />
+          </div>
+        </div>
+
         {/* Address Form */}
-        <div className="space-y-3">
+        <div className="space-y-3 border-t border-gray-100 pt-5 mt-2">
           <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
             <MapPin className="h-4 w-4" />
             Dirección de Envío
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <input
               type="text"
               placeholder="Calle y número"
               value={address.street}
-              onChange={(e) => setAddress({...address, street: e.target.value})}
+              onChange={(e) => setAddress({ ...address, street: e.target.value })}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
             />
-            
+
             <input
               type="text"
               placeholder="Ciudad"
               value={address.city}
-              onChange={(e) => setAddress({...address, city: e.target.value})}
+              onChange={(e) => setAddress({ ...address, city: e.target.value })}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
             />
-            
+
             <input
               type="text"
               placeholder="Estado"
               value={address.state}
-              onChange={(e) => setAddress({...address, state: e.target.value})}
+              onChange={(e) => setAddress({ ...address, state: e.target.value })}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
             />
-            
+
             <input
               type="text"
               placeholder="Código Postal"
               value={address.zipCode}
-              onChange={(e) => setAddress({...address, zipCode: e.target.value})}
+              onChange={(e) => setAddress({ ...address, zipCode: e.target.value })}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
             />
           </div>
@@ -205,11 +262,10 @@ export default function ShippingCalculator({
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                  selectedRate?.carrierId === rate.carrierId && selectedRate?.serviceId === rate.serviceId
-                    ? 'border-pink-500 bg-pink-50'
-                    : 'border-gray-200 hover:border-pink-300'
-                }`}
+                className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedRate?.carrierId === rate.carrierId && selectedRate?.serviceId === rate.serviceId
+                  ? 'border-pink-500 bg-pink-50'
+                  : 'border-gray-200 hover:border-pink-300'
+                  }`}
                 onClick={() => handleRateSelect(rate)}
               >
                 <div className="flex items-center justify-between">

@@ -10,11 +10,7 @@ export interface OrderItem {
   price: number;
   quantity: number;
   imageUrl?: string;
-  customizations?: {
-    text?: string;
-    font?: string;
-    color?: string;
-  };
+  customizations?: Record<string, any> | null;
 }
 
 export interface ShippingAddress {
@@ -30,6 +26,7 @@ export interface Order {
   orderNumber: string;
   customerEmail: string;
   customerName: string;
+  customerPhone?: string;
   items: OrderItem[];
   subtotal: number;
   shipping: number;
@@ -53,18 +50,18 @@ export function useOrders() {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const ordersRef = collection(db, 'orders');
       const q = query(ordersRef, orderBy('createdAt', 'desc'));
       const querySnapshot = await getDocs(q);
-      
+
       const ordersData = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
         updatedAt: doc.data().updatedAt?.toDate() || new Date()
       })) as Order[];
-      
+
       setOrders(ordersData);
     } catch (err) {
       console.error('Error loading orders:', err);
@@ -78,24 +75,24 @@ export function useOrders() {
   const createOrder = useCallback(async (orderData: Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'orderNumber'>) => {
     try {
       setError(null);
-      
+
       // Generar número de orden único
       const orderNumber = `PF-${Date.now().toString().slice(-6)}`;
-      
+
       const data = {
         ...orderData,
         orderNumber,
         createdAt: new Date(),
         updatedAt: new Date()
       };
-      
+
       const docRef = await addDoc(collection(db, 'orders'), data);
-      
+
       const newOrder: Order = {
         id: docRef.id,
         ...data
       };
-      
+
       setOrders(prev => [newOrder, ...prev]);
       return { success: true, id: docRef.id, orderNumber };
     } catch (err) {
@@ -109,18 +106,18 @@ export function useOrders() {
   const updateOrder = useCallback(async (id: string, updates: Partial<Order>) => {
     try {
       setError(null);
-      
+
       const updateData = {
         ...updates,
         updatedAt: new Date()
       };
-      
+
       await updateDoc(doc(db, 'orders', id), updateData);
-      
-      setOrders(prev => prev.map(order => 
+
+      setOrders(prev => prev.map(order =>
         order.id === id ? { ...order, ...updateData } : order
       ));
-      
+
       return { success: true };
     } catch (err) {
       console.error('Error updating order:', err);
@@ -133,7 +130,7 @@ export function useOrders() {
   const deleteOrder = useCallback(async (id: string) => {
     try {
       setError(null);
-      
+
       await deleteDoc(doc(db, 'orders', id));
       setOrders(prev => prev.filter(order => order.id !== id));
       return { success: true };
@@ -149,22 +146,22 @@ export function useOrders() {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const ordersRef = collection(db, 'orders');
       const q = query(
-        ordersRef, 
+        ordersRef,
         where('customerEmail', '==', email),
         orderBy('createdAt', 'desc')
       );
       const querySnapshot = await getDocs(q);
-      
+
       const ordersData = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
         updatedAt: doc.data().updatedAt?.toDate() || new Date()
       })) as Order[];
-      
+
       return ordersData;
     } catch (err) {
       console.error('Error searching orders:', err);

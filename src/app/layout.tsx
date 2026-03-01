@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/contexts/CartContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import ThemeProviderWrapper from "@/components/ThemeProviderWrapper";
 import CartNotificationProvider from "@/components/CartNotificationProvider";
 import FooterSwitcher from "@/components/layout/FooterSwitcher";
@@ -16,9 +17,9 @@ export const metadata: Metadata = {
   keywords: "velas, personalizadas, artesanales, aromáticas, decoración, hogar",
   authors: [{ name: "Pinky Flame" }],
   icons: {
-    icon: '/images/favicon.ico',
-    shortcut: '/images/favicon.ico',
-    apple: '/images/favicon.ico',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
   },
   openGraph: {
     title: "Pinky Flame - Velas Personalizadas",
@@ -44,16 +45,18 @@ export default function RootLayout({
   return (
     <html lang="es" data-scroll-behavior="smooth">
       <body className={inter.className}>
-        <ThemeProviderWrapper>
-          <CartProvider>
-            <HeaderSwitcher />
-            <main>
-              {children}
-            </main>
-            <FooterSwitcher />
-            <CartNotificationProvider />
-          </CartProvider>
-        </ThemeProviderWrapper>
+        <AuthProvider>
+          <ThemeProviderWrapper>
+            <CartProvider>
+              <HeaderSwitcher />
+              <main>
+                {children}
+              </main>
+              <FooterSwitcher />
+              <CartNotificationProvider />
+            </CartProvider>
+          </ThemeProviderWrapper>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -8,54 +8,54 @@ import { useOrders, Order } from '@/hooks/useOrders';
 import { getProxyImageUrl } from '@/lib/image-proxy';
 
 const statusConfig = {
-  pending: { 
-    label: 'Pendiente', 
-    color: 'bg-yellow-100 text-yellow-800 border-yellow-300', 
-    icon: Clock 
+  pending: {
+    label: 'Pendiente',
+    color: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+    icon: Clock
   },
-  confirmed: { 
-    label: 'Confirmada', 
-    color: 'bg-blue-100 text-blue-800 border-blue-300', 
-    icon: CheckCircle 
+  confirmed: {
+    label: 'Confirmada',
+    color: 'bg-blue-100 text-blue-800 border-blue-300',
+    icon: CheckCircle
   },
-  processing: { 
-    label: 'En Proceso', 
-    color: 'bg-purple-100 text-purple-800 border-purple-300', 
-    icon: Package 
+  processing: {
+    label: 'En Proceso',
+    color: 'bg-purple-100 text-purple-800 border-purple-300',
+    icon: Package
   },
-  shipped: { 
-    label: 'Enviada', 
-    color: 'bg-indigo-100 text-indigo-800 border-indigo-300', 
-    icon: Truck 
+  shipped: {
+    label: 'Enviada',
+    color: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+    icon: Truck
   },
-  delivered: { 
-    label: 'Entregada', 
-    color: 'bg-green-100 text-green-800 border-green-300', 
-    icon: CheckCircle 
+  delivered: {
+    label: 'Entregada',
+    color: 'bg-green-100 text-green-800 border-green-300',
+    icon: CheckCircle
   },
-  cancelled: { 
-    label: 'Cancelada', 
-    color: 'bg-red-100 text-red-800 border-red-300', 
-    icon: X 
+  cancelled: {
+    label: 'Cancelada',
+    color: 'bg-red-100 text-red-800 border-red-300',
+    icon: X
   }
 };
 
 const paymentStatusConfig = {
-  pending: { 
-    label: 'Pendiente', 
-    color: 'bg-yellow-100 text-yellow-800' 
+  pending: {
+    label: 'Pendiente',
+    color: 'bg-yellow-100 text-yellow-800'
   },
-  paid: { 
-    label: 'Pagado', 
-    color: 'bg-green-100 text-green-800' 
+  paid: {
+    label: 'Pagado',
+    color: 'bg-green-100 text-green-800'
   },
-  failed: { 
-    label: 'Fallido', 
-    color: 'bg-red-100 text-red-800' 
+  failed: {
+    label: 'Fallido',
+    color: 'bg-red-100 text-red-800'
   },
-  refunded: { 
-    label: 'Reembolsado', 
-    color: 'bg-gray-100 text-gray-800' 
+  refunded: {
+    label: 'Reembolsado',
+    color: 'bg-gray-100 text-gray-800'
   }
 };
 
@@ -71,8 +71,8 @@ export default function OrdenesPage() {
     }
   };
 
-  const filteredOrders = statusFilter === 'all' 
-    ? orders 
+  const filteredOrders = statusFilter === 'all'
+    ? orders
     : orders.filter(order => order.status === statusFilter);
 
   const getStatusCounts = () => {
@@ -151,11 +151,10 @@ export default function OrdenesPage() {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setStatusFilter('all')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                statusFilter === 'all'
+              className={`px-4 py-2 rounded-lg transition-colors ${statusFilter === 'all'
                   ? 'bg-pink-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               Todas
             </button>
@@ -163,11 +162,10 @@ export default function OrdenesPage() {
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  statusFilter === status
+                className={`px-4 py-2 rounded-lg transition-colors ${statusFilter === status
                     ? 'bg-pink-500 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 {config.label}
               </button>
@@ -278,11 +276,10 @@ export default function OrdenesPage() {
                       <button
                         key={status}
                         onClick={() => handleStatusChange(selectedOrder.id, status as Order['status'])}
-                        className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
-                          selectedOrder.status === status
+                        className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${selectedOrder.status === status
                             ? config.color
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
+                          }`}
                       >
                         <StatusIcon className="h-4 w-4" />
                         {config.label}
@@ -304,6 +301,12 @@ export default function OrdenesPage() {
                     <Mail className="h-4 w-4 text-gray-400" />
                     <span className="text-gray-700">{selectedOrder.customerEmail}</span>
                   </div>
+                  {selectedOrder.customerPhone && (
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-gray-400" />
+                      <span className="text-gray-700">{selectedOrder.customerPhone}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
