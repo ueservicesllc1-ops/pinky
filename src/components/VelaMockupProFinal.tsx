@@ -11,6 +11,7 @@ import { getProxyImageUrl } from "@/lib/image-proxy";
 import { Heart, Flower2 as Flower, Leaf, Star, Sparkles, Sun, Moon, Crown, Gift, Diamond, Zap, Image as ImageIcon } from "lucide-react";
 import SimpleImageUploadModal from './SimpleImageUploadModal';
 import CustomCandleOrderModal from './CustomCandleOrderModal';
+import { useRouter } from 'next/navigation';
 
 interface VelaMockupProFinalProps {
   src?: string;
@@ -22,6 +23,8 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
 
   // Hook para fuentes personalizadas
   const { customFonts, loading: fontsLoading } = useCustomFonts();
+
+  const router = useRouter();
 
   // Estados de imagen
   const [currentImageSrc, setCurrentImageSrc] = useState(initialSrc || "/velas/vela-cilindrica-rosa.jpg");
@@ -42,7 +45,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
   const [uploadedImageObjects, setUploadedImageObjects] = useState<{ [key: string]: HTMLImageElement }>({});
 
   // Estados de texto
-  const [text, setText] = useState("Tu mensaje aquí");
+  const [text, setText] = useState("");
   const [fontSize, setFontSize] = useState(28);
   const [fontColor, setFontColor] = useState("#000000");
   const [fontFamily, setFontFamily] = useState("Dancing Script");
@@ -345,8 +348,8 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
   };
 
   const handleOrderPlaced = () => {
-    // Redirigir al carrito después del pedido
-    window.location.href = '/es/carrito';
+    // Redirigir al carrito usando Next.js Router para no perder estado de la app en la recarga web
+    router.push('/es/carrito');
   };
 
   const handleExport = async () => {
@@ -377,7 +380,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
       }
 
       // Dibujar el texto
-      if (text.trim() !== "Tu mensaje aquí" && text.trim() !== "") {
+      if (text.trim() !== "") {
         ctx.font = `${fontSize * 3}px ${fontFamily}`;
         ctx.fillStyle = fontColor;
         ctx.textAlign = 'center';
@@ -792,7 +795,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
                 onClick={handleSendOrder}
                 className="w-full bg-gradient-to-r from-green-500 to-blue-600 text-white px-4 py-3 rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 transition-all duration-200 shadow-lg"
               >
-                Enviar Imagen y Hacer Pedido
+                Añadir al Carrito
               </button>
 
               <button
@@ -835,7 +838,7 @@ export default function VelaMockupProFinal({ src: initialSrc }: VelaMockupProFin
                         })()}
 
                         {/* Texto personalizado en Konva */}
-                        {text.trim() !== "Tu mensaje aquí" && text.trim() !== "" && (
+                        {text.trim() !== "" && (
                           <Text
                             text={text}
                             x={textPosition.x - 100}

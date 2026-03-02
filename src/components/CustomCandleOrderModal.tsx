@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { X, ShoppingCart, User, MessageSquare, Tag } from 'lucide-react';
-import { collection, addDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import SuccessModal from './SuccessModal';
 import { useCart } from '@/contexts/CartContext';
 import { Product, CartItem } from '@/types';
@@ -30,13 +28,13 @@ interface OrderData {
   createdAt: Date;
 }
 
-export default function CustomCandleOrderModal({ 
-  isOpen, 
-  onClose, 
-  onOrderPlaced, 
-  candleImage, 
+export default function CustomCandleOrderModal({
+  isOpen,
+  onClose,
+  onOrderPlaced,
+  candleImage,
   templateName,
-  templatePrice 
+  templatePrice
 }: CustomCandleOrderModalProps) {
   const { addItem } = useCart();
   const [formData, setFormData] = useState({
@@ -46,7 +44,7 @@ export default function CustomCandleOrderModal({
     candleName: '',
     additionalDetails: ''
   });
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
@@ -60,27 +58,15 @@ export default function CustomCandleOrderModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.customerName || !formData.customerEmail || !formData.candleName) {
-      alert('Por favor completa todos los campos obligatorios');
+
+    if (!formData.candleName) {
+      alert('Por favor completa el nombre de tu vela');
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const orderData: OrderData = {
-        ...formData,
-        templateName,
-        templatePrice,
-        orderImage: candleImage,
-        status: 'pending',
-        createdAt: new Date()
-      };
-
-      // Guardar en Firestore
-      await addDoc(collection(db, 'customCandleOrders'), orderData);
-
       // Crear producto personalizado para el carrito
       const customProduct: Product = {
         id: `custom-candle-${Date.now()}`,
@@ -109,7 +95,7 @@ export default function CustomCandleOrderModal({
       addItem(cartItem);
 
       setShowSuccessModal(true);
-      
+
       // Cerrar modal después de 2 segundos
       setTimeout(() => {
         setShowSuccessModal(false);
@@ -118,8 +104,8 @@ export default function CustomCandleOrderModal({
       }, 2000);
 
     } catch (error) {
-      console.error('Error al enviar pedido:', error);
-      alert('Error al enviar el pedido. Inténtalo de nuevo.');
+      console.error('Error al agregar al carrito:', error);
+      alert('Error al agregar tu diseño al carrito. Inténtalo de nuevo.');
     } finally {
       setIsSubmitting(false);
     }
@@ -165,7 +151,7 @@ export default function CustomCandleOrderModal({
             {/* Vista previa de la vela */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium text-gray-900">Tu Diseño Personalizado</h3>
-              
+
               {/* Diseño personalizado del usuario */}
               <div className="border-2 border-gray-200 rounded-lg p-4 bg-gray-50">
                 <img
@@ -174,7 +160,7 @@ export default function CustomCandleOrderModal({
                   className="w-full h-64 object-contain rounded-lg"
                 />
               </div>
-              
+
               {/* Información adicional */}
               <div className="bg-green-50 rounded-lg p-4">
                 <h4 className="font-medium text-green-900 mb-2">🎨 Diseño Completo</h4>
@@ -186,7 +172,7 @@ export default function CustomCandleOrderModal({
                   <li>📦 Listo para producción</li>
                 </ul>
               </div>
-              
+
               {/* Información del pedido */}
               <div className="bg-pink-50 rounded-lg p-4">
                 <h4 className="font-medium text-pink-900 mb-2">Resumen del Pedido</h4>
@@ -203,64 +189,15 @@ export default function CustomCandleOrderModal({
             {/* Formulario */}
             <div>
               <h3 className="text-lg font-medium text-gray-900 mb-4">Datos del Pedido</h3>
-              
+
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Información del cliente */}
-                <div className="space-y-3">
-                  <h4 className="font-medium text-gray-700 flex items-center">
-                    <User className="h-4 w-4 mr-2" />
-                    Información Personal
-                  </h4>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nombre completo *
-                    </label>
-                    <input
-                      type="text"
-                      name="customerName"
-                      value={formData.customerName}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email *
-                    </label>
-                    <input
-                      type="email"
-                      name="customerEmail"
-                      value={formData.customerEmail}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Teléfono
-                    </label>
-                    <input
-                      type="tel"
-                      name="customerPhone"
-                      value={formData.customerPhone}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
-                    />
-                  </div>
-                </div>
-
                 {/* Detalles de la vela */}
                 <div className="space-y-3">
                   <h4 className="font-medium text-gray-700 flex items-center">
                     <Tag className="h-4 w-4 mr-2" />
                     Detalles de la Vela
                   </h4>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Nombre para la vela *
@@ -313,7 +250,7 @@ export default function CustomCandleOrderModal({
                     ) : (
                       <>
                         <ShoppingCart className="h-4 w-4 mr-2" />
-                        Hacer Pedido
+                        Añadir al Carrito
                       </>
                     )}
                   </button>
@@ -328,7 +265,7 @@ export default function CustomCandleOrderModal({
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
-        message="¡Pedido enviado exitosamente! Te redirigiremos al carrito."
+        message="¡Diseño guardado! Redirigiendo al carrito para que finalices tu compra..."
       />
     </>
   );

@@ -11,6 +11,16 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Falta la dirección para validar' }, { status: 400 });
         }
 
+        // Si no hay API KEY, asumimos pasivamente que la dirección es válida para no bloquear ventas
+        if (!SHIPPO_API_KEY) {
+            console.log("No hay SHIPPO_API_KEY definida. Validando dirección genéricamente...");
+            return NextResponse.json({
+                valid: true,
+                messages: [{ source: "System", code: "skipped", text: "Validación de Shippo omitida" }],
+                normalized: address
+            });
+        }
+
         const payload = {
             name: "Validacion Cliente",
             street1: address.street,
@@ -35,7 +45,13 @@ export async function POST(request: Request) {
         if (!response.ok) {
             const errorText = await response.text();
             console.error('Shippo Validation Error:', response.status, errorText);
-            return NextResponse.json({ error: 'Error del proveedor de envíos' }, { status: response.status });
+            // IMPORTANTE: En lugar de arrojar error y bloquear el checkout (como el 401 Unauthorized)
+            // se le permite al usuario continuar de forma amigable.
+            return NextResponse.json({
+                valid: true,
+                messages: [{ text: "Shippo offline, asumiendo válida" }],
+                normalized: address
+            });
         }
 
         const data = await response.json();

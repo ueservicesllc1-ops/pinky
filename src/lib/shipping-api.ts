@@ -64,22 +64,8 @@ export async function calculateShipping(
     };
 
   } catch (error) {
-    console.error('Error calculating shipping with Karrio:', error);
-
-    // Retornar tarifa por defecto en caso de error
-    return {
-      rates: [{
-        carrier: "Pinky Flame",
-        service: "Envío Estándar",
-        price: 7.99,
-        estimatedDays: 7,
-        description: "Envío estándar (error en cálculo)",
-        carrierId: "pinky-flame",
-        serviceId: "standard"
-      }],
-      freeShippingEligible: false,
-      freeShippingThreshold: SHIPPING_CONFIG.freeShipping.threshold
-    };
+    console.error('Error calculating shipping with Shippo:', error);
+    throw error;
   }
 }
 
@@ -111,48 +97,10 @@ async function fetchShippingRates(
 
   } catch (error) {
     console.error('Error fetching Shippo rates:', error);
-
-    // En caso de error, usar tarifas simuladas como fallback
-    return getFallbackRates(destination, weight);
+    throw error;
   }
 }
 
-/**
- * Tarifas de fallback cuando Karrio no está disponible
- */
-function getFallbackRates(destination: ShippingAddress, weight: number): ShippingRate[] {
-  const baseRate = 5.50 + (weight * 0.50);
-
-  return [
-    {
-      carrier: "USPS",
-      service: "Priority Mail",
-      price: Math.round(baseRate * 100) / 100,
-      estimatedDays: 3,
-      description: "Entrega rápida con seguimiento",
-      carrierId: "usps",
-      serviceId: "priority"
-    },
-    {
-      carrier: "UPS",
-      service: "Ground",
-      price: Math.round((baseRate + 2) * 100) / 100,
-      estimatedDays: 5,
-      description: "Entrega terrestre confiable",
-      carrierId: "ups",
-      serviceId: "ground"
-    },
-    {
-      carrier: "FedEx",
-      service: "Ground",
-      price: Math.round((baseRate + 3) * 100) / 100,
-      estimatedDays: 4,
-      description: "Entrega terrestre rápida",
-      carrierId: "fedex",
-      serviceId: "ground"
-    }
-  ];
-}
 
 
 /**
