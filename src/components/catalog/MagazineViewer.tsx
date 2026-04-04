@@ -21,7 +21,9 @@ import {
   ChevronLeft, 
   ChevronRight,
   MoreHorizontal,
-  Loader2
+  Loader2,
+  Plus,
+  Minus
 } from 'lucide-react';
 
 const HTMLFlipBook = dynamic(
@@ -104,9 +106,14 @@ export default function MagazineViewer({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // ── Zoom handlers
+  const handleZoomIn  = () => setZoom(z => Math.min(z + 0.25, 2.5));
+  const handleZoomOut = () => setZoom(z => Math.max(z - 0.25, 0.75));
+
+  // Actual dimension calc
   const dims = useMemo(() => {
     return calcBookDims(windowSize.width, windowSize.height, PAGE_RATIO);
-  }, [windowSize.width, windowSize.height]);
+  }, [windowSize.width, windowSize.height, PAGE_RATIO]);
 
   const isPortrait = windowSize.height > windowSize.width;
 
@@ -217,23 +224,45 @@ export default function MagazineViewer({
                </>
             )}
 
-            {/* Page number badge */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50">
-               <div className="px-6 py-2 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 text-white/60 text-[10px] font-black font-mono tracking-[0.3em] uppercase flex items-center gap-2">
-                  <div className={`w-1.5 h-1.5 rounded-full bg-pink-500 ${isFlipping ? 'animate-pulse' : ''}`} />
-                  PAG {currentPage + 1} / {catalog.pages.length}
+            {/* Bottom Controls Bar (Zoom + Pagination) */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4">
+               {/* Zoom Group */}
+               <div className="flex items-center gap-1 p-1 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10">
+                 <button 
+                   onClick={handleZoomOut}
+                   className="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center text-white/40 hover:text-white transition-all active:scale-90"
+                 >
+                   <Minus size={18} />
+                 </button>
+                 <span className="text-white/60 text-[10px] font-bold w-12 text-center select-none font-mono tracking-tighter">
+                   {Math.round(zoom * 100)}%
+                 </span>
+                 <button 
+                   onClick={handleZoomIn}
+                   className="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center text-white/40 hover:text-white transition-all active:scale-90"
+                 >
+                   <Plus size={18} />
+                 </button>
+               </div>
+
+               {/* Page Counter */}
+               <div className="px-6 py-3 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 text-white/60 text-[10px] font-black font-mono tracking-[0.3em] uppercase flex items-center gap-3">
+                  <div className={`w-1.5 h-1.5 rounded-full bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.5)] ${isFlipping ? 'animate-pulse' : ''}`} />
+                  {currentPage + 1} / {catalog.pages.length}
                </div>
             </div>
           </>
         )}
 
         {/* ── Magazine flipping stage ── */}
-        <div className="relative z-10 flex flex-1 items-center justify-center px-0 py-0 overflow-hidden">
+        <div className="relative z-10 flex flex-1 items-center justify-center overflow-auto p-4 scrollbar-hide">
           <div
             style={{
               width: dims.isSinglePage ? dims.width : dims.width * 2,
               height: dims.height,
-              transition: 'all 0.4s cubic-bezier(0.2, 0, 0.2, 1)',
+              transform: `scale(${zoom})`,
+              transformOrigin: 'center center',
+              transition: 'transform 0.4s cubic-bezier(0.2, 0, 0.2, 1)',
             }}
           >
             <div className="relative shadow-[0_50px_100px_rgba(0,0,0,0.8)]">
