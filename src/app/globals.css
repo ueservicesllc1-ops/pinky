@@ -209,3 +209,81 @@ html {
 * {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
+
+/* ─────────────────────────────────────────────
+   Magazine / Flipbook Styles
+   ───────────────────────────────────────────── */
+
+/* Kill transition override inside flipbook so it doesn't fight page-flip */
+.magazine-flipbook * {
+  transition: none !important;
+}
+
+/* The flipbook container itself */
+.magazine-flipbook {
+  outline: none;
+}
+
+/* Each page inside the flipbook */
+.magazine-page {
+  background-color: #fff;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+
+/* Realistic page gradient shadow on the spine */
+.stf__parent {
+  perspective: 2400px;
+}
+
+/* Cover page special styling */
+.magazine-page:first-child {
+  border-radius: 0 2px 2px 0;
+}
+.magazine-page:last-child {
+  border-radius: 2px 0 0 2px;
+}
+
+/* Page corner hover effect */
+.stf__item--soft {
+  box-shadow:
+    inset -7px 0 30px -5px rgba(0, 0, 0, 0.12),
+    inset 7px 0 30px -5px rgba(0, 0, 0, 0.08);
+}
+
+/* Spine shadow */
+.stf__item--hard:first-child {
+  box-shadow: 2px 0 25px rgba(0,0,0,0.4);
+}
+.stf__item--hard:last-child {
+  box-shadow: -2px 0 25px rgba(0,0,0,0.4);
+}
+
+/* Remove default outline on flipbook elements */
+.stf__block,
+.stf__item {
+  outline: none !important;
+}
+
+/* Catalog viewer full-height within main */
+.catalog-viewer-root {
+  min-height: calc(100vh - 80px);
+}
+
+/* Gloss overlay for pages */
+.magazine-page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,0.08) 0%,
+    transparent 40%,
+    rgba(0,0,0,0.04) 100%
+  );
+  pointer-events: none;
+  z-index: 5;
+}
+

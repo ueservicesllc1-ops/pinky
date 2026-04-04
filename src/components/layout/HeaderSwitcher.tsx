@@ -8,7 +8,10 @@ const DIGITAL_ROUTE_FRAGMENT = '/digital';
 export default function HeaderSwitcher() {
   const pathname = usePathname();
 
-  if (pathname?.includes(DIGITAL_ROUTE_FRAGMENT)) {
+  const isCatalog = pathname?.includes('/catalogo');
+  const isDigital = pathname?.includes(DIGITAL_ROUTE_FRAGMENT);
+
+  if (isCatalog || isDigital) {
     return null;
   }
 

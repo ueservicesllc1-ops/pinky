@@ -5,7 +5,7 @@ export interface UploadResult {
 
 export async function uploadImage(
   file: File, 
-  folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup' | 'candle-templates',
+  folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup' | 'candle-templates' | 'catalogs' | 'pdfs',
   fileName?: string
 ): Promise<UploadResult> {
   try {
@@ -45,7 +45,7 @@ export async function uploadImage(
 
 export async function uploadMultipleImages(
   files: File[], 
-  folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup' | 'candle-templates'
+  folder: 'banners' | 'candles' | 'promotions' | 'offers' | 'categories' | 'hero-popup' | 'candle-templates' | 'catalogs' | 'pdfs'
 ): Promise<UploadResult[]> {
   try {
     console.log(`📤 Subiendo ${files.length} imágenes a B2 via API en carpeta ${folder}`);
