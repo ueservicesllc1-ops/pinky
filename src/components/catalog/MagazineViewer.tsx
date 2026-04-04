@@ -5,6 +5,7 @@ import React, {
   useState,
   useCallback,
   useEffect,
+  useMemo
 } from 'react';
 import dynamic from 'next/dynamic';
 import MagazinePage from './MagazinePage';
@@ -19,7 +20,8 @@ import {
   LayoutGrid, 
   ChevronLeft, 
   ChevronRight,
-  MoreHorizontal
+  MoreHorizontal,
+  Loader2
 } from 'lucide-react';
 
 const HTMLFlipBook = dynamic(
@@ -47,39 +49,31 @@ const MAX_ZOOM  = 2.0;
 function calcBookDims(
   vw: number,
   vh: number,
-  isFullscreen: boolean,
   ratio: number = 1.0
 ): { width: number; height: number; isSinglePage: boolean } {
   const isLandscape = vw > vh;
   
-  // Adaptive margins to maximize use of screen
-  const marginV = isLandscape ? 24 : 48;
-  const marginH = isLandscape ? 24 : 16;
+  // Use ultra-thin margins for mobile landscape to maximize space
+  const marginV = isLandscape ? 10 : 60;
+  const marginH = isLandscape ? 10 : 16;
 
   const availH = vh - marginV;
   const availW = vw - marginH;
 
-  // Single page on Phone Portrait
-  if (!isLandscape && vw < 600) {
-    const w = Math.min(availW, 580);
-    const h = Math.round(w * ratio);
-    return { width: w, height: h, isSinglePage: true };
-  }
-
-  // Single page on Tablet Portrait
-  if (!isLandscape && vw >= 600) {
+  // Single Page for portrait
+  if (!isLandscape) {
     const w = Math.min(availW, 1000);
     const h = Math.round(w * ratio);
     return { width: w, height: h, isSinglePage: true };
   }
 
-  // Tablet/Desktop/Phone Landscape (Spread)
+  // Force spread (2 pages) for all landscapes
   const pageHbyH = availH;
-  const pageWbyH = Math.round(pageHbyH / PAGE_RATIO);
+  const pageWbyH = Math.round(pageHbyH / ratio);
   const pageWbyW = Math.floor(availW / 2);
 
   const pageW = Math.min(pageWbyH, pageWbyW);
-  const pageH = Math.round(pageW * PAGE_RATIO);
+  const pageH = Math.round(pageW * ratio);
 
   return { width: pageW, height: pageH, isSinglePage: false };
 }
@@ -97,39 +91,26 @@ export default function MagazineViewer({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showShare, setShowShare]     = useState(false);
   const [isFlipping, setIsFlipping]   = useState(false);
-  const [isPortrait, setIsPortrait] = useState(false);
-  const [isLandscape, setIsLandscape] = useState(false);
-  const [isMobile, setIsMobile]     = useState(false);
   const [mounted, setMounted]       = useState(false);
-  const [dims, setDims]             = useState<{
-    width: number; height: number; isSinglePage: boolean;
-  }>({ width: 380, height: 537, isSinglePage: false });
+  const [windowSize, setWindowSize] = useState({ width: 1200, height: 800 });
 
-  useEffect(() => { setMounted(true); }, []);
-
-  // ── Orientation Detection (for the shared view)
-  useEffect(() => {
-    const check = () => {
-      setIsPortrait(window.innerHeight > window.innerWidth);
-      setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+  useEffect(() => { 
+    setMounted(true);
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     };
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // ── Responsive dimension calculation
-  useEffect(() => {
-    const update = () => {
-      const d = calcBookDims(window.innerWidth, window.innerHeight, isFullscreen);
-      setDims(d);
-    };
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, [isFullscreen]);
+  const dims = useMemo(() => {
+    return calcBookDims(windowSize.width, windowSize.height, PAGE_RATIO);
+  }, [windowSize.width, windowSize.height]);
 
-  // ── Page flip
+  const isPortrait = windowSize.height > windowSize.width;
+
+  // ── Page flip handlers
   const handleFlipNext = useCallback(() => {
     if (!isFlipping) flipBookRef.current?.pageFlip?.().flipNext();
   }, [isFlipping]);
@@ -142,11 +123,7 @@ export default function MagazineViewer({
   const handleFlipStart = useCallback(() => setIsFlipping(true), []);
   const handleFlipEnd   = useCallback(() => setIsFlipping(false), []);
 
-  // ── Zoom
-  const handleZoomIn  = () => setZoom(z => Math.min(z + ZOOM_STEP, MAX_ZOOM));
-  const handleZoomOut = () => setZoom(z => Math.max(z - ZOOM_STEP, MIN_ZOOM));
-
-  // ── Fullscreen
+  // ── Fullscreen toggle (using API where supported)
   const handleToggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
       containerRef.current?.requestFullscreen().catch(() => {});
@@ -161,7 +138,7 @@ export default function MagazineViewer({
     return () => document.removeEventListener('fullscreenchange', onchange);
   }, []);
 
-  // ── Keyboard
+  // ── Keyboard shortcuts
   useEffect(() => {
     const onkey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') handleFlipNext();
@@ -171,76 +148,76 @@ export default function MagazineViewer({
     return () => window.removeEventListener('keydown', onkey);
   }, [handleFlipNext, handleFlipPrev]);
 
-  const shareToken = catalog.shareToken || catalog.id;
-  const skeletonW  = dims.isSinglePage ? dims.width : dims.width * 2;
-
   return (
     <>
       <div
         ref={containerRef}
-        className="fixed inset-0 w-screen h-[100dvh] z-[9999] overflow-hidden flex flex-col bg-black"
+        className="fixed inset-0 w-screen h-[100dvh] z-[9999] overflow-hidden flex flex-col bg-black touch-none"
         style={{
           background: 'radial-gradient(circle at center, #1a0030 0%, #0d0020 60%, #000000 100%)',
         }}
       >
         {/* ── Orientation Prompt ── */}
-        {mounted && isMobile && isPortrait && !isFullscreen && (
-          <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0d0020]/95 backdrop-blur-2xl p-10 text-center">
+        {mounted && isPortrait && (
+          <div className="fixed inset-0 z-[100001] flex flex-col items-center justify-center bg-[#0d0020]/98 backdrop-blur-3xl p-10 text-center">
             <div className="relative mb-10 scale-125">
               <div className="absolute inset-0 bg-pink-500/25 blur-3xl rounded-full animate-pulse" />
               <RotateCw className="w-16 h-16 text-pink-500 relative animate-[spin_4s_linear_infinite]" />
             </div>
-            <h2 className="text-white text-2xl font-bold mb-4 tracking-tight">Experiencia Inmersiva</h2>
-            <p className="text-white/60 mb-10 max-w-xs text-sm font-medium">
-              Gira tu dispositivo para ver el catálogo en pantalla completa horizontal.
+            <h2 className="text-white text-3xl font-black mb-4 tracking-tighter uppercase leading-none">Gira tu iPhone</h2>
+            <p className="text-white/60 mb-10 max-w-xs text-sm font-medium leading-relaxed">
+              Para ver las dos páginas del catálogo, necesitas usar el teléfono en **horizontal**.
             </p>
             <button
               onClick={() => {
-                handleToggleFullscreen();
                 const screenAny = window.screen as any;
                 if (screenAny?.orientation?.lock) {
                   screenAny.orientation.lock('landscape').catch(() => {});
                 }
               }}
-              className="px-10 py-4 rounded-full bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold text-lg shadow-2xl shadow-pink-500/30 active:scale-95 transition-all"
+              className="px-12 py-5 rounded-full bg-gradient-to-r from-pink-600 to-purple-600 text-white font-black text-lg shadow-2xl shadow-pink-500/40 active:scale-95 transition-all uppercase tracking-widest"
             >
-              Ver en Horizontal
+              Entendido
             </button>
           </div>
         )}
 
-        {/* ── Immersive Floating UI (Always, for independent feel) ── */}
+        {/* ── Immersive UI Elements ── */}
         {mounted && (
           <>
-            {/* 9-dot grid menu (Top Right) */}
-            <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-50">
+            {/* Grid menu button */}
+            <div className="absolute top-6 right-6 z-[99999]">
               <button
                 onClick={() => setShowShare(true)}
-                className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white/80 hover:text-white transition-all shadow-2xl active:scale-90"
+                className="w-14 h-14 rounded-2xl bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white/80 transition-all shadow-2xl active:scale-90"
               >
                 <LayoutGrid size={28} />
               </button>
             </div>
+            
+            {/* Navigation arrows (Landscape only) */}
+            {!isPortrait && (
+               <>
+                 <div className="absolute inset-y-0 left-0 flex items-center pl-4 z-40 pointer-events-none">
+                   <button
+                     onClick={(e) => { e.stopPropagation(); handleFlipPrev(); }}
+                     className={`w-14 h-14 rounded-full bg-black/40 shadow-xl backdrop-blur-md flex items-center justify-center text-white/60 pointer-events-auto transition-all active:scale-95 ${currentPage === 0 ? 'opacity-0 scale-50' : 'opacity-100'}`}
+                   >
+                     <ChevronLeft size={32} />
+                   </button>
+                 </div>
+                 <div className="absolute inset-y-0 right-0 flex items-center pr-4 z-40 pointer-events-none">
+                   <button
+                     onClick={(e) => { e.stopPropagation(); handleFlipNext(); }}
+                     className={`w-14 h-14 rounded-full bg-black/40 shadow-xl backdrop-blur-md flex items-center justify-center text-white/60 pointer-events-auto transition-all active:scale-95 ${currentPage === catalog.pages.length - 1 ? 'opacity-0 scale-50' : 'opacity-100'}`}
+                   >
+                     <ChevronRight size={32} />
+                   </button>
+                 </div>
+               </>
+            )}
 
-            {/* Floating Nav Arrows (Sides) */}
-            <div className="absolute inset-y-0 left-0 flex items-center pl-2 sm:pl-6 z-40 pointer-events-none">
-              <button
-                onClick={(e) => { e.stopPropagation(); handleFlipPrev(); }}
-                className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-black/40 hover:bg-black/60 shadow-lg backdrop-blur-md flex items-center justify-center text-white/60 hover:text-white pointer-events-auto transition-all active:scale-95 ${currentPage === 0 ? 'opacity-0 scale-50' : 'opacity-100'}`}
-              >
-                <ChevronLeft size={32} />
-              </button>
-            </div>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-6 z-40 pointer-events-none">
-              <button
-                onClick={(e) => { e.stopPropagation(); handleFlipNext(); }}
-                className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-black/40 hover:bg-black/60 shadow-lg backdrop-blur-md flex items-center justify-center text-white/60 hover:text-white pointer-events-auto transition-all active:scale-95 ${currentPage === catalog.pages.length - 1 ? 'opacity-0 scale-50' : 'opacity-100'}`}
-              >
-                <ChevronRight size={32} />
-              </button>
-            </div>
-
-            {/* Page Counter (Bottom Center) - Modern Pill Style */}
+            {/* Page number badge */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50">
                <div className="px-6 py-2 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 text-white/60 text-[10px] font-black font-mono tracking-[0.3em] uppercase flex items-center gap-2">
                   <div className={`w-1.5 h-1.5 rounded-full bg-pink-500 ${isFlipping ? 'animate-pulse' : ''}`} />
@@ -250,23 +227,19 @@ export default function MagazineViewer({
           </>
         )}
 
-        {/* ── Flipbook Stage ── */}
+        {/* ── Magazine flipping stage ── */}
         <div className="relative z-10 flex flex-1 items-center justify-center px-0 py-0 overflow-hidden">
           <div
             style={{
-              transform: `scale(${zoom})`,
-              transformOrigin: 'center center',
-              transition: 'transform 0.4s cubic-bezier(0.2, 0, 0.2, 1)',
               width: dims.isSinglePage ? dims.width : dims.width * 2,
               height: dims.height,
+              transition: 'all 0.4s cubic-bezier(0.2, 0, 0.2, 1)',
             }}
           >
-            <div
-              className="relative shadow-[0_50px_100px_rgba(0,0,0,0.8)]"
-            >
+            <div className="relative shadow-[0_50px_100px_rgba(0,0,0,0.8)]">
               {!mounted ? (
                 <div className="flex items-center justify-center w-full h-full bg-gray-900/50 rounded-lg">
-                  <div className="w-10 h-10 border-2 border-pink-500/20 border-t-pink-500 rounded-full animate-spin" />
+                  <Loader2 className="w-10 h-10 text-pink-500 animate-spin" />
                 </div>
               ) : (
                 <HTMLFlipBook
@@ -280,7 +253,7 @@ export default function MagazineViewer({
                   maxHeight={1400}
                   showCover={true}
                   mobileScrollSupport={true}
-                  swipeDistance={40}
+                  swipeDistance={50}
                   useMouseEvents={true}
                   clickEventForward={true}
                   flippingTime={800}
